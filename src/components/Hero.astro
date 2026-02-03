@@ -1,76 +1,119 @@
 ---
-import HeroScene from './HeroScene.jsx';
 ---
-
 <section class="hero">
-    <div class="scene-container">
-        <HeroScene client:load />
-    </div>
     <div class="content">
-        <h1>Yegor Golovnia</h1>
-        <p class="subtitle">Web3 Operations Generalist &<br/>Tech Humanist</p>
-        <div class="scroll-indicator">↓ SCROLL_TO_INITIALIZE</div>
+        <h1 class="fade-in">Yegor<br>Golovnia</h1>
+        <div class="role-container fade-in-delay">
+            <span class="role">Program & Product Lead</span>
+            <span class="separator">/</span>
+            <span class="role">Web3 Ops</span>
+        </div>
+        <p class="intro fade-in-more-delay">
+            Building impact-focused organizations and scalable systems in the Ethereum ecosystem.
+        </p>
     </div>
+    
+    <div class="bg-gradient"></div>
 </section>
 
 <style>
     .hero {
-        position: relative;
-        height: 80vh; /* Not full screen to show content peek */
+        min-height: 85vh; /* Taller hero */
         display: flex;
-        align-items: center;
+        flex-direction: column;
         justify-content: center;
+        position: relative;
         overflow: hidden;
-    }
-
-    .scene-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        opacity: 0.6; /* Let text pop */
     }
 
     .content {
         position: relative;
         z-index: 2;
-        text-align: center;
-        pointer-events: none; /* Let clicks pass to 3D scene if needed */
+        max-width: 900px;
     }
 
     h1 {
-        font-size: 3rem;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 0 10px rgba(0,0,0,0.8);
+        font-size: clamp(4rem, 15vw, 10rem); /* Massive responsive text */
+        line-height: 0.9;
+        margin-bottom: 2rem;
+        letter-spacing: -0.04em;
+        font-weight: 600;
+        color: var(--color-text);
     }
 
-    .subtitle {
-        font-size: 1.2rem;
+    .role-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-family: var(--font-mono);
+        font-size: 1.1rem;
         color: var(--color-text-muted);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        background: rgba(0,0,0,0.5);
-        display: inline-block;
-        padding: 5px 10px;
+        margin-bottom: 2rem;
     }
 
-    .scroll-indicator {
+    .separator {
+        opacity: 0.5;
+    }
+
+    .intro {
+        font-size: 1.5rem;
+        max-width: 600px;
+        line-height: 1.4;
+        font-weight: 300;
+        color: var(--color-text);
+        opacity: 0.9;
+    }
+
+    /* Ambient Background */
+    .bg-gradient {
         position: absolute;
-        bottom: 2rem;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 0.8rem;
-        animation: blink 1s infinite;
+        top: 50%;
+        right: -10%;
+        width: 60vw;
+        height: 60vw;
+        background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0) 70%);
+        transform: translateY(-50%);
+        pointer-events: none;
+        z-index: 1;
+        filter: blur(80px); /* Soft blur */
+        animation: breathe 10s infinite alternate ease-in-out;
     }
 
-    @keyframes blink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.3; }
+    @keyframes breathe {
+        0% { opacity: 0.5; transform: translateY(-50%) scale(0.9); }
+        100% { opacity: 1; transform: translateY(-50%) scale(1.1); }
     }
 
-    @media (min-width: 768px) {
-        h1 { font-size: 5rem; }
+    /* Entry Animations */
+    .fade-in {
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    .fade-in-delay {
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    .fade-in-more-delay {
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    @keyframes fadeInUp {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+        .role-container {
+            font-size: 0.9rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        .separator { display: none; }
     }
 </style>
