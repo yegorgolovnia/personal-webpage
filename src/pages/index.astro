@@ -1,0 +1,153 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import CaseStudies from '../components/CaseStudies.astro';
+import Experience from '../components/Experience.astro';
+import Lifestyle from '../components/Lifestyle.astro';
+
+// Updated Linktree links
+const links = [
+    { label: "Email", url: "mailto:hi@yegorgolovnia.com" },
+    { label: "Twitter", url: "https://twitter.com/yegorgolovnia" },
+    { label: "LinkedIn", url: "https://www.linkedin.com/in/yegorgolovnia/" },
+    { label: "Telegram", url: "https://t.me/yegorgolovnia" },
+    { label: "Warpcast", url: "https://warpcast.com/yegor" },
+    { label: "Calendly", url: "https://calendly.com/yegorgolovnia" }
+];
+---
+
+<Layout title="Yegor Golovnia">
+	<Hero />
+    
+    <div class="spacer"></div>
+
+    <section id="about">
+        <div class="header">
+            <h2>About</h2>
+            <span class="mono">/bio</span>
+        </div>
+        <p class="bio">
+            I am a <strong>Program & Product Lead</strong> and <strong>Operations Specialist</strong> with a deep focus on the Ethereum ecosystem.
+        </p>
+        <p class="bio">
+            Currently managing impact funding initiatives at <strong>SEH Foundation</strong>. Previously co-founded <strong>ETHBarcelona</strong>, scaling it to 2,500+ attendees. 
+        </p>
+        <p class="bio text-muted">
+            Specializing in Agile Product Management, Quadratic Funding, Grant Writing, and building distributed organizations. Native in Ukrainian, fluent in English & Russian.
+        </p>
+    </section>
+
+    <Experience />
+    <CaseStudies />
+    <Lifestyle />
+
+    <footer id="contact">
+        <div class="header">
+            <h2>Contact</h2>
+            <span class="mono">/connect</span>
+        </div>
+        <div class="links-grid">
+            {links.map(link => (
+                <a href={link.url} target="_blank" class="link-item">
+                    <span class="arrow">→</span> {link.label}
+                </a>
+            ))}
+        </div>
+        <div class="f-credits mono">
+            <p>NO COOKIES. NO TRACKERS.</p>
+            <p>&copy; {new Date().getFullYear()} Yegor Golovnia</p>
+        </div>
+    </footer>
+</Layout>
+
+<style>
+    .spacer { height: 100px; }
+
+    #about {
+        padding: 4rem 0;
+        max-width: 800px;
+    }
+
+    .header {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .mono {
+        font-family: var(--font-mono);
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+    }
+
+    .bio {
+        font-size: 1.5rem;
+        line-height: 1.4;
+        margin-bottom: 1.5rem;
+        font-weight: 300;
+    }
+    
+    .bio.text-muted {
+        color: var(--color-text-muted);
+        font-size: 1.1rem;
+    }
+
+    footer {
+        padding: 6rem 0 4rem 0;
+        margin-top: 4rem;
+        border-top: 1px solid var(--color-accent-subtle);
+    }
+
+    .links-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 4rem;
+    }
+    
+    .link-item {
+        font-size: 1.2rem;
+        padding: 1rem;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .link-item:hover {
+        background: var(--color-text);
+        color: var(--color-bg);
+        border-color: var(--color-text);
+    }
+
+    .arrow {
+        opacity: 0;
+        transform: translateX(-5px);
+        transition: all 0.2s ease;
+    }
+    
+    .link-item:hover .arrow {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .f-credits {
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        text-align: center;
+        opacity: 0.5;
+        margin-top: 4rem;
+    }
+
+    @media (min-width: 768px) {
+        .links-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .bio {
+            font-size: 2rem;
+        }
+    }
+</style>

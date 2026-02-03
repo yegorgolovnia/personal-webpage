@@ -1,0 +1,115 @@
+---
+const projects = [
+    {
+        title: "Monero Meetups BCN",
+        role: "Co-organizer",
+        desc: "Privacy-focused community events in Barcelona.",
+        link: "#", // Add real links if available in future
+        year: "2024"
+    },
+    {
+        title: "Coven.Land",
+        role: "Ops & Strategy Lead",
+        desc: "Web3 community platform operations.",
+        link: "#",
+        year: "2023-2024"
+    },
+    {
+        title: "MindGem",
+        role: "COO & Co-founder",
+        desc: "AI x Web3 startup. Operational foundation.",
+        link: "#",
+        year: "2023"
+    },
+    {
+        title: "ETHBarcelona",
+        role: "Ops Lead",
+        desc: "Impact-focused Ethereum conference.",
+        link: "https://ethbarcelona.com",
+        year: "2022"
+    }
+];
+---
+
+<section id="projects">
+    <h2>> ./projects_dump</h2>
+    
+    <div class="grid">
+        {projects.map((project) => (
+            <a href={project.link} class="card" target={project.link !== '#' ? "_blank" : "_self"}>
+                <div class="card-header">
+                    <span class="year">{project.year}</span>
+                    <span class="icon">[DIR]</span>
+                </div>
+                <h3>{project.title}</h3>
+                <div class="role">{project.role}</div>
+                <p>{project.desc}</p>
+            </a>
+        ))}
+    </div>
+</section>
+
+<style>
+    #projects {
+        padding: 4rem 0;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .card {
+        border: 1px solid var(--color-accent-subtle);
+        padding: 2rem;
+        display: block;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        background: rgba(255,255,255,0.02);
+    }
+
+    .card:hover {
+        border-color: var(--color-text);
+        transform: translateY(-5px);
+        background: var(--color-text);
+        color: var(--color-bg);
+        text-decoration: none; /* Override global anchor */
+    }
+
+    .card:hover h3, .card:hover .role, .card:hover p, .card:hover .year, .card:hover .icon {
+        color: var(--color-bg);
+    }
+    
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        font-size: 0.8rem;
+        font-family: var(--font-pixel);
+    }
+
+    h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+        font-family: var(--font-mono);
+    }
+
+    .role {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        opacity: 0.8;
+    }
+
+    p {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+
+    @media (min-width: 768px) {
+        .grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>

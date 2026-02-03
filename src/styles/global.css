@@ -1,0 +1,83 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+/* Importing Uncut Sans from a CDN or similar if available, or using a fallback for now. */
+/* Using a similar modern sans-serif from Google Fonts as a proxy for Uncut Sans if not locally available: 'Inter' or 'Manrope' */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+:root {
+    --color-bg: #050505;
+    /* Slightly softer black */
+    --color-text: #eaeaea;
+    --color-text-muted: #888888;
+    --color-accent: #ffffff;
+    /* Stark white for high contrast tech feel */
+    --color-accent-subtle: #2a2a2a;
+
+    --font-mono: 'Space Mono', monospace;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    /* "Uncut Sans" vibe */
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    /* Default to clean sans */
+    overflow-x: hidden;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    /* Tight tracking for modern feel */
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+a:hover {
+    opacity: 0.7;
+}
+
+/* Utilities */
+.container {
+    max-width: 1000px;
+    /* Tighter container for reading */
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-accent-subtle);
+    border-radius: 3px;
+}

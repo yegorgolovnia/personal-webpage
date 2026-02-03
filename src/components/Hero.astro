@@ -1,0 +1,76 @@
+---
+import HeroScene from './HeroScene.jsx';
+---
+
+<section class="hero">
+    <div class="scene-container">
+        <HeroScene client:load />
+    </div>
+    <div class="content">
+        <h1>Yegor Golovnia</h1>
+        <p class="subtitle">Web3 Operations Generalist &<br/>Tech Humanist</p>
+        <div class="scroll-indicator">↓ SCROLL_TO_INITIALIZE</div>
+    </div>
+</section>
+
+<style>
+    .hero {
+        position: relative;
+        height: 80vh; /* Not full screen to show content peek */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .scene-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        opacity: 0.6; /* Let text pop */
+    }
+
+    .content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        pointer-events: none; /* Let clicks pass to 3D scene if needed */
+    }
+
+    h1 {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 0 10px rgba(0,0,0,0.8);
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        background: rgba(0,0,0,0.5);
+        display: inline-block;
+        padding: 5px 10px;
+    }
+
+    .scroll-indicator {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.8rem;
+        animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+
+    @media (min-width: 768px) {
+        h1 { font-size: 5rem; }
+    }
+</style>

@@ -1,0 +1,122 @@
+---
+const experiences = [
+    {
+        role: "Program & Product Lead",
+        company: "SEH Foundation",
+        period: "Jan 2024 – Present",
+        desc: "Managing impact funding initiatives and product iterations. Focused on Quadratic Funding and strategic partnerships."
+    },
+    {
+        role: "Operations Lead & Co-Founder",
+        company: "ETHBarcelona",
+        period: "Mar 2022 – Aug 2023",
+        desc: "Co-organized the first impact-focused Ethereum conference in Spain with 2,500+ attendees and $1.5M+ in sponsorships."
+    },
+    {
+        role: "Web3 Operations Consultant",
+        company: "Self-Employed",
+        period: "Nov 2022 – Present",
+        desc: "Systems building (Notion, CRM, ATS), HR strategies, and operational architecture for high-growth Web3 projects."
+    },
+    {
+        role: "Operations & HR Lead",
+        company: "FightPandemics",
+        period: "Apr 2020 – Apr 2021",
+        desc: "Secured $450K+ in grants and optimized volunteer onboarding for a global network."
+    },
+    {
+        role: "Business Development Manager",
+        company: "SoftRize",
+        period: "Jan 2017 – Dec 2020",
+        desc: "Scaled engineering delivery capacity by 50% through strategic sales and partnerships."
+    }
+];
+---
+
+<section id="experience">
+    <div class="header">
+        <h2>Experience</h2>
+        <span class="mono">/log</span>
+    </div>
+    
+    <div class="timeline">
+        {experiences.map((exp, index) => (
+            <div class="entry">
+                <div class="meta mono">
+                    <span class="period">{exp.period}</span>
+                </div>
+                <div class="content">
+                    <h3>{exp.role}</h3>
+                    <h4 class="company">{exp.company}</h4>
+                    <p>{exp.desc}</p>
+                </div>
+            </div>
+        ))}
+    </div>
+</section>
+
+<style>
+    #experience {
+        padding: 6rem 0;
+    }
+
+    .header {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+        margin-bottom: 3rem;
+        border-bottom: 1px solid var(--color-accent-subtle);
+        padding-bottom: 1rem;
+    }
+
+    .mono {
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        color: var(--color-text-muted);
+    }
+
+    .timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+    }
+
+    .entry {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .meta {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+    }
+
+    h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+
+    .company {
+        font-size: 1rem;
+        font-weight: 400;
+        color: var(--color-text-muted);
+        margin-bottom: 0.8rem;
+    }
+
+    p {
+        font-size: 1rem;
+        color: var(--color-text);
+        margin: 0;
+        max-width: 600px;
+        line-height: 1.5;
+    }
+
+    @media (min-width: 768px) {
+        .entry {
+            grid-template-columns: 200px 1fr;
+            gap: 2rem;
+        }
+    }
+</style>

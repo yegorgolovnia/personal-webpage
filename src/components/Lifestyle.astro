@@ -1,0 +1,191 @@
+---
+---
+<section id="lifestyle">
+    <div class="header">
+        <h2>Lifestyle</h2>
+        <span class="mono">/api_streams</span>
+    </div>
+
+    <div class="grid">
+        <!-- Spotify Card -->
+        <div class="card spotify">
+            <div class="icon-header">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18V5l12-2v13"></path>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <circle cx="18" cy="16" r="3"></circle>
+                </svg>
+                <span class="mono">Spotify / On Repeat</span>
+            </div>
+            <div class="content">
+                <div class="art">
+                    <div class="disc"></div>
+                </div>
+                <div class="info">
+                    <strong>Running. Fast.</strong>
+                    <span class="artist mono">Playlist by Yegor</span>
+                </div>
+            </div>
+            <div class="status mono">
+                <span class="pulse"></span> Listening
+            </div>
+        </div>
+
+        <!-- Strava Card -->
+        <div class="card strava">
+            <div class="icon-header">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span class="mono">Strava / Latest Activity</span>
+            </div>
+            <div class="content">
+                <div class="stat-grid">
+                    <div>
+                        <span class="label mono">Distance</span>
+                        <div class="val">5.02 km</div>
+                    </div>
+                    <div>
+                        <span class="label mono">Pace</span>
+                        <div class="val">4:55 /km</div>
+                    </div>
+                    <div>
+                        <span class="label mono">Time</span>
+                        <div class="val">24:32</div>
+                    </div>
+                </div>
+            </div>
+            <div class="status mono">
+                Last Workout: Yesterday
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    #lifestyle {
+        padding: 4rem 0;
+    }
+
+    .header {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+        margin-bottom: 3rem;
+        border-bottom: 1px solid var(--color-accent-subtle);
+        padding-bottom: 1rem;
+    }
+
+    .mono {
+        font-family: var(--font-mono);
+        color: var(--color-text-muted);
+        font-size: 0.85rem;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .card {
+        border: 1px solid var(--color-accent-subtle);
+        padding: 1.5rem;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.02);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 200px;
+    }
+
+    .icon-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
+        color: var(--color-text);
+    }
+
+    .content {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    /* Spotify Specifics */
+    .art {
+        width: 60px;
+        height: 60px;
+        background: #333;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .disc {
+        width: 100%;
+        height: 100%;
+        background: conic-gradient(from 0deg, #333, #666);
+        border-radius: 50%;
+        animation: spin 4s linear infinite;
+    }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    .info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .status {
+        margin-top: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .pulse {
+        width: 8px;
+        height: 8px;
+        background: #1DB954; /* Spotify Green */
+        border-radius: 50%;
+        box-shadow: 0 0 5px #1DB954;
+        animation: pulse 2s infinite;
+    }
+    .strava .pulse { background: #FC4C02; box-shadow: 0 0 5px #FC4C02; }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    /* Strava Specifics */
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .label {
+        font-size: 0.7rem;
+        display: block;
+        margin-bottom: 0.2rem;
+    }
+
+    .val {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    @media (min-width: 768px) {
+        .grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
