@@ -1,0 +1,72 @@
+<canvas id="cursor-trace"></canvas>
+
+<script>
+    const canvas = document.getElementById('cursor-trace') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+    
+    let points: {x: number, y: number, age: number}[] = [];
+    const maxAge = 50; // How long the trail lasts
+    
+    // Resize canvas to fill screen
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Track mouse
+    window.addEventListener('mousemove', (e) => {
+        points.push({ x: e.clientX, y: e.clientY, age: maxAge });
+    });
+
+    // Animation Loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Filter dead points
+        points = points.filter(p => p.age > 0);
+
+        if (points.length > 1) {
+            ctx.beginPath();
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            for (let i = 0; i < points.length - 1; i++) {
+                const p1 = points[i];
+                const p2 = points[i+1];
+                
+                // Opacity based on age
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                
+                // Color & Style
+                // Using the site's accent color (mostly white/grey transparent)
+                const opacity = p1.age / maxAge;
+                ctx.strokeStyle = `rgba(200, 200, 200, ${opacity * 0.5})`;
+                ctx.lineWidth = 2 * opacity; // Tapering trail
+                ctx.stroke();
+
+                p1.age--;
+            }
+        }
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+</script>
+
+<style>
+    canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none; /* Let clicks pass through */
+        z-index: 9999; /* On top of everything */
+        mix-blend-mode: difference; /* Cool effect on white/black */
+    }
+</style>
