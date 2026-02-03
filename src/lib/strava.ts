@@ -41,7 +41,10 @@ export const getLatestActivity = async () => {
 
         const activities = await activitiesResponse.json();
 
+        console.log(`✅ Strava API Responded. Count: ${Array.isArray(activities) ? activities.length : 'Not an array'}`);
+
         if (!activities || !Array.isArray(activities)) {
+            console.error("⚠️ Strava response is not an array:", JSON.stringify(activities));
             return [];
         }
 
