@@ -33,7 +33,7 @@ export const getLatestActivity = async () => {
         const accessToken = tokenData.access_token;
 
         // 2. Get Activities
-        const activitiesResponse = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=1', {
+        const activitiesResponse = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=5', {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -41,11 +41,11 @@ export const getLatestActivity = async () => {
 
         const activities = await activitiesResponse.json();
 
-        if (!activities || activities.length === 0) {
-            return null;
+        if (!activities || !Array.isArray(activities)) {
+            return [];
         }
 
-        return activities[0]; // Return the most recent activity
+        return activities; // Return array of activities
     } catch (error) {
         console.error("Error fetching Strava data:", error);
         return null;
