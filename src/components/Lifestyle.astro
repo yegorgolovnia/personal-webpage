@@ -26,7 +26,7 @@ function formatPace(time: number, distance: number) {
 
     <div class="grid">
         <!-- Spotify Card -->
-        <div class="card spotify">
+        <a href="https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ?si=17a95ef6b9c046fa" target="_blank" rel="noopener noreferrer" class="card spotify link-card">
             <div class="icon-header">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M9 18V5l12-2v13"></path>
@@ -47,7 +47,7 @@ function formatPace(time: number, distance: number) {
             <div class="status mono">
                 <span class="pulse"></span> Listening
             </div>
-        </div>
+        </a>
 
         <!-- Strava Card -->
         <div class="card strava">
@@ -122,6 +122,19 @@ function formatPace(time: number, distance: number) {
         flex-direction: column;
         justify-content: space-between;
         min-height: 200px;
+        transition: all 0.2s ease;
+    }
+
+    .link-card {
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    .link-card:hover {
+        background: rgba(255,255,255,0.05);
+        border-color: var(--color-accent);
+        transform: translateY(-2px);
     }
 
     .icon-header {

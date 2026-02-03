@@ -24,10 +24,12 @@ export const getLatestActivity = async () => {
         const tokenData = await tokenResponse.json();
 
         if (!tokenResponse.ok) {
-            console.error("Failed to refresh Strava token:", tokenData);
+            console.error("❌ Failed to refresh Strava token. Status:", tokenResponse.status);
+            console.error("Response:", JSON.stringify(tokenData));
             return null;
         }
 
+        console.log("✅ Strava Token Refreshed. Fetching activities...");
         const accessToken = tokenData.access_token;
 
         // 2. Get Activities
