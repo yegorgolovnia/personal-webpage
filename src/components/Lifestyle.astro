@@ -1,4 +1,22 @@
 ---
+import { getLatestActivity } from '../lib/strava';
+
+const stravaData = await getLatestActivity();
+
+function formatTime(seconds: number) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function formatPace(time: number, distance: number) {
+    const minutes = time / 60;
+    const km = distance / 1000;
+    const pace = minutes / km;
+    const paceMins = Math.floor(pace);
+    const paceSecs = Math.round((pace - paceMins) * 60);
+    return `${paceMins}:${paceSecs.toString().padStart(2, '0')}`;
+}
 ---
 <section id="lifestyle">
     <div class="header">
@@ -44,20 +62,26 @@
                 <div class="stat-grid">
                     <div>
                         <span class="label mono">Distance</span>
-                        <div class="val">5.02 km</div>
+                        <div class="val">
+                            {stravaData ? (stravaData.distance / 1000).toFixed(2) : "5.02"} km
+                        </div>
                     </div>
                     <div>
                         <span class="label mono">Pace</span>
-                        <div class="val">4:55 /km</div>
+                        <div class="val">
+                            {stravaData ? formatPace(stravaData.moving_time, stravaData.distance) : "4:55"} /km
+                        </div>
                     </div>
                     <div>
                         <span class="label mono">Time</span>
-                        <div class="val">24:32</div>
+                        <div class="val">
+                            {stravaData ? formatTime(stravaData.moving_time) : "24:32"}
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="status mono">
-                Last Workout: Yesterday
+                Last Workout: {stravaData ? new Date(stravaData.start_date).toLocaleDateString() : "Yesterday"}
             </div>
         </div>
     </div>
