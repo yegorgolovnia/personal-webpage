@@ -34,12 +34,32 @@ function getActivityStats(activity: any) {
     const isRide = type === 'Ride' || type === 'VirtualRide';
     const isSwim = type === 'Swim';
     
-    // Default stats (Duration & Burn)
+    // Better Calorie Fallback (Estimate if missing)
+    // Strava API often hides 'calories' for privacy unless 'own' activity.
+    // We already have 'read_all', so it should be there.
+    // Fallback: MET approximation (very rough). 
+    // But better to just show "HR" or something else if 0.
+    let burn = Math.round(activity.kilojoules || activity.calories || 0);
+    let label2 = 'Burn';
+    let val2 = `${burn}kcal`;
+    
+    if (burn === 0) {
+       // If no calories, show Elevation or just hide secondary stat?
+       // Let's show "Time" again or Elevation if available
+       if (activity.total_elevation_gain > 0) {
+           label2 = 'Elev';
+           val2 = `${Math.round(activity.total_elevation_gain)}m`;
+       } else {
+           label2 = 'Rest'; // Weird fallback, but better than 0kcal
+           val2 = '-';
+       }
+    }
+
     let stats = {
         label1: 'Time',
         val1: formatDuration(activity.moving_time),
-        label2: 'Burn',
-        val2: `${Math.round(activity.kilojoules || activity.calories || 0)}kcal`
+        label2: label2,
+        val2: val2
     };
 
     if (isRun) {
@@ -75,11 +95,11 @@ function getActivityStats(activity: any) {
     </div>
 
     <div class="grid">
-        <!-- Spotify Raffle Drum -->
-        <div class="raffle-drum spotify-drum">
-            <div class="drum-scroller">
-                <!-- Current Item -->
-                <a href="https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ" target="_blank" rel="noopener noreferrer" class="drum-face spotify">
+        <!-- Spotify 3D Prism -->
+        <div class="prism-scene">
+            <div class="prism">
+                <!-- Front Face -->
+                <a href="https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ" target="_blank" rel="noopener noreferrer" class="face front spotify">
                     <div class="icon-header">
                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M9 18V5l12-2v13"></path>
@@ -100,69 +120,80 @@ function getActivityStats(activity: any) {
                     </div>
                 </a>
 
-                <!-- Past Item (Mock) -->
-                <a href="https://open.spotify.com/playlist/..." target="_blank" class="drum-face spotify past">
-                    <div class="icon-header">
-                        <span class="mono">Spotify / Jan '26</span>
-                    </div>
-                    <div class="content">
-                        <div class="info">
-                            <strong>Jan '26</strong>
-                            <span class="artist mono">Archive</span>
-                        </div>
+                <!-- Bottom Face (Visible on Rotate) -->
+                <a href="https://open.spotify.com/playlist/..." target="_blank" class="face bottom spotify">
+                    <div class="center-msg mono">
+                        <span>View Full Playlist ↗</span>
                     </div>
                 </a>
             </div>
-            <div class="drum-overlay"></div>
         </div>
 
-        <!-- Strava Raffle Drum -->
-        <div class="raffle-drum strava-drum">
-            <div class="drum-scroller">
-                {activities.length > 0 ? activities.map((activity: any, index: number) => {
-                    const stats = getActivityStats(activity);
-                    return (
-                        <a href={`https://www.strava.com/activities/${activity.id}`} target="_blank" rel="noopener noreferrer" class="drum-face strava">
+        <!-- Strava 3D Prism -->
+        <div class="prism-scene">
+            <div class="prism">
+                {activities.length > 0 ? (
+                    <>
+                        {/* Front Face: Latest Activity */}
+                        <a href={`https://www.strava.com/activities/${activities[0].id}`} target="_blank" rel="noopener noreferrer" class="face front strava">
                             <div class="icon-header">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg>
-                                <span class="mono">Strava / {index === 0 ? 'Last Workout' : 'Previous'}</span>
+                                <span class="mono">Strava / Last Workout</span>
                             </div>
                             <div class="content">
                                 <div class="activity-meta">
-                                    <span class="type-large">{activity.type}</span>
+                                    <span class="type-large">{activities[0].type}</span>
                                     <span class="date mono">
-                                        {new Date(activity.start_date).toLocaleDateString(undefined, {month:'short', day:'numeric'})}
+                                        {new Date(activities[0].start_date).toLocaleDateString(undefined, {month:'short', day:'numeric'})}
                                          {' · '}
-                                         {formatDuration(activity.moving_time)}
+                                         {formatDuration(activities[0].moving_time)}
                                     </span>
                                 </div>
                                 <div class="stat-row">
                                     <div>
-                                        <span class="label mono">{stats.label1}</span>
-                                        <div class="val">{stats.val1}</div>
+                                        <span class="label mono">{getActivityStats(activities[0]).label1}</span>
+                                        <div class="val">{getActivityStats(activities[0]).val1}</div>
                                     </div>
                                     <div>
-                                        <span class="label mono">{stats.label2}</span>
-                                        <div class="val">{stats.val2}</div>
+                                        <span class="label mono">{getActivityStats(activities[0]).label2}</span>
+                                        <div class="val">{getActivityStats(activities[0]).val2}</div>
                                     </div>
                                 </div>
                             </div>
                              <div class="status mono">
-                                {index === 0 ? <span class="pulse"></span> : null} 
-                                {index === 0 ? 'Latest' : 'Done'}
+                                <span class="pulse"></span> Latest
                             </div>
                         </a>
-                    )
-                }) : (
-                     <div class="drum-face strava empty">
+
+                        {/* Bottom Face: Previous Activity */}
+                        {activities.length > 1 && (
+                            <a href={`https://www.strava.com/activities/${activities[1].id}`} target="_blank" rel="noopener noreferrer" class="face bottom strava">
+                                 <div class="icon-header">
+                                    <span class="mono">Strava / Previous</span>
+                                </div>
+                                <div class="content small-content">
+                                    <div class="activity-meta">
+                                        <strong>{activities[1].type}</strong>
+                                        <span class="mono op-50">{new Date(activities[1].start_date).toLocaleDateString(undefined, {month:'short', day:'numeric'})}</span>
+                                    </div>
+                                    <div class="stat-row small-stats">
+                                        <span class="mono">{getActivityStats(activities[1]).val1}</span>
+                                        <span class="mono op-50">/</span>
+                                        <span class="mono">{getActivityStats(activities[1]).val2}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        )}
+                    </>
+                ) : (
+                     <div class="face front strava empty">
                         <span class="mono">No data available</span>
                      </div>
                 )}
             </div>
-             <div class="drum-overlay"></div>
         </div>
     </div>
 </section>
@@ -174,59 +205,57 @@ function getActivityStats(activity: any) {
         border-bottom: 1px solid var(--color-accent-subtle); padding-bottom: 1rem;
     }
     .mono { font-family: var(--font-mono); color: var(--color-text-muted); font-size: 0.85rem; }
+    .op-50 { opacity: 0.5; }
     .grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
 
-    /* RAFFLE DRUM (Scroll Snap) */
-    .raffle-drum {
-        height: 220px; /* Fixed height equals one card */
-        position: relative;
-        overflow: hidden; /* Hide scrollbar visual */
-        border-radius: 12px;
-        background: #0a0a0a;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        border: 1px solid var(--color-accent-subtle);
+    /* --- TRUE 3D PRISM EFFECT --- */
+    .prism-scene {
+        perspective: 1000px;
+        height: 220px;
     }
 
-    .drum-scroller {
-        height: 100%;
-        overflow-y: auto;
-        scroll-snap-type: y mandatory;
-        scrollbar-width: none; /* Firefox */
-    }
-    .drum-scroller::-webkit-scrollbar { display: none; } /* Chrome/Safari */
-
-    .drum-face {
-        height: 100%; /* Full height of container */
+    .prism {
         width: 100%;
-        scroll-snap-align: start;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        transform-origin: 50% 50% -110px; /* -Depth/2 approx */
+    }
+
+    .prism-scene:hover .prism {
+        transform: rotateX(90deg);
+    }
+
+    .face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #0a0a0a;
+        border: 1px solid var(--color-accent-subtle);
+        border-radius: 12px;
         padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        box-sizing: border-box;
         text-decoration: none;
         color: inherit;
-        background: #0a0a0a;
-        box-sizing: border-box;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-        transition: background 0.2s;
+        display: flex; flex-direction: column; justify-content: space-between;
+        
+        /* 3D Shadows */
+        box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
     }
 
-    .drum-face:hover {
+    /* FRONT FACE */
+    .face.front {
+        transform: translateZ(0px); /* Front stays "here" */
+    }
+
+    /* BOTTOM FACE (The "Next" one) */
+    .face.bottom {
+        transform: rotateX(-90deg) translateZ(110px) translateY(110px); 
+        /* The translation logic ensures it meets the bottom edge perfectly */
+        /* Note: For a true cube, height is 220px, so half is 110px */
+        border-color: var(--color-accent);
         background: #111;
-    }
-
-    /* Overlay for depth effect (Top/Bottom shadows) */
-    .drum-overlay {
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        pointer-events: none;
-        background: linear-gradient(to bottom, 
-            rgba(0,0,0,1) 0%, 
-            rgba(0,0,0,0) 10%, 
-            rgba(0,0,0,0) 90%, 
-            rgba(0,0,0,1) 100%
-        );
-        box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
     }
 
     /* Content Styling */
@@ -239,9 +268,13 @@ function getActivityStats(activity: any) {
     .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .label { font-size: 0.7rem; display: block; margin-bottom: 0.2rem; color: var(--color-text-muted); }
     .val { font-size: 1.2rem; font-weight: 500; }
+    
+    .small-content { justify-content: center; align-items: center; text-align: center; }
+    .small-stats { display: flex; gap: 0.5rem; justify-content: center; }
 
     /* Spotify Specifics */
     .spotify .content { flex-direction: row; align-items: center; }
+    .center-msg { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
     .art { width: 50px; height: 50px; background: #333; border-radius: 4px; position: relative; overflow: hidden; margin-right: 1rem; }
     .disc { width: 100%; height: 100%; background: conic-gradient(from 0deg, #333, #666); border-radius: 50%; animation: spin 4s linear infinite; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
