@@ -326,14 +326,14 @@ function getActivityStats(activity: any) {
     }
 
     .strava .activity-meta {
-        display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 1.5rem;
+        display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 1.25rem;
     }
     .strava .type-large { font-size: 1.6rem; font-weight: 700; color: #FC4C02; letter-spacing: -0.02em; }
     .strava .date { font-size: 0.9rem; color: var(--color-text-muted); }
     
     .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
     .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.3rem; color: var(--color-text-muted); }
-    .val { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.02em; }
+    .val { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; }
     
     .strava .content {
         flex-grow: 1; display: flex; flex-direction: column; justify-content: center;
@@ -352,7 +352,10 @@ function getActivityStats(activity: any) {
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     
     .center-msg { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 1.2rem; }
-    .profile-card { border-color: #FC4C02; }
+    
+    /* Specific Profile Card Borders */
+    .spotify-cube .profile-card { border-color: #1DB954; }
+    .strava-cube .profile-card { border-color: #FC4C02; }
 
     /* When a face is "active" or near active, maybe we highlight it? 
        Actually, backface-visibility handles the hiding. 
