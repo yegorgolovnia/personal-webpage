@@ -329,7 +329,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
     }
 
     .strava .activity-meta {
-        display: flex; align-items: baseline; justify-content: flex-start; gap: 0.8rem; width: 100%; margin-bottom: 0.5rem;
+        display: flex; align-items: baseline; justify-content: flex-start; gap: 0.8rem; width: 100%; margin-bottom: 0;
     }
     .strava .type-large { font-size: 1.5rem; font-weight: 700; color: #FC4C02; letter-spacing: -0.02em; }
     .strava .date { font-size: 0.85rem; color: var(--color-text-muted); }
@@ -339,7 +339,12 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
     .val { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; }
     
     .strava .content {
-        flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 0;
+        flex-grow: 1; 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: flex-start; /* Move up */
+        padding-top: 1rem;           /* Breathing room below header */
+        gap: 1.5rem;                 /* Separate Title/Stats clearly */
     }
 
     .icon-header { display: flex; align-items: center; gap: 0.8rem; color: var(--color-text); margin-bottom: 0; height: 24px; }
