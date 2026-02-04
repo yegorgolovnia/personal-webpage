@@ -42,40 +42,40 @@ function getActivityStats(activity: any) {
     const isRide = type === 'Ride' || type === 'VirtualRide';
     const isSwim = type === 'Swim';
     
-    let burn = Math.round(activity.kilojoules || activity.calories || 0);
-    let label2 = 'Burn';
-    let val2 = `${burn}kcal`;
-    
-    if (burn === 0) {
-        if (activity.total_elevation_gain > 0) {
-            label2 = 'Elev';
-            val2 = `${Math.round(activity.total_elevation_gain)}m`;
-        } else {
-            label2 = 'Rest';
-            val2 = '-';
-        }
+    // Calculate Calories (Strava often sends kilojoules for rides, or we might have nothing)
+    // 1 kJ ~= 0.239 kcal. If kilojoules exists, use it. Else check if there's a calorie field (mock or real).
+    // If neither, we might show 0 or hidden.
+    let burnVal = 0;
+    if (activity.kilojoules) {
+        burnVal = Math.round(activity.kilojoules); // Strava often treats kJ roughly equal to active cals for cycling logic contexts, strictly 1kJ = 0.239 kcal
+    } else if (activity.calories) {
+        burnVal = Math.round(activity.calories);
     }
+    
+    // Formatted strings
+    const distKm = (activity.distance / 1000).toFixed(2);
+    const timeStr = formatDuration(activity.moving_time);
 
     let stats = {
         label1: 'Time',
-        val1: formatDuration(activity.moving_time),
-        label2: label2,
-        val2: val2
+        val1: timeStr,
+        label2: 'Burn',
+        val2: burnVal > 0 ? `${burnVal}kcal` : '-'
     };
 
     if (isRun) {
         stats = {
             label1: 'Dist',
-            val1: `${(activity.distance / 1000).toFixed(2)}km`,
+            val1: `${distKm}km`,
             label2: 'Pace',
             val2: `${formatPace(activity.moving_time, activity.distance)}/km`
         };
     } else if (isRide) {
         stats = {
             label1: 'Dist',
-            val1: `${(activity.distance / 1000).toFixed(2)}km`,
+            val1: `${distKm}km`,
             label2: 'Time',
-            val2: formatDuration(activity.moving_time)
+            val2: timeStr
         };
     } else if (isSwim) {
         stats = {
@@ -259,41 +259,38 @@ function getActivityStats(activity: any) {
 
     /* Hover Tilt Effect: 
        - First card: 20deg
-       - Others: 5deg 
+       - Others: 10deg 
     */
     .cube-container.first-card:hover .cube {
         transform: rotateX(20deg);
     }
     .cube-container:not(.first-card):hover .cube {
-        transform: rotateX(5deg);
+        transform: rotateX(10deg);
     }
 
-    /* Hover Border Colors */
-    .spotify-cube:hover .face { border-color: #1DB954; }
-    .strava-cube:hover .face { border-color: #FC4C02; }
+    /* Hover Border Colors - Only on the ACTIVE face */
+    .spotify-cube:hover .face.active-face { border-color: #1DB954; }
+    .strava-cube:hover .face.active-face { border-color: #FC4C02; }
 
     /* FACE STYLING */
     .face {
         position: absolute;
         width: 100%;
         height: 100%;
-        background: #000000; /* Solid black to prevent seeing behind */
+        background: #000000; /* Solid black */
         border: 1px solid var(--color-accent-subtle);
         border-radius: 12px;
         padding: 1.5rem;
         box-sizing: border-box;
-        display: flex; flex-direction: column; justify-content: space-between;
+        display: flex; flex-direction: column; 
         text-decoration: none;
         color: inherit;
-        backface-visibility: hidden; /* Hide backfaces */
-        overflow: hidden; /* Prevent content spilling */
+        backface-visibility: hidden; 
+        overflow: hidden; 
         
         transform: rotateX(calc(var(--i) * -90deg)) translateZ(95px);
-        
-        /* Shadows for depth/lighting simulation */
         box-shadow: inset 0 0 40px rgba(255,255,255,0.02);
         
-        /* Visibility Transition */
         transition: opacity 0.3s ease, visibility 0.3s ease, border-color 0.3s ease;
     }
     .face.hidden-face {
@@ -301,7 +298,7 @@ function getActivityStats(activity: any) {
         visibility: hidden;
     }
     .dummy-face {
-        pointer-events: none; /* Just for visuals */
+        pointer-events: none; 
     }
 
     /* Data Specifics */
@@ -309,11 +306,11 @@ function getActivityStats(activity: any) {
         display: flex; 
         flex-direction: row; 
         align-items: center; 
-        justify-content: center; /* Center horizontally */
-        height: 100%; /* Take full available height */
-        padding-top: 1rem;
+        /* Center in the available space */
+        flex-grow: 1;
+        transform: translateY(-5px); /* Optical center */
     }
-    .art { width: 60px; height: 60px; background: #333; border-radius: 4px; position: relative; overflow: hidden; margin-right: 1.5rem; flex-shrink: 0; }
+    .art { width: 56px; height: 56px; background: #333; border-radius: 4px; position: relative; overflow: hidden; margin-right: 1.25rem; flex-shrink: 0; }
     .disc { width: 100%; height: 100%; background: conic-gradient(from 0deg, #333, #666); border-radius: 50%; animation: spin 4s linear infinite; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
 
@@ -321,19 +318,34 @@ function getActivityStats(activity: any) {
         display: flex; flex-direction: column; justify-content: center;
     }
     .spotify .playlist-name {
-        font-size: 1.4rem; font-weight: 700; line-height: 1.2;
+        font-size: 1.5rem; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em;
+        margin-bottom: 0.25rem;
     }
     .spotify .curated-by {
-        font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.2rem;
+        font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em;
     }
 
-    .strava .type-large { font-size: 1.5rem; font-weight: 700; color: #FC4C02; }
-    .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem; }
-    .label { font-size: 0.7rem; display: block; margin-bottom: 0.2rem; color: var(--color-text-muted); }
-    .val { font-size: 1.2rem; font-weight: 500; }
+    .strava .activity-meta {
+        display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 1.5rem;
+    }
+    .strava .type-large { font-size: 1.6rem; font-weight: 700; color: #FC4C02; letter-spacing: -0.02em; }
+    .strava .date { font-size: 0.9rem; color: var(--color-text-muted); }
+    
+    .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.3rem; color: var(--color-text-muted); }
+    .val { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.02em; }
+    
+    .strava .content {
+        flex-grow: 1; display: flex; flex-direction: column; justify-content: center;
+    }
 
-    .icon-header { display: flex; align-items: center; gap: 0.8rem; color: var(--color-text); margin-bottom: 1rem; }
-    .status { margin-top: auto; display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; }
+    .icon-header { display: flex; align-items: center; gap: 0.8rem; color: var(--color-text); margin-bottom: 0; height: 24px; }
+    
+    /* Footer Status absolute positioning for consistency */
+    .status { 
+        position: absolute; bottom: 1.5rem; left: 1.5rem;
+        display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);
+    }
     .pulse { width: 6px; height: 6px; border-radius: 50%; animation: pulse 2s infinite; }
     .spotify .pulse { background: #1DB954; box-shadow: 0 0 5px #1DB954; }
     .strava .pulse { background: #FC4C02; box-shadow: 0 0 5px #FC4C02; }
@@ -382,9 +394,14 @@ function getActivityStats(activity: any) {
         // Function to hide faces that are "far away" to prevent z-fighting/overlap
         const updateVisibility = (index: number) => {
             faces.forEach((face, i) => {
+                // Toggle active-face for specific border styling
+                if (i === index) {
+                    face.classList.add('active-face');
+                } else {
+                    face.classList.remove('active-face');
+                }
+
                 // Show current, previous (-1), and next (+1) for smooth tilt/scroll
-                // Actually, due to tilt (+20deg), we see the BOTTOM face (Next, i+1).
-                // We might also see TOP if we overscroll? Safe to show +/- 1.
                 if (Math.abs(i - index) <= 1) {
                     face.classList.remove('hidden-face');
                 } else {
