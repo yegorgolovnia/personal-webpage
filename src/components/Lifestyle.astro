@@ -121,9 +121,6 @@ function getActivityStats(activity: any) {
                             {index === 0 && <span class="pulse"></span>}
                             {index === 0 ? "Listening to..." : "Archived"}
                         </div>
-                        <div class="index-indicator mono">
-                            {index + 1}/{spotifyPlaylists.length}
-                        </div>
                     </a>
                 ))}
             </div>
@@ -167,9 +164,6 @@ function getActivityStats(activity: any) {
                                     {index === 0 && <span class="pulse"></span>}
                                     {index === 0 ? "Latest Activity" : "Past Activity"}
                                 </div>
-                                <div class="index-indicator mono">
-                                    {index + 1}/{activities.length + 1}
-                                </div>
                             </a>
                         ))}
                         
@@ -180,9 +174,6 @@ function getActivityStats(activity: any) {
                             </div>
                             <div class="center-msg mono">
                                 <span>Follow me on Strava ↗</span>
-                            </div>
-                             <div class="index-indicator mono">
-                                {activities.length + 1}/{activities.length + 1}
                             </div>
                         </a>
                     </>
@@ -276,8 +267,6 @@ function getActivityStats(activity: any) {
     .spotify .pulse { background: #1DB954; box-shadow: 0 0 5px #1DB954; }
     .strava .pulse { background: #FC4C02; box-shadow: 0 0 5px #FC4C02; }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-    .index-indicator { position: absolute; top: 1.5rem; right: 1.5rem; opacity: 0.3; font-size: 0.7rem; }
     
     .center-msg { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 1.2rem; }
     .profile-card { border-color: #FC4C02; }
