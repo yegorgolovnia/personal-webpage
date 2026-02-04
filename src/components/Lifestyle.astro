@@ -233,6 +233,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
         /* Ensure we don't overflow horizontally during rotation */
         overflow: visible; 
         z-index: 1;
+        touch-action: none; /* Prevent browser handling of gestures */
     }
     .cube-container:hover {
         z-index: 10; /* Bring to front on interaction */
@@ -440,20 +441,12 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
         container.classList.toggle('first-card', currentIndex === 0);
 
 
-        container.addEventListener('wheel', (e) => {
-            const wheelEvent = e as WheelEvent;
-            // Prevent default page scroll to allow interaction
-            wheelEvent.preventDefault();
-
-            // Simple debounce/throttle logic
+        const handleInteraction = (direction: number) => {
+             // Simple debounce/throttle logic
             if (isScrolling) return;
-
-            // Threshold
-            if (Math.abs(wheelEvent.deltaY) < 10) return;
 
             isScrolling = true;
 
-            const direction = wheelEvent.deltaY > 0 ? 1 : -1;
             const newIndex = currentIndex + direction;
 
             // Clamp: 0 to totalFaces - 1
@@ -471,7 +464,54 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
             scrollTimeout = setTimeout(() => {
                 isScrolling = false;
             }, 500); 
+        };
 
+        container.addEventListener('wheel', (e) => {
+            const wheelEvent = e as WheelEvent;
+            // Prevent default page scroll to allow interaction
+            wheelEvent.preventDefault();
+
+            // Threshold
+            if (Math.abs(wheelEvent.deltaY) < 10) return;
+
+            const direction = wheelEvent.deltaY > 0 ? 1 : -1;
+            handleInteraction(direction);
+
+        }, { passive: false });
+
+        // Touch handling
+        let touchStartY = 0;
+        let lastInteractionTime = 0;
+
+        container.addEventListener('touchstart', (e) => {
+            touchStartY = (e as TouchEvent).touches[0].clientY;
+        }, { passive: false });
+
+        container.addEventListener('touchmove', (e) => {
+             e.preventDefault(); // Prevent page scrolling
+             
+             const touchCurrentY = (e as TouchEvent).touches[0].clientY;
+             const swipeDistance = touchStartY - touchCurrentY; // Positive = Drag Up
+             const minSwipeDistance = 40; // Reduced threshold for better sensitivity, but not too low to flap
+
+             // Throttle logic specifically for touchmove
+             const now = Date.now();
+             if (now - lastInteractionTime < 300) return; // Prevent rapid spinning
+
+             if (Math.abs(swipeDistance) > minSwipeDistance) {
+                 const direction = swipeDistance > 0 ? 1 : -1;
+                 
+                 handleInteraction(direction);
+                 
+                 // Reset start point to allow continuous swiping without lifting finger
+                 touchStartY = touchCurrentY;
+                 lastInteractionTime = now;
+             }
+        }, { passive: false });
+
+        // Touchend no longer needed for trigger, but cleanliness
+        container.addEventListener('touchend', (e) => {
+            // Optional: Snap or finalize if needed. Currently logic handles it step-by-step
         }, { passive: false });
     });
 </script>
