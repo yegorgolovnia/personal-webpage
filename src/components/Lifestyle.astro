@@ -121,9 +121,9 @@ function getActivityStats(activity: any) {
                 </a>
 
                 <!-- Bottom Face (Visible on Rotate) -->
-                <a href="https://open.spotify.com/playlist/..." target="_blank" class="face bottom spotify">
+                <a href="https://open.spotify.com/user/22vwofsgpsjmnw5gzow7pi5ly?si=1928cab520564145" target="_blank" class="face bottom spotify">
                     <div class="center-msg mono">
-                        <span>View Full Playlist ↗</span>
+                        <span>Follow me on Spotify ↗</span>
                     </div>
                 </a>
             </div>
@@ -168,25 +168,15 @@ function getActivityStats(activity: any) {
                             </div>
                         </a>
 
-                        {/* Bottom Face: Previous Activity */}
-                        {activities.length > 1 && (
-                            <a href={`https://www.strava.com/activities/${activities[1].id}`} target="_blank" rel="noopener noreferrer" class="face bottom strava">
-                                 <div class="icon-header">
-                                    <span class="mono">Strava / Previous</span>
-                                </div>
-                                <div class="content small-content">
-                                    <div class="activity-meta">
-                                        <strong>{activities[1].type}</strong>
-                                        <span class="mono op-50">{new Date(activities[1].start_date).toLocaleDateString(undefined, {month:'short', day:'numeric'})}</span>
-                                    </div>
-                                    <div class="stat-row small-stats">
-                                        <span class="mono">{getActivityStats(activities[1]).val1}</span>
-                                        <span class="mono op-50">/</span>
-                                        <span class="mono">{getActivityStats(activities[1]).val2}</span>
-                                    </div>
-                                </div>
-                            </a>
-                        )}
+                        {/* Bottom Face: Profile Link (User Request: "Card #6" Logic) */}
+                        <a href="https://www.strava.com/athletes/yegorgolovnia" target="_blank" rel="noopener noreferrer" class="face bottom strava">
+                                <div class="icon-header">
+                                <span class="mono">Strava / Profile</span>
+                            </div>
+                            <div class="center-msg mono">
+                                <span>Follow me on Strava ↗</span>
+                            </div>
+                        </a>
                     </>
                 ) : (
                      <div class="face front strava empty">
@@ -224,7 +214,15 @@ function getActivityStats(activity: any) {
     }
 
     .prism-scene:hover .prism {
-        transform: rotateX(90deg);
+        /* Glimpse/Tilt Effect - only 20deg to show "direction" */
+        transform: rotateX(20deg);
+        animation: bump 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    @keyframes bump {
+        0% { transform: rotateX(0deg); }
+        50% { transform: rotateX(25deg); }
+        100% { transform: rotateX(20deg); }
     }
 
     .face {
