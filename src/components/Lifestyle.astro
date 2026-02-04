@@ -218,6 +218,12 @@ function getActivityStats(activity: any) {
         transform: rotateX(20deg);
         animation: bump 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
+    
+    /* Flipped State (via Scroll) - Overrides hover glimpse */
+    .prism-scene:hover .prism.flipped, .prism.flipped {
+        transform: rotateX(90deg);
+        animation: none; /* No bump when fully flipped */
+    }
 
     @keyframes bump {
         0% { transform: rotateX(0deg); }
@@ -242,9 +248,13 @@ function getActivityStats(activity: any) {
         box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
     }
 
+
     /* FRONT FACE */
     .face.front {
         transform: translateZ(0px); /* Front stays "here" */
+        border-bottom-color: transparent; /* Remove seam line */
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
     }
 
     /* BOTTOM FACE (The "Next" one) */
@@ -253,6 +263,9 @@ function getActivityStats(activity: any) {
         /* The translation logic ensures it meets the bottom edge perfectly */
         /* Note: For a true cube, height is 220px, so half is 110px */
         border-color: var(--color-accent);
+        border-top-color: transparent; /* Remove seam line */
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
         background: #111;
     }
 
@@ -288,3 +301,26 @@ function getActivityStats(activity: any) {
         .grid { grid-template-columns: repeat(2, 1fr); }
     }
 </style>
+
+<script>
+    // Scroll-to-Flip Interaction
+    const scenes = document.querySelectorAll('.prism-scene');
+    
+    scenes.forEach((scene) => {
+        const prism = scene.querySelector('.prism');
+        
+        scene.addEventListener('wheel', (e) => {
+            // Check if we can scroll (if user wants to flip)
+            e.preventDefault(); // Stop page scroll to allow card interaction
+            
+            // DeltaY > 0 is scrolling DOWN -> Flip to Show Bottom
+            if (e.deltaY > 0) {
+                prism.classList.add('flipped');
+            } 
+            // DeltaY < 0 is scrolling UP -> Return to Front
+            else {
+                prism.classList.remove('flipped');
+            }
+        }, { passive: false }); // Passive false required to preventDefault
+    });
+</script>
