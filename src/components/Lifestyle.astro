@@ -7,38 +7,65 @@ const activities = Array.isArray(stravaActivities) ? stravaActivities : [];
 function formatDuration(seconds: number) {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
-    return h > 0 ? `${h}h ${m}m` : `${m}m`;
+    const s = seconds % 60;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m ${s}s`;
 }
 
-function formatPace(time: number, distance: number) {
-    const minutes = time / 60;
-    const km = distance / 1000;
-    const pace = minutes / km;
+// Pace logic
+function formatPace(time: number, distance: number, isSwim: boolean = false) {
+    let pace;
+    if (isSwim) {
+        // Minutes per 100m
+        pace = (time / 60) / (distance / 100);
+    } else {
+        // Minutes per km
+        pace = (time / 60) / (distance / 1000);
+    }
+    
     const paceMins = Math.floor(pace);
     const paceSecs = Math.round((pace - paceMins) * 60);
     return `${paceMins}:${paceSecs.toString().padStart(2, '0')}`;
 }
 
-// Logic to determine what stats to show
 function getActivityStats(activity: any) {
-    const isDistanceSport = ['Run', 'Ride', 'Swim', 'Walk', 'Hike'].includes(activity.type);
+    const type = activity.type;
+    const isRun = type === 'Run' || type === 'Walk' || type === 'Hike';
+    const isRide = type === 'Ride' || type === 'VirtualRide';
+    const isSwim = type === 'Swim';
     
-    if (isDistanceSport) {
-        return {
+    // Default stats (Duration & Burn)
+    let stats = {
+        label1: 'Time',
+        val1: formatDuration(activity.moving_time),
+        label2: 'Burn',
+        val2: `${Math.round(activity.kilojoules || activity.calories || 0)}kcal`
+    };
+
+    if (isRun) {
+        stats = {
             label1: 'Dist',
             val1: `${(activity.distance / 1000).toFixed(2)}km`,
             label2: 'Pace',
             val2: `${formatPace(activity.moving_time, activity.distance)}/km`
         };
-    } else {
-        // For Yoga, Weights, etc.
-        return {
-            label1: 'Time',
-            val1: formatDuration(activity.moving_time),
-            label2: 'Burn',
-            val2: `${Math.round(activity.kilojoules || activity.calories || 0)}kcal`
+    } else if (isRide) {
+        stats = {
+            label1: 'Dist',
+            val1: `${(activity.distance / 1000).toFixed(2)}km`,
+            label2: 'Time',
+            val2: formatDuration(activity.moving_time)
+        };
+    } else if (isSwim) {
+        stats = {
+            label1: 'Dist',
+            val1: `${(activity.distance).toFixed(0)}m`,
+            label2: 'Pace',
+            val2: `${formatPace(activity.moving_time, activity.distance, true)}/100m`
         };
     }
+
+    return stats;
 }
 ---
 <section id="lifestyle">
@@ -48,12 +75,13 @@ function getActivityStats(activity: any) {
     </div>
 
     <div class="grid">
-        <!-- Spotify Rotisserie -->
-        <div class="rotisserie-container">
-            <div class="rotisserie">
-                <a href="https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ" target="_blank" rel="noopener noreferrer" class="face front spotify">
+        <!-- Spotify Raffle Drum -->
+        <div class="raffle-drum spotify-drum">
+            <div class="drum-scroller">
+                <!-- Current Item -->
+                <a href="https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ" target="_blank" rel="noopener noreferrer" class="drum-face spotify">
                     <div class="icon-header">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M9 18V5l12-2v13"></path>
                             <circle cx="6" cy="18" r="3"></circle>
                             <circle cx="18" cy="16" r="3"></circle>
@@ -61,52 +89,55 @@ function getActivityStats(activity: any) {
                         <span class="mono">Spotify / Feb '26</span>
                     </div>
                     <div class="content">
-                        <div class="art">
-                            <div class="disc"></div>
-                        </div>
-                        <div class="info">
+                         <div class="art"><div class="disc"></div></div>
+                         <div class="info">
                             <strong>Feb '26</strong>
                             <span class="artist mono">Playlist by Yegor</span>
                         </div>
                     </div>
-                    <div class="status mono">
+                     <div class="status mono">
                         <span class="pulse"></span> Listening to...
                     </div>
                 </a>
-                
-                <!-- Back Face (Optional: Could be previous month or strict repeat) -->
-                <a href="https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ" target="_blank" class="face back spotify">
-                    <div class="center-msg mono">
-                        View Full Playlist ↗
+
+                <!-- Past Item (Mock) -->
+                <a href="https://open.spotify.com/playlist/..." target="_blank" class="drum-face spotify past">
+                    <div class="icon-header">
+                        <span class="mono">Spotify / Jan '26</span>
+                    </div>
+                    <div class="content">
+                        <div class="info">
+                            <strong>Jan '26</strong>
+                            <span class="artist mono">Archive</span>
+                        </div>
                     </div>
                 </a>
             </div>
+            <div class="drum-overlay"></div>
         </div>
 
-        <!-- Strava Rotisserie -->
-        <div class="rotisserie-container">
-            <div class="rotisserie">
-                {activities.slice(0, 4).map((activity: any, index: number) => {
-                    // We only show one face effectively in this simple CSS implementation, 
-                    // OR we map them to faces of a cube.
-                    // For a "Flip" effect, let's just show the LATEST on Front, and PREVIOUS on Back (on hover).
+        <!-- Strava Raffle Drum -->
+        <div class="raffle-drum strava-drum">
+            <div class="drum-scroller">
+                {activities.length > 0 ? activities.map((activity: any, index: number) => {
                     const stats = getActivityStats(activity);
-                    const isFront = index === 0;
-                    if (index > 1) return null; // Only use 2 for front/back flip
-
                     return (
-                        <a href={`https://www.strava.com/activities/${activity.id}`} target="_blank" rel="noopener noreferrer" class={`face ${isFront ? 'front' : 'back'} strava`}>
+                        <a href={`https://www.strava.com/activities/${activity.id}`} target="_blank" rel="noopener noreferrer" class="drum-face strava">
                             <div class="icon-header">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg>
-                                <span class="mono">Strava / {isFront ? 'Latest' : 'Previous'}</span>
+                                <span class="mono">Strava / {index === 0 ? 'Last Workout' : 'Previous'}</span>
                             </div>
                             <div class="content">
                                 <div class="activity-meta">
                                     <span class="type-large">{activity.type}</span>
-                                    <span class="date mono">{new Date(activity.start_date).toLocaleDateString(undefined, {weekday:'short'})}</span>
+                                    <span class="date mono">
+                                        {new Date(activity.start_date).toLocaleDateString(undefined, {month:'short', day:'numeric'})}
+                                         {' · '}
+                                         {formatDuration(activity.moving_time)}
+                                    </span>
                                 </div>
                                 <div class="stat-row">
                                     <div>
@@ -120,19 +151,18 @@ function getActivityStats(activity: any) {
                                 </div>
                             </div>
                              <div class="status mono">
-                                {isFront ? <span class="pulse"></span> : null} 
-                                {isFront ? 'Active' : 'Done'}
+                                {index === 0 ? <span class="pulse"></span> : null} 
+                                {index === 0 ? 'Latest' : 'Done'}
                             </div>
                         </a>
                     )
-                })}
-                
-                {activities.length === 0 && (
-                     <div class="face front strava empty">
+                }) : (
+                     <div class="drum-face strava empty">
                         <span class="mono">No data available</span>
                      </div>
                 )}
             </div>
+             <div class="drum-overlay"></div>
         </div>
     </div>
 </section>
@@ -146,64 +176,64 @@ function getActivityStats(activity: any) {
     .mono { font-family: var(--font-mono); color: var(--color-text-muted); font-size: 0.85rem; }
     .grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
 
-    /* ROTISSERIE (3D Flip) */
-    .rotisserie-container {
-        perspective: 1000px;
-        height: 220px; /* Fixed height for the card */
-    }
-
-    .rotisserie {
-        width: 100%;
-        height: 100%;
+    /* RAFFLE DRUM (Scroll Snap) */
+    .raffle-drum {
+        height: 220px; /* Fixed height equals one card */
         position: relative;
-        transform-style: preserve-3d;
-        transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
-    }
-
-    /* Flip on Hover */
-    .rotisserie-container:hover .rotisserie {
-        transform: rotateX(180deg);
-    }
-
-    .face {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        backface-visibility: hidden; /* Hide back when flipped */
-        border: 1px solid var(--color-accent-subtle);
+        overflow: hidden; /* Hide scrollbar visual */
         border-radius: 12px;
-        background: #0a0a0a; /* Ensure opaque background */
+        background: #0a0a0a;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        border: 1px solid var(--color-accent-subtle);
+    }
+
+    .drum-scroller {
+        height: 100%;
+        overflow-y: auto;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none; /* Firefox */
+    }
+    .drum-scroller::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+    .drum-face {
+        height: 100%; /* Full height of container */
+        width: 100%;
+        scroll-snap-align: start;
         padding: 1.5rem;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         text-decoration: none;
         color: inherit;
+        background: #0a0a0a;
+        box-sizing: border-box;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: background 0.2s;
     }
 
-    .face.front {
-        /* Default front */
+    .drum-face:hover {
+        background: #111;
     }
 
-    .face.back {
-        transform: rotateX(180deg); /* Pre-rotated for the back side */
-        background: #0f0f0f; /* Slightly lighter for contrast */
-        border-color: var(--color-accent);
+    /* Overlay for depth effect (Top/Bottom shadows) */
+    .drum-overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        pointer-events: none;
+        background: linear-gradient(to bottom, 
+            rgba(0,0,0,1) 0%, 
+            rgba(0,0,0,0) 10%, 
+            rgba(0,0,0,0) 90%, 
+            rgba(0,0,0,1) 100%
+        );
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
     }
 
-    /* Card Content Styles */
-    .icon-header {
-        display: flex; align-items: center; gap: 0.8rem;
-        color: var(--color-text); margin-bottom: 1rem;
-    }
-    
+    /* Content Styling */
+    .icon-header { display: flex; align-items: center; gap: 0.8rem; color: var(--color-text); margin-bottom: 1rem; }
     .content { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
 
-    /* Strava Specifics */
-    .activity-meta {
-        display: flex; justify-content: space-between; align-items: baseline;
-        margin-bottom: 1rem;
-    }
+    .activity-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; }
     .type-large { font-size: 1.5rem; font-weight: 700; color: #FC4C02; }
 
     .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -211,22 +241,10 @@ function getActivityStats(activity: any) {
     .val { font-size: 1.2rem; font-weight: 500; }
 
     /* Spotify Specifics */
-    .art {
-        width: 50px; height: 50px; background: #333; border-radius: 4px;
-        position: relative; overflow: hidden; margin-right: 1rem;
-    }
-    .disc {
-        width: 100%; height: 100%; background: conic-gradient(from 0deg, #333, #666);
-        border-radius: 50%; animation: spin 4s linear infinite;
-    }
+    .spotify .content { flex-direction: row; align-items: center; }
+    .art { width: 50px; height: 50px; background: #333; border-radius: 4px; position: relative; overflow: hidden; margin-right: 1rem; }
+    .disc { width: 100%; height: 100%; background: conic-gradient(from 0deg, #333, #666); border-radius: 50%; animation: spin 4s linear infinite; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
-    
-    .spotify .content { flex-direction: row; align-items: center; justify-content: flex-start; }
-    
-    .center-msg {
-        height: 100%; display: flex; align-items: center; justify-content: center;
-        font-size: 1.2rem;
-    }
 
     .status { margin-top: auto; display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; }
     .pulse { width: 6px; height: 6px; border-radius: 50%; animation: pulse 2s infinite; }
