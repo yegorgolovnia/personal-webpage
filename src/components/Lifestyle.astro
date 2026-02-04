@@ -97,7 +97,7 @@ function getActivityStats(activity: any) {
 
     <div class="grid">
         <!-- Spotify Cube -->
-        <div class="cube-container spotify-cube" data-total={spotifyPlaylists.length}>
+        <div class="cube-container spotify-cube" data-total={spotifyPlaylists.length + 1}>
             <div class="cube-wrapper">
                 <div class="cube">
                     {spotifyPlaylists.map((playlist, index) => (
@@ -124,6 +124,16 @@ function getActivityStats(activity: any) {
                             </div>
                         </a>
                     ))}
+                    
+                    <!-- Spotify Profile Card -->
+                    <a href="https://open.spotify.com/user/yegorgolovnia" target="_blank" class="face spotify profile-card" style={`--i: ${spotifyPlaylists.length}`}>
+                         <div class="icon-header">
+                            <span class="mono">Spotify / Profile</span>
+                        </div>
+                        <div class="center-msg mono">
+                            <span>Follow me on Spotify ↗</span>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -267,6 +277,13 @@ function getActivityStats(activity: any) {
         
         /* Shadows for depth/lighting simulation */
         box-shadow: inset 0 0 40px rgba(255,255,255,0.02);
+        
+        /* Visibility Transition */
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .face.hidden-face {
+        opacity: 0;
+        visibility: hidden;
     }
 
     /* Data Specifics */
@@ -321,9 +338,28 @@ function getActivityStats(activity: any) {
         if (!rotator) return;
 
         const totalFaces = parseInt(container.getAttribute('data-total') || '1');
+        const faces = container.querySelectorAll('.face');
+
         let currentIndex = 0;
         let isScrolling = false;
         let scrollTimeout: ReturnType<typeof setTimeout>;
+
+        // Function to hide faces that are "far away" to prevent z-fighting/overlap
+        const updateVisibility = (index: number) => {
+            faces.forEach((face, i) => {
+                // Show current, previous (-1), and next (+1) for smooth tilt/scroll
+                // Actually, due to tilt (+20deg), we see the BOTTOM face (Next, i+1).
+                // We might also see TOP if we overscroll? Safe to show +/- 1.
+                if (Math.abs(i - index) <= 1) {
+                    face.classList.remove('hidden-face');
+                } else {
+                    face.classList.add('hidden-face');
+                }
+            });
+        };
+
+        // Initial state
+        updateVisibility(0);
 
         container.addEventListener('wheel', (e) => {
             const wheelEvent = e as WheelEvent;
@@ -346,6 +382,9 @@ function getActivityStats(activity: any) {
                 currentIndex = newIndex;
                 const rotation = currentIndex * 90;
                 rotator.style.transform = `rotateX(${rotation}deg)`;
+                
+                // Update visibility
+                updateVisibility(currentIndex);
             }
 
             // Lock for 500ms
