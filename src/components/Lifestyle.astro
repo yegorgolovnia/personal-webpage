@@ -1,10 +1,44 @@
 ---
-import { getLatestActivity } from '../lib/strava';
+import { getLatestActivity } from "../lib/strava";
 
+// Fetch Strava Data
 const stravaActivities = await getLatestActivity();
 const activities = Array.isArray(stravaActivities) ? stravaActivities : [];
+// Ensure we have up to 5 unique activities (or repeat/pad if needed, but usually 5)
+// If less than 5, we'll just map what we have, but geometry depends on 5.
+// Ideally, we pad with "No Data" or repeat to maintain the pentagon shape.
+const displayActivities = [...activities];
+while (displayActivities.length < 5) {
+    displayActivities.push({ type: "Empty", id: "empty" });
+}
+const finalActivities = displayActivities.slice(0, 5); // Strict 5
+
+// Spotify Data (5 Months)
+const playlists = [
+    {
+        month: "Feb '26",
+        url: "https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ",
+    },
+    {
+        month: "Jan '26",
+        url: "https://open.spotify.com/playlist/3CVIbEDvJ93BTa2GX393PD?si=b8171c174727404e",
+    },
+    {
+        month: "Dec '25",
+        url: "https://open.spotify.com/playlist/0h2wa8isRovLhuDyvJ9zzv?si=0348503b85464872",
+    },
+    {
+        month: "Nov '25",
+        url: "https://open.spotify.com/playlist/6SzWlZxv8UN46aLpX5RG9x?si=a7c3b25743194c83",
+    },
+    {
+        month: "Oct '25",
+        url: "https://open.spotify.com/playlist/1P3Iu18FrIeXAMMqUsLB0a?si=ce80fe238b2344e4",
+    },
+];
 
 function formatDuration(seconds: number) {
+    if (!seconds) return "-";
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
@@ -14,80 +48,76 @@ function formatDuration(seconds: number) {
 
 // Pace logic
 function formatPace(time: number, distance: number, isSwim: boolean = false) {
+    if (!time || !distance) return "-";
     let pace;
     if (isSwim) {
-        // Minutes per 100m
-        pace = (time / 60) / (distance / 100);
+        pace = time / 60 / (distance / 100);
     } else {
-        // Minutes per km
-        pace = (time / 60) / (distance / 1000);
+        pace = time / 60 / (distance / 1000);
     }
-    
+
     const paceMins = Math.floor(pace);
     const paceSecs = Math.round((pace - paceMins) * 60);
-    return `${paceMins}:${paceSecs.toString().padStart(2, '0')}`;
+    return `${paceMins}:${paceSecs.toString().padStart(2, "0")}`;
 }
 
 function getActivityStats(activity: any) {
+    if (activity.type === "Empty")
+        return { label1: "-", val1: "-", label2: "-", val2: "-" };
+
     const type = activity.type;
-    const isRun = type === 'Run' || type === 'Walk' || type === 'Hike';
-    const isRide = type === 'Ride' || type === 'VirtualRide';
-    const isSwim = type === 'Swim';
-    
-    // Better Calorie Fallback (Estimate if missing)
-    // Strava API often hides 'calories' for privacy unless 'own' activity.
-    // We already have 'read_all', so it should be there.
-    // Fallback: MET approximation (very rough). 
-    // But better to just show "HR" or something else if 0.
+    const isRun = type === "Run" || type === "Walk" || type === "Hike";
+    const isRide = type === "Ride" || type === "VirtualRide";
+    const isSwim = type === "Swim";
+
     let burn = Math.round(activity.kilojoules || activity.calories || 0);
-    let label2 = 'Burn';
+    let label2 = "Burn";
     let val2 = `${burn}kcal`;
-    
+
     if (burn === 0) {
-       // If no calories, show Elevation or just hide secondary stat?
-       // Let's show "Time" again or Elevation if available
-       if (activity.total_elevation_gain > 0) {
-           label2 = 'Elev';
-           val2 = `${Math.round(activity.total_elevation_gain)}m`;
-       } else {
-           label2 = 'Rest'; // Weird fallback, but better than 0kcal
-           val2 = '-';
-       }
+        if (activity.total_elevation_gain > 0) {
+            label2 = "Elev";
+            val2 = `${Math.round(activity.total_elevation_gain)}m`;
+        } else {
+            label2 = "Rest";
+            val2 = "-";
+        }
     }
 
     let stats = {
-        label1: 'Time',
+        label1: "Time",
         val1: formatDuration(activity.moving_time),
         label2: label2,
-        val2: val2
+        val2: val2,
     };
 
     if (isRun) {
         stats = {
-            label1: 'Dist',
+            label1: "Dist",
             val1: `${(activity.distance / 1000).toFixed(2)}km`,
-            label2: 'Pace',
-            val2: `${formatPace(activity.moving_time, activity.distance)}/km`
+            label2: "Pace",
+            val2: `${formatPace(activity.moving_time, activity.distance)}/km`,
         };
     } else if (isRide) {
         stats = {
-            label1: 'Dist',
+            label1: "Dist",
             val1: `${(activity.distance / 1000).toFixed(2)}km`,
-            label2: 'Time',
-            val2: formatDuration(activity.moving_time)
+            label2: "Time",
+            val2: formatDuration(activity.moving_time),
         };
     } else if (isSwim) {
         stats = {
-            label1: 'Dist',
-            val1: `${(activity.distance).toFixed(0)}m`,
-            label2: 'Pace',
-            val2: `${formatPace(activity.moving_time, activity.distance, true)}/100m`
+            label1: "Dist",
+            val1: `${activity.distance.toFixed(0)}m`,
+            label2: "Pace",
+            val2: `${formatPace(activity.moving_time, activity.distance, true)}/100m`,
         };
     }
 
     return stats;
 }
 ---
+
 <section id="lifestyle">
     <div class="header">
         <h2>Lifestyle</h2>
@@ -95,133 +125,192 @@ function getActivityStats(activity: any) {
     </div>
 
     <div class="grid">
-        <!-- Spotify 3D Prism -->
-        <div class="prism-scene">
-            <div class="prism">
-                <!-- Front Face -->
-                <a href="https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ" target="_blank" rel="noopener noreferrer" class="face front spotify">
-                    <div class="icon-header">
-                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 18V5l12-2v13"></path>
-                            <circle cx="6" cy="18" r="3"></circle>
-                            <circle cx="18" cy="16" r="3"></circle>
-                        </svg>
-                        <span class="mono">Spotify / Monthly Playlists</span>
-                    </div>
-                    <div class="content">
-                         <div class="art"><div class="disc"></div></div>
-                         <div class="info">
-                            <strong>Feb '26</strong>
-                            <br/>
-                            <span class="artist mono" style="opacity: 0.7; font-size: 0.8rem;">Playlist by Yegor</span>
-                        </div>
-                    </div>
-                     <div class="status mono">
-                        <span class="pulse"></span> Listening to...
-                    </div>
-                </a>
-
-                <!-- Bottom Face (Visible on Rotate) -->
-                <!-- Bottom Face (List of Playlists) -->
-                <div class="face bottom spotify-list-face">
-                    <div class="playlist-list">
-                        <a href="https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ" target="_blank" class="playlist-item">
-                            <span class="mono">Feb '26</span> <span class="arr">↗</span>
-                        </a>
-                        <a href="https://open.spotify.com/playlist/3CVIbEDvJ93BTa2GX393PD?si=b8171c174727404e" target="_blank" class="playlist-item">
-                            <span class="mono">Jan '26</span> <span class="arr">↗</span>
-                        </a>
-                        <a href="https://open.spotify.com/playlist/0h2wa8isRovLhuDyvJ9zzv?si=0348503b85464872" target="_blank" class="playlist-item">
-                            <span class="mono">Dec '25</span> <span class="arr">↗</span>
-                        </a>
-                        <a href="https://open.spotify.com/playlist/6SzWlZxv8UN46aLpX5RG9x?si=a7c3b25743194c83" target="_blank" class="playlist-item">
-                            <span class="mono">Nov '25</span> <span class="arr">↗</span>
-                        </a>
-                        <a href="https://open.spotify.com/playlist/1P3Iu18FrIeXAMMqUsLB0a?si=ce80fe238b2344e4" target="_blank" class="playlist-item">
-                            <span class="mono">Oct '25</span> <span class="arr">↗</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Strava 3D Prism -->
-        <div class="prism-scene">
-            <div class="prism">
-                {activities.length > 0 ? (
-                    <>
-                        {/* Front Face: Latest Activity */}
-                        <a href={`https://www.strava.com/activities/${activities[0].id}`} target="_blank" rel="noopener noreferrer" class="face front strava">
+        <!-- Spotify Pentagonal Prism (Interactive Scroll) -->
+        <div class="prism-scene spotify-scene">
+            <div class="prism pentagon">
+                {
+                    playlists.map((playlist, index) => (
+                        <a
+                            href={playlist.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class={`face face-${index} spotify`}
+                        >
                             <div class="icon-header">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path d="M9 18V5l12-2v13" />
+                                    <circle cx="6" cy="18" r="3" />
+                                    <circle cx="18" cy="16" r="3" />
                                 </svg>
-                                <span class="mono">Strava / Last Workout</span>
+                                <span class="mono">Spotify / Matches</span>
                             </div>
                             <div class="content">
-                                <div class="activity-meta">
-                                    <span class="type-large">{activities[0].type}</span>
-                                    <span class="date mono">
-                                        {new Date(activities[0].start_date).toLocaleDateString(undefined, {month:'short', day:'numeric'})}
-                                         {' · '}
-                                         {formatDuration(activities[0].moving_time)}
+                                <div class="art">
+                                    <div class="disc" />
+                                </div>
+                                <div class="info">
+                                    <strong>{playlist.month}</strong>
+                                    <br />
+                                    <span class="artist mono">
+                                        Playlist by Yegor
                                     </span>
                                 </div>
-                                <div class="stat-row">
-                                    <div>
-                                        <span class="label mono">{getActivityStats(activities[0]).label1}</span>
-                                        <div class="val">{getActivityStats(activities[0]).val1}</div>
-                                    </div>
-                                    <div>
-                                        <span class="label mono">{getActivityStats(activities[0]).label2}</span>
-                                        <div class="val">{getActivityStats(activities[0]).val2}</div>
-                                    </div>
-                                </div>
                             </div>
-                             <div class="status mono">
-                                <span class="pulse"></span> Latest
+                            <div class="status mono">
+                                <span class="pulse" /> Listening...
                             </div>
                         </a>
-
-                        {/* Bottom Face: Profile Link (User Request: "Card #6" Logic) */}
-                        <a href="https://www.strava.com/athletes/yegorgolovnia" target="_blank" rel="noopener noreferrer" class="face bottom strava">
-                                <div class="icon-header">
-                                <span class="mono">Strava / Profile</span>
-                            </div>
-                            <div class="center-msg mono">
-                                <span>Follow me on Strava ↗</span>
-                            </div>
-                        </a>
-                    </>
-                ) : (
-                     <div class="face front strava empty">
-                        <span class="mono">No data available</span>
-                     </div>
-                )}
+                    ))
+                }
             </div>
+            <div class="hint mono">Scroll to rotate ⇵</div>
+        </div>
+
+        <!-- Strava Pentagonal Prism (Auto Rotate) -->
+        <div class="prism-scene strava-scene">
+            <div class="prism pentagon">
+                {
+                    finalActivities.map((activity, index) => (
+                        <a
+                            href={
+                                activity.id !== "empty"
+                                    ? `https://www.strava.com/activities/${activity.id}`
+                                    : "#"
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class={`face face-${index} strava ${activity.type === "Empty" ? "empty" : ""}`}
+                        >
+                            {activity.type !== "Empty" ? (
+                                <>
+                                    <div class="icon-header">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <circle cx="12" cy="12" r="10" />
+                                            <polyline points="12 6 12 12 16 14" />
+                                        </svg>
+                                        <span class="mono">
+                                            Strava / Activity {index + 1}
+                                        </span>
+                                    </div>
+                                    <div class="content">
+                                        <div class="activity-meta">
+                                            <span class="type-large">
+                                                {activity.type}
+                                            </span>
+                                            <span class="date mono">
+                                                {new Date(
+                                                    activity.start_date,
+                                                ).toLocaleDateString(
+                                                    undefined,
+                                                    {
+                                                        month: "short",
+                                                        day: "numeric",
+                                                    },
+                                                )}
+                                            </span>
+                                        </div>
+                                        <div class="stat-row">
+                                            <div>
+                                                <span class="label mono">
+                                                    {
+                                                        getActivityStats(
+                                                            activity,
+                                                        ).label1
+                                                    }
+                                                </span>
+                                                <div class="val">
+                                                    {
+                                                        getActivityStats(
+                                                            activity,
+                                                        ).val1
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <span class="label mono">
+                                                    {
+                                                        getActivityStats(
+                                                            activity,
+                                                        ).label2
+                                                    }
+                                                </span>
+                                                <div class="val">
+                                                    {
+                                                        getActivityStats(
+                                                            activity,
+                                                        ).val2
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="status mono">
+                                        <span class="pulse" /> Recent
+                                    </div>
+                                </>
+                            ) : (
+                                <div class="center-msg mono">No Data</div>
+                            )}
+                        </a>
+                    ))
+                }
+            </div>
+            <div class="hint mono">Syncing...</div>
         </div>
     </div>
 </section>
 
 <style>
-    #lifestyle { padding: 4rem 0; }
-    .header {
-        display: flex; align-items: baseline; gap: 1rem; margin-bottom: 3rem;
-        border-bottom: 1px solid var(--color-accent-subtle); padding-bottom: 1rem;
+    #lifestyle {
+        padding: 4rem 0;
     }
-    .mono { font-family: var(--font-mono); color: var(--color-text-muted); font-size: 0.85rem; }
-    .op-50 { opacity: 0.5; }
-    .grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+    .header {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+        margin-bottom: 3rem;
+        border-bottom: 1px solid var(--color-accent-subtle);
+        padding-bottom: 1rem;
+    }
+    .mono {
+        font-family: var(--font-mono);
+        color: var(--color-text-muted);
+        font-size: 0.85rem;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4rem;
+        row-gap: 6rem;
+    } /* added gap for 3D clearance */
 
     .prism-scene {
         perspective: 1000px;
         height: 220px;
-        position: relative; /* Ensure z-index works contextually */
+        position: relative;
     }
 
-    .prism-scene:hover {
-        z-index: 10; /* FIX: Bring current card above siblings to avoid border overlap issues */
+    .hint {
+        position: absolute;
+        bottom: -30px;
+        width: 100%;
+        text-align: center;
+        font-size: 0.7rem;
+        opacity: 0.5;
     }
 
     .prism {
@@ -230,26 +319,12 @@ function getActivityStats(activity: any) {
         position: relative;
         transform-style: preserve-3d;
         transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-        transform-origin: 50% 50% -110px; /* -Depth/2 approx */
+        /* Center for rotation */
+        transform-origin: 50% 50% -151px; /* Radius of pentagon approx */
     }
 
-    .prism-scene:hover .prism {
-        /* Glimpse/Tilt Effect - only 20deg to show "direction" */
-        transform: rotateX(20deg);
-        animation: bump 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-    
-    /* Flipped State (via Scroll) - Overrides hover glimpse */
-    .prism-scene:hover .prism.flipped, .prism.flipped {
-        transform: rotateX(90deg);
-        animation: none; /* No bump when fully flipped */
-    }
-
-    @keyframes bump {
-        0% { transform: rotateX(0deg); }
-        50% { transform: rotateX(25deg); }
-        100% { transform: rotateX(20deg); }
-    }
+    /* PENTAGON GEOMETRY (Height 220px, 5 sides) */
+    /* Angle = 72deg. Apothem (Radius) = (Height/2) / tan(36) = 110 / 0.7265 = ~151.4px */
 
     .face {
         position: absolute;
@@ -262,123 +337,195 @@ function getActivityStats(activity: any) {
         box-sizing: border-box;
         text-decoration: none;
         color: inherit;
-        display: flex; flex-direction: column; justify-content: space-between;
-        
-        /* 3D Shadows */
-        box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        backface-visibility: hidden; /* Important for clean rotation? Maybe logic needs checking */
+        /* Actually backface vis helps performance but might hide faces if angles are tricky. 
+           With 72deg angles, side faces are visible. Keep visible. */
+        backface-visibility: visible;
+        box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
     }
 
-
-    /* FRONT FACE */
-    .face.front {
-        transform: translateZ(0px); /* Front stays "here" */
-        border-bottom-color: transparent; /* Remove seam line */
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
+    /* 5 Faces Positioning */
+    .face-0 {
+        transform: rotateX(0deg) translateZ(151px);
     }
-
-    /* BOTTOM FACE (The "Next" one) */
-    .face.bottom {
-        transform: rotateX(-90deg) translateZ(110px) translateY(110px); 
-        /* The translation logic ensures it meets the bottom edge perfectly */
-        /* Note: For a true cube, height is 220px, so half is 110px */
-        border-color: var(--color-accent);
-        border-top-color: transparent; /* Remove seam line */
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-        background: #111;
+    .face-1 {
+        transform: rotateX(-72deg) translateZ(151px);
+    }
+    .face-2 {
+        transform: rotateX(-144deg) translateZ(151px);
+    }
+    .face-3 {
+        transform: rotateX(-216deg) translateZ(151px);
+    }
+    .face-4 {
+        transform: rotateX(-288deg) translateZ(151px);
     }
 
     /* Content Styling */
-    .icon-header { display: flex; align-items: center; gap: 0.8rem; color: var(--color-text); margin-bottom: 1rem; }
-    .content { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-
-    .activity-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; }
-    .type-large { font-size: 1.5rem; font-weight: 700; color: #FC4C02; }
-
-    .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .label { font-size: 0.7rem; display: block; margin-bottom: 0.2rem; color: var(--color-text-muted); }
-    .val { font-size: 1.2rem; font-weight: 500; }
-    
-    .small-content { justify-content: center; align-items: center; text-align: center; }
-    .small-stats { display: flex; gap: 0.5rem; justify-content: center; }
-
-    /* Spotify Specifics */
-    .spotify .content { flex-direction: row; align-items: center; }
-    .center-msg { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
-    .art { width: 50px; height: 50px; background: #333; border-radius: 4px; position: relative; overflow: hidden; margin-right: 1rem; }
-    .disc { width: 100%; height: 100%; background: conic-gradient(from 0deg, #333, #666); border-radius: 50%; animation: spin 4s linear infinite; }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-
-    .status { margin-top: auto; display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; }
-    .pulse { width: 6px; height: 6px; border-radius: 50%; animation: pulse 2s infinite; }
-    .spotify .pulse { background: #1DB954; box-shadow: 0 0 5px #1DB954; }
-    .strava .pulse { background: #FC4C02; box-shadow: 0 0 5px #FC4C02; }
-
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-    /* Playlist List Styling */
-    .spotify-list-face {
+    .icon-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        color: var(--color-text);
+        margin-bottom: 1rem;
+    }
+    .content {
+        flex-grow: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        padding: 1rem;
     }
 
-    .playlist-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        width: 100%;
-        height: 100%;
-        overflow-y: auto; /* Scrollable if too many? No, mostly fixed fit */
-    }
-
-    .playlist-item {
+    .activity-meta {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 0.8rem;
-        background: rgba(255,255,255,0.05);
-        border-radius: 4px;
-        text-decoration: none;
-        color: var(--color-text-muted);
-        transition: all 0.2s ease;
-        font-size: 0.85rem;
+        align-items: baseline;
+        margin-bottom: 1rem;
+    }
+    .type-large {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #fc4c02;
     }
 
-    .playlist-item:hover {
-        background: var(--color-text);
-        color: var(--color-bg);
+    .stat-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
     }
-    
-    .playlist-item:hover .arr { transform: translateX(2px) translateY(-2px); }
-    .arr { transition: transform 0.2s; }
+    .label {
+        font-size: 0.7rem;
+        display: block;
+        margin-bottom: 0.2rem;
+        color: var(--color-text-muted);
+    }
+    .val {
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    /* Spotify Specifics */
+    .spotify .content {
+        flex-direction: row;
+        align-items: center;
+    }
+    .art {
+        width: 50px;
+        height: 50px;
+        background: #333;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        margin-right: 1rem;
+    }
+    .disc {
+        width: 100%;
+        height: 100%;
+        background: conic-gradient(from 0deg, #333, #666);
+        border-radius: 50%;
+        animation: spin 4s linear infinite;
+    }
+    @keyframes spin {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .status {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+    }
+    .pulse {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    .spotify .pulse {
+        background: #1db954;
+        box-shadow: 0 0 5px #1db954;
+    }
+    .strava .pulse {
+        background: #fc4c02;
+        box-shadow: 0 0 5px #fc4c02;
+    }
+
+    .artist {
+        opacity: 0.7;
+        font-size: 0.8rem;
+    }
+    .center-msg {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        opacity: 0.5;
+    }
+
+    @keyframes pulse {
+        0% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
 
     @media (min-width: 768px) {
-        .grid { grid-template-columns: repeat(2, 1fr); }
+        .grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
     }
 </style>
 
 <script>
-    // Scroll-to-Flip Interaction
-    const scenes = document.querySelectorAll('.prism-scene');
-    
-    scenes.forEach((scene) => {
-        const prism = scene.querySelector('.prism');
-        
-        scene.addEventListener('wheel', (e) => {
-            // Check if we can scroll (if user wants to flip)
-            e.preventDefault(); // Stop page scroll to allow card interaction
-            
-            // DeltaY > 0 is scrolling DOWN -> Flip to Show Bottom
-            if (e.deltaY > 0) {
-                prism.classList.add('flipped');
-            } 
-            // DeltaY < 0 is scrolling UP -> Return to Front
-            else {
-                prism.classList.remove('flipped');
-            }
-        }, { passive: false }); // Passive false required to preventDefault
-    });
+    // --- SPOTIFY INTERACTION (Scroll to Rotate) ---
+    const spotifyScene = document.querySelector(".spotify-scene");
+    if (spotifyScene) {
+        const prism = spotifyScene.querySelector(".prism") as HTMLElement;
+        let spotifyRotation = 0;
+
+        spotifyScene.addEventListener(
+            "wheel",
+            (e: WheelEvent) => {
+                e.preventDefault();
+                // Scroll Down (+DeltaY) -> Rotate upwards (Negative Angle) to show next face (face 1 is below face 0)
+                // NO: Face 1 is at -72deg. So we need to DECREASE angle to go to 1. 0 -> -72.
+                // So +DeltaY (Scroll Down) should Decrease Rotation.
+
+                // Debounce or just accumulate? Accumulating fits "every turn" naturally.
+                // Let's use steps of 72deg.
+                const direction = e.deltaY > 0 ? -1 : 1;
+                spotifyRotation += direction * 72;
+
+                prism.style.transform = `rotateX(${spotifyRotation}deg)`;
+            },
+            { passive: false },
+        );
+    }
+
+    // --- STRAVA INTERACTION (Auto Rotate) ---
+    const stravaScene = document.querySelector(".strava-scene");
+    if (stravaScene) {
+        const prism = stravaScene.querySelector(".prism") as HTMLElement;
+        let stravaRotation = 0;
+
+        // Auto-rotate every 3.5 seconds
+        setInterval(() => {
+            // Unidirectional rotation (show next activity)
+            // Face 1 is at -72deg. So we subtract 72.
+            stravaRotation -= 72;
+            prism.style.transform = `rotateX(${stravaRotation}deg)`;
+        }, 3500);
+    }
 </script>
