@@ -342,9 +342,9 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
         flex-grow: 1; 
         display: flex; 
         flex-direction: column; 
-        justify-content: center; /* Back to center */
+        justify-content: center; 
         padding-top: 0;          
-        gap: 0.75rem;            /* Moderate gap */
+        gap: 0.25rem;            /* Tight gap */
     }
 
     .icon-header { display: flex; align-items: center; gap: 0.8rem; color: var(--color-text); margin-bottom: 0; height: 24px; }
@@ -359,11 +359,18 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
     .strava .pulse { background: #FC4C02; box-shadow: 0 0 5px #FC4C02; }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     
-    .center-msg { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 1.2rem; }
+    .center-msg { 
+        display: flex; align-items: center; justify-content: center; height: 100%; font-size: 1.2rem; 
+        transition: color 0.3s ease;
+    }
     
     /* Specific Profile Card Borders */
     .spotify-cube .profile-card { border-color: #1DB954; }
     .strava-cube .profile-card { border-color: #FC4C02; }
+
+    /* Profile Card Text Hover Color */
+    .spotify-cube .profile-card:hover .center-msg { color: #1DB954; }
+    .strava-cube .profile-card:hover .center-msg { color: #FC4C02; }
 
     /* When a face is "active" or near active, maybe we highlight it? 
        Actually, backface-visibility handles the hiding. 
