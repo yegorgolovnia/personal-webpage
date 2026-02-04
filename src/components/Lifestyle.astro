@@ -211,9 +211,9 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
 
 <style>
     :root {
-        --cube-height: 190px;
-        --cube-depth: 190px; 
-        --cube-radius: 95px; /* height / 2 */
+        --cube-height: 230px;
+        --cube-depth: 230px; 
+        --cube-radius: 115px; /* height / 2 */
     }
 
     #lifestyle { padding: 4rem 0; }
@@ -226,7 +226,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
 
     /* CUBE CONTAINER */
     .cube-container {
-        height: 190px; /* var(--cube-height) */
+        height: var(--cube-height);
         perspective: 1000px;
         position: relative;
         cursor: grab;
@@ -291,7 +291,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
         backface-visibility: hidden; 
         overflow: hidden; 
         
-        transform: rotateX(calc(var(--i) * -90deg)) translateZ(95px);
+        transform: rotateX(calc(var(--i) * -90deg)) translateZ(var(--cube-radius));
         box-shadow: inset 0 0 40px rgba(255,255,255,0.02);
         
         transition: opacity 0.3s ease, visibility 0.3s ease, border-color 0.3s ease;
