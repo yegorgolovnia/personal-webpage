@@ -4,16 +4,18 @@ import { getLatestActivity } from "../lib/strava";
 // Fetch Strava Data
 const stravaActivities = await getLatestActivity();
 const activities = Array.isArray(stravaActivities) ? stravaActivities : [];
-// Ensure we have up to 5 unique activities (or repeat/pad if needed, but usually 5)
-// If less than 5, we'll just map what we have, but geometry depends on 5.
-// Ideally, we pad with "No Data" or repeat to maintain the pentagon shape.
+
+// We want to show 5 items. With 90deg geometry, 360deg covers 4 items.
+// Item 5 will effectively overlap Item 1 (at 360deg).
+// This is acceptable for a "simulated tape" effect.
+// Ensure we have enough data.
 const displayActivities = [...activities];
 while (displayActivities.length < 5) {
     displayActivities.push({ type: "Empty", id: "empty" });
 }
-const finalActivities = displayActivities.slice(0, 5); // Strict 5
+const finalActivities = displayActivities.slice(0, 5);
 
-// Spotify Data (5 Months)
+// Spotify Data
 const playlists = [
     {
         month: "Feb '26",
@@ -46,7 +48,6 @@ function formatDuration(seconds: number) {
     return `${m}m ${s}s`;
 }
 
-// Pace logic
 function formatPace(time: number, distance: number, isSwim: boolean = false) {
     if (!time || !distance) return "-";
     let pace;
@@ -125,16 +126,17 @@ function getActivityStats(activity: any) {
     </div>
 
     <div class="grid">
-        <!-- Spotify Pentagonal Prism (Interactive Scroll) -->
+        <!-- Spotify Cube (Interactive Scroll) -->
         <div class="prism-scene spotify-scene">
-            <div class="prism pentagon">
+            <div class="prism cube">
                 {
                     playlists.map((playlist, index) => (
                         <a
                             href={playlist.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            class={`face face-${index} spotify`}
+                            class={`face spotify face-${index}`}
+                            style={`transform: rotateX(${-index * 90}deg) translateZ(110px)`}
                         >
                             <div class="icon-header">
                                 <svg
@@ -173,9 +175,9 @@ function getActivityStats(activity: any) {
             <div class="hint mono">Scroll to rotate ⇵</div>
         </div>
 
-        <!-- Strava Pentagonal Prism (Auto Rotate) -->
+        <!-- Strava Cube (Auto Rotate) -->
         <div class="prism-scene strava-scene">
-            <div class="prism pentagon">
+            <div class="prism cube">
                 {
                     finalActivities.map((activity, index) => (
                         <a
@@ -186,7 +188,8 @@ function getActivityStats(activity: any) {
                             }
                             target="_blank"
                             rel="noopener noreferrer"
-                            class={`face face-${index} strava ${activity.type === "Empty" ? "empty" : ""}`}
+                            class={`face strava face-${index} ${activity.type === "Empty" ? "empty" : ""}`}
+                            style={`transform: rotateX(${-index * 90}deg) translateZ(110px)`}
                         >
                             {activity.type !== "Empty" ? (
                                 <>
@@ -296,7 +299,7 @@ function getActivityStats(activity: any) {
         grid-template-columns: 1fr;
         gap: 4rem;
         row-gap: 6rem;
-    } /* added gap for 3D clearance */
+    }
 
     .prism-scene {
         perspective: 1000px;
@@ -319,12 +322,15 @@ function getActivityStats(activity: any) {
         position: relative;
         transform-style: preserve-3d;
         transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-        /* Center for rotation */
-        transform-origin: 50% 50% -151px; /* Radius of pentagon approx */
+        /* 
+           CUBE GEOMETRY: Height 220px. 
+           Center of rotation should be in the middle of the cube.
+           Radius (apothem) of a cube is Height/2 = 110px.
+           So translation Z of faces is 110px.
+           Transform Origin Z should be -110px (pushing the pivot point back to the center).
+        */
+        transform-origin: 50% 50% -110px;
     }
-
-    /* PENTAGON GEOMETRY (Height 220px, 5 sides) */
-    /* Angle = 72deg. Apothem (Radius) = (Height/2) / tan(36) = 110 / 0.7265 = ~151.4px */
 
     .face {
         position: absolute;
@@ -340,29 +346,12 @@ function getActivityStats(activity: any) {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        backface-visibility: hidden; /* Important for clean rotation? Maybe logic needs checking */
-        /* Actually backface vis helps performance but might hide faces if angles are tricky. 
-           With 72deg angles, side faces are visible. Keep visible. */
-        backface-visibility: visible;
+        /* Using 90deg steps, backface visibility is beneficial for performance and doesn't hurt visuals */
+        backface-visibility: hidden;
         box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
     }
 
-    /* 5 Faces Positioning */
-    .face-0 {
-        transform: rotateX(0deg) translateZ(151px);
-    }
-    .face-1 {
-        transform: rotateX(-72deg) translateZ(151px);
-    }
-    .face-2 {
-        transform: rotateX(-144deg) translateZ(151px);
-    }
-    .face-3 {
-        transform: rotateX(-216deg) translateZ(151px);
-    }
-    .face-4 {
-        transform: rotateX(-288deg) translateZ(151px);
-    }
+    /* Individual Face transforms are handled inline for scalability with N items */
 
     /* Content Styling */
     .icon-header {
@@ -407,7 +396,6 @@ function getActivityStats(activity: any) {
         font-weight: 500;
     }
 
-    /* Spotify Specifics */
     .spotify .content {
         flex-direction: row;
         align-items: center;
@@ -489,26 +477,33 @@ function getActivityStats(activity: any) {
 </style>
 
 <script>
-    // --- SPOTIFY INTERACTION (Scroll to Rotate) ---
+    // --- SPOTIFY INTERACTION (Debounced Step-Scroll) ---
     const spotifyScene = document.querySelector(".spotify-scene");
     if (spotifyScene) {
         const prism = spotifyScene.querySelector(".prism") as HTMLElement;
         let spotifyRotation = 0;
+        let isAnimating = false; // Lock to force 1-step-at-time
 
         spotifyScene.addEventListener(
             "wheel",
             (e: WheelEvent) => {
                 e.preventDefault();
-                // Scroll Down (+DeltaY) -> Rotate upwards (Negative Angle) to show next face (face 1 is below face 0)
-                // NO: Face 1 is at -72deg. So we need to DECREASE angle to go to 1. 0 -> -72.
-                // So +DeltaY (Scroll Down) should Decrease Rotation.
 
-                // Debounce or just accumulate? Accumulating fits "every turn" naturally.
-                // Let's use steps of 72deg.
+                if (isAnimating) return; // Ignore input during animation
+
+                // Threshold checking? Maybe not needed if we lock immediately.
+                // Just detection of direction.
                 const direction = e.deltaY > 0 ? -1 : 1;
-                spotifyRotation += direction * 72;
+
+                isAnimating = true;
+                spotifyRotation += direction * 90; // Snap to next 90deg face
 
                 prism.style.transform = `rotateX(${spotifyRotation}deg)`;
+
+                // Unlock after transition completes
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 600); // 600ms matches CSS transition duration
             },
             { passive: false },
         );
@@ -520,12 +515,9 @@ function getActivityStats(activity: any) {
         const prism = stravaScene.querySelector(".prism") as HTMLElement;
         let stravaRotation = 0;
 
-        // Auto-rotate every 3.5 seconds
         setInterval(() => {
-            // Unidirectional rotation (show next activity)
-            // Face 1 is at -72deg. So we subtract 72.
-            stravaRotation -= 72;
+            stravaRotation -= 90; // Rotate to next face (negative goes 'down')
             prism.style.transform = `rotateX(${stravaRotation}deg)`;
-        }, 3500);
+        }, 3500); // 3.5s slideshow
     }
 </script>
