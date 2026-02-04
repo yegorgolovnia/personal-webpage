@@ -98,90 +98,94 @@ function getActivityStats(activity: any) {
     <div class="grid">
         <!-- Spotify Cube -->
         <div class="cube-container spotify-cube" data-total={spotifyPlaylists.length}>
-            <div class="cube">
-                {spotifyPlaylists.map((playlist, index) => (
-                    <a href={playlist.link} target="_blank" class="face spotify" style={`--i: ${index}`}>
-                        <div class="icon-header">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M9 18V5l12-2v13"></path>
-                                <circle cx="6" cy="18" r="3"></circle>
-                                <circle cx="18" cy="16" r="3"></circle>
-                            </svg>
-                            <span class="mono">Spotify / {playlist.label}</span>
-                        </div>
-                        <div class="content">
-                            <div class="art"><div class="disc"></div></div>
-                            <div class="info">
-                                <strong>{playlist.month}</strong>
-                                <br/>
-                                <span class="artist mono">Playlist by Yegor</span>
+            <div class="cube-wrapper">
+                <div class="cube">
+                    {spotifyPlaylists.map((playlist, index) => (
+                        <a href={playlist.link} target="_blank" class="face spotify" style={`--i: ${index}`}>
+                            <div class="icon-header">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 18V5l12-2v13"></path>
+                                    <circle cx="6" cy="18" r="3"></circle>
+                                    <circle cx="18" cy="16" r="3"></circle>
+                                </svg>
+                                <span class="mono">Spotify / {playlist.label}</span>
                             </div>
-                        </div>
-                        <div class="status mono">
-                            {index === 0 && <span class="pulse"></span>}
-                            {index === 0 ? "Listening to..." : "Archived"}
-                        </div>
-                    </a>
-                ))}
+                            <div class="content">
+                                <div class="art"><div class="disc"></div></div>
+                                <div class="info">
+                                    <strong>{playlist.month}</strong>
+                                    <br/>
+                                    <span class="artist mono">Playlist by Yegor</span>
+                                </div>
+                            </div>
+                            <div class="status mono">
+                                {index === 0 && <span class="pulse"></span>}
+                                {index === 0 ? "Listening to..." : "Archived"}
+                            </div>
+                        </a>
+                    ))}
+                </div>
             </div>
         </div>
 
         <!-- Strava Cube -->
         <div class="cube-container strava-cube" data-total={activities.length + 1}>
-            <div class="cube">
-                {activities.length > 0 ? (
-                    <>
-                        {activities.map((activity: any, index: number) => (
-                             <a href={`https://www.strava.com/activities/${activity.id}`} target="_blank" class="face strava" style={`--i: ${index}`}>
-                                <div class="icon-header">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    <span class="mono">Strava / Workout {index + 1}</span>
-                                </div>
-                                <div class="content">
-                                    <div class="activity-meta">
-                                        <span class="type-large">{activity.type}</span>
-                                        <span class="date mono">
-                                            {activity.start_date ? new Date(activity.start_date).toLocaleDateString(undefined, {month:'short', day:'numeric'}) : ''}
-                                            {' · '}
-                                            {formatDuration(activity.moving_time || 0)}
-                                        </span>
+            <div class="cube-wrapper">
+                <div class="cube">
+                    {activities.length > 0 ? (
+                        <>
+                            {activities.map((activity: any, index: number) => (
+                                 <a href={`https://www.strava.com/activities/${activity.id}`} target="_blank" class="face strava" style={`--i: ${index}`}>
+                                    <div class="icon-header">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                        <span class="mono">Strava / Workout {index + 1}</span>
                                     </div>
-                                    <div class="stat-row">
-                                        <div>
-                                            <span class="label mono">{getActivityStats(activity).label1}</span>
-                                            <div class="val">{getActivityStats(activity).val1}</div>
+                                    <div class="content">
+                                        <div class="activity-meta">
+                                            <span class="type-large">{activity.type}</span>
+                                            <span class="date mono">
+                                                {activity.start_date ? new Date(activity.start_date).toLocaleDateString(undefined, {month:'short', day:'numeric'}) : ''}
+                                                {' · '}
+                                                {formatDuration(activity.moving_time || 0)}
+                                            </span>
                                         </div>
-                                        <div>
-                                            <span class="label mono">{getActivityStats(activity).label2}</span>
-                                            <div class="val">{getActivityStats(activity).val2}</div>
+                                        <div class="stat-row">
+                                            <div>
+                                                <span class="label mono">{getActivityStats(activity).label1}</span>
+                                                <div class="val">{getActivityStats(activity).val1}</div>
+                                            </div>
+                                            <div>
+                                                <span class="label mono">{getActivityStats(activity).label2}</span>
+                                                <div class="val">{getActivityStats(activity).val2}</div>
+                                            </div>
                                         </div>
                                     </div>
+                                     <div class="status mono">
+                                        {index === 0 && <span class="pulse"></span>}
+                                        {index === 0 ? "Latest Activity" : "Past Activity"}
+                                    </div>
+                                </a>
+                            ))}
+                            
+                            <!-- Profile Card as the Last Face -->
+                            <a href="https://www.strava.com/athletes/yegorgolovnia" target="_blank" class="face strava profile-card" style={`--i: ${activities.length}`}>
+                                 <div class="icon-header">
+                                    <span class="mono">Strava / Profile</span>
                                 </div>
-                                 <div class="status mono">
-                                    {index === 0 && <span class="pulse"></span>}
-                                    {index === 0 ? "Latest Activity" : "Past Activity"}
+                                <div class="center-msg mono">
+                                    <span>Follow me on Strava ↗</span>
                                 </div>
                             </a>
-                        ))}
-                        
-                        <!-- Profile Card as the Last Face -->
-                        <a href="https://www.strava.com/athletes/yegorgolovnia" target="_blank" class="face strava profile-card" style={`--i: ${activities.length}`}>
-                             <div class="icon-header">
-                                <span class="mono">Strava / Profile</span>
-                            </div>
-                            <div class="center-msg mono">
-                                <span>Follow me on Strava ↗</span>
-                            </div>
-                        </a>
-                    </>
-                ) : (
-                    <div class="face strava empty" style="--i: 0">
-                        <span class="mono">No data available</span>
-                    </div>
-                )}
+                        </>
+                    ) : (
+                        <div class="face strava empty" style="--i: 0">
+                            <span class="mono">No data available</span>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     </div>
@@ -189,9 +193,9 @@ function getActivityStats(activity: any) {
 
 <style>
     :root {
-        --cube-height: 180px;
-        --cube-depth: 180px; 
-        --cube-radius: 90px; /* height / 2 */
+        --cube-height: 220px;
+        --cube-depth: 220px; 
+        --cube-radius: 110px; /* height / 2 */
     }
 
     #lifestyle { padding: 4rem 0; }
@@ -204,7 +208,7 @@ function getActivityStats(activity: any) {
 
     /* CUBE CONTAINER */
     .cube-container {
-        height: 180px; /* var(--cube-height) */
+        height: 220px; /* var(--cube-height) */
         perspective: 1000px;
         position: relative;
         cursor: grab;
@@ -217,15 +221,30 @@ function getActivityStats(activity: any) {
     }
     .cube-container:active { cursor: grabbing; }
 
-    .cube {
+    /* ROTATION WRAPPER (Controlled by Scroll/JS) */
+    .cube-wrapper {
         width: 100%;
         height: 100%;
         position: relative;
         transform-style: preserve-3d;
         transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-        /* Default position */
+        transform-origin: center center;
+    }
+
+    /* TILT WRAPPER (Controlled by Hover/CSS) */
+    .cube {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         transform: rotateX(0deg);
-        transform-origin: center center; /* Center rotation point in the middle of the "cylinder" */
+        transform-origin: center center;
+    }
+
+    /* Hover Tilt Effect: Peek at the next face (bottom) */
+    .cube-container:hover .cube {
+        transform: rotateX(20deg);
     }
 
     /* FACE STYLING */
@@ -244,7 +263,7 @@ function getActivityStats(activity: any) {
         backface-visibility: hidden; /* Hide backfaces */
         overflow: hidden; /* Prevent content spilling */
         
-        transform: rotateX(calc(var(--i) * -90deg)) translateZ(90px);
+        transform: rotateX(calc(var(--i) * -90deg)) translateZ(110px);
         
         /* Shadows for depth/lighting simulation */
         box-shadow: inset 0 0 40px rgba(255,255,255,0.02);
@@ -297,8 +316,9 @@ function getActivityStats(activity: any) {
     const containers = document.querySelectorAll('.cube-container');
 
     containers.forEach(container => {
-        const cube = container.querySelector('.cube') as HTMLElement;
-        if (!cube) return;
+        // We rotate the WRAPPER now, not the inner cube (which handles tilt)
+        const rotator = container.querySelector('.cube-wrapper') as HTMLElement;
+        if (!rotator) return;
 
         const totalFaces = parseInt(container.getAttribute('data-total') || '1');
         let currentIndex = 0;
@@ -325,7 +345,7 @@ function getActivityStats(activity: any) {
             if (newIndex >= 0 && newIndex < totalFaces) {
                 currentIndex = newIndex;
                 const rotation = currentIndex * 90;
-                cube.style.transform = `rotateX(${rotation}deg)`;
+                rotator.style.transform = `rotateX(${rotation}deg)`;
             }
 
             // Lock for 500ms
