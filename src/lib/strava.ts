@@ -6,10 +6,10 @@ export const getLatestActivity = async () => {
     if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
         console.warn("Strava credentials missing. Using mock data.");
         return [
+            { id: 4, type: "WeightTraining", start_date: new Date(Date.now() - 259200000).toISOString(), moving_time: 3000, distance: 0, kilojoules: 0, calories: 350, total_elevation_gain: 0 },
             { id: 1, type: "Run", start_date: new Date().toISOString(), moving_time: 3600, distance: 10000, kilojoules: 800, calories: 1100, total_elevation_gain: 100 },
             { id: 2, type: "Ride", start_date: new Date(Date.now() - 86400000).toISOString(), moving_time: 7200, distance: 45000, kilojoules: 1200, calories: 1300, total_elevation_gain: 500 },
             { id: 3, type: "Swim", start_date: new Date(Date.now() - 172800000).toISOString(), moving_time: 1800, distance: 1500, kilojoules: 400, calories: 500, total_elevation_gain: 0 },
-            { id: 4, type: "WeightTraining", start_date: new Date(Date.now() - 259200000).toISOString(), moving_time: 3000, distance: 0, kilojoules: 0, calories: 350, total_elevation_gain: 0 },
             { id: 5, type: "Hike", start_date: new Date(Date.now() - 345600000).toISOString(), moving_time: 10800, distance: 12000, kilojoules: 900, calories: 950, total_elevation_gain: 600 }
         ];
     }
