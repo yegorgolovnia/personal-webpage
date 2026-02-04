@@ -29,7 +29,9 @@ export const getLatestActivity = async () => {
             return null;
         }
 
-        console.log("✅ Strava Token Refreshed. Fetching activities...");
+        console.log("✅ Strava Token Refreshed.");
+        console.log("🔑 Token Scope:", JSON.stringify(tokenData)); // Check what scopes we actually have
+
         const accessToken = tokenData.access_token;
 
         // 2. Get Activities
@@ -41,10 +43,11 @@ export const getLatestActivity = async () => {
 
         const activities = await activitiesResponse.json();
 
-        console.log(`✅ Strava API Responded. Count: ${Array.isArray(activities) ? activities.length : 'Not an array'}`);
+        console.log(`✅ Strava Activities Fetch Status: ${activitiesResponse.status}`);
+        console.log(`📊 Activities Found: ${Array.isArray(activities) ? activities.length : 'Not an array'}`);
 
         if (!activities || !Array.isArray(activities)) {
-            console.error("⚠️ Strava response is not an array:", JSON.stringify(activities));
+            console.error("⚠️ Strava response body:", JSON.stringify(activities));
             return [];
         }
 
