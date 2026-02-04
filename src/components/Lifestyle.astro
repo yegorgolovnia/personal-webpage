@@ -4,10 +4,10 @@ import { getLatestActivity } from '../lib/strava';
 const stravaActivities = await getLatestActivity();
 const activities = Array.isArray(stravaActivities) ? stravaActivities : [];
 
-function formatTime(seconds: number) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+function formatDuration(seconds: number) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
 
 function formatPace(time: number, distance: number) {
@@ -18,6 +18,28 @@ function formatPace(time: number, distance: number) {
     const paceSecs = Math.round((pace - paceMins) * 60);
     return `${paceMins}:${paceSecs.toString().padStart(2, '0')}`;
 }
+
+// Logic to determine what stats to show
+function getActivityStats(activity: any) {
+    const isDistanceSport = ['Run', 'Ride', 'Swim', 'Walk', 'Hike'].includes(activity.type);
+    
+    if (isDistanceSport) {
+        return {
+            label1: 'Dist',
+            val1: `${(activity.distance / 1000).toFixed(2)}km`,
+            label2: 'Pace',
+            val2: `${formatPace(activity.moving_time, activity.distance)}/km`
+        };
+    } else {
+        // For Yoga, Weights, etc.
+        return {
+            label1: 'Time',
+            val1: formatDuration(activity.moving_time),
+            label2: 'Burn',
+            val2: `${Math.round(activity.kilojoules || activity.calories || 0)}kcal`
+        };
+    }
+}
 ---
 <section id="lifestyle">
     <div class="header">
@@ -26,60 +48,89 @@ function formatPace(time: number, distance: number) {
     </div>
 
     <div class="grid">
-        <!-- Spotify Card -->
-        <a href="https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ?si=17a95ef6b9c046fa" target="_blank" rel="noopener noreferrer" class="card spotify link-card">
-            <div class="icon-header">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 18V5l12-2v13"></path>
-                    <circle cx="6" cy="18" r="3"></circle>
-                    <circle cx="18" cy="16" r="3"></circle>
-                </svg>
-                <span class="mono">Spotify / Feb '26 Rotation</span>
-            </div>
-            <div class="content">
-                <div class="art">
-                    <div class="disc"></div>
-                </div>
-                <div class="info">
-                    <strong>Feb '26</strong>
-                    <span class="artist mono">Playlist by Yegor</span>
-                </div>
-            </div>
-            <div class="status mono">
-                <span class="pulse"></span> Listening
-            </div>
-        </a>
-
-        <!-- Strava Card (List) -->
-        <div class="card strava-list">
-            <div class="icon-header">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                <span class="mono">Strava / Recent Activity</span>
-            </div>
-
-            <div class="activity-list">
-                {activities.length > 0 ? activities.map((activity: any) => (
-                    <div class="activity-item">
-                        <div class="activity-meta">
-                            <span class="date mono">{new Date(activity.start_date).toLocaleDateString(undefined, {month:'short', day:'numeric'})}</span>
-                            <span class="type mono">{activity.type}</span>
+        <!-- Spotify Rotisserie -->
+        <div class="rotisserie-container">
+            <div class="rotisserie">
+                <a href="https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ" target="_blank" rel="noopener noreferrer" class="face front spotify">
+                    <div class="icon-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 18V5l12-2v13"></path>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <circle cx="18" cy="16" r="3"></circle>
+                        </svg>
+                        <span class="mono">Spotify / Feb '26</span>
+                    </div>
+                    <div class="content">
+                        <div class="art">
+                            <div class="disc"></div>
                         </div>
-                        <div class="stat-grid small">
-                            <div>
-                                <span class="label mono">Dist</span>
-                                <div class="val">{(activity.distance / 1000).toFixed(2)}km</div>
-                            </div>
-                            <div>
-                                <span class="label mono">Pace</span>
-                                <div class="val">{formatPace(activity.moving_time, activity.distance)}/km</div>
-                            </div>
+                        <div class="info">
+                            <strong>Feb '26</strong>
+                            <span class="artist mono">Playlist by Yegor</span>
                         </div>
                     </div>
-                )) : (
-                    <div class="empty-state mono">No recent activities found (or token invalid).</div>
+                    <div class="status mono">
+                        <span class="pulse"></span> Listening to...
+                    </div>
+                </a>
+                
+                <!-- Back Face (Optional: Could be previous month or strict repeat) -->
+                <a href="https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ" target="_blank" class="face back spotify">
+                    <div class="center-msg mono">
+                        View Full Playlist ↗
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Strava Rotisserie -->
+        <div class="rotisserie-container">
+            <div class="rotisserie">
+                {activities.slice(0, 4).map((activity: any, index: number) => {
+                    // We only show one face effectively in this simple CSS implementation, 
+                    // OR we map them to faces of a cube.
+                    // For a "Flip" effect, let's just show the LATEST on Front, and PREVIOUS on Back (on hover).
+                    const stats = getActivityStats(activity);
+                    const isFront = index === 0;
+                    if (index > 1) return null; // Only use 2 for front/back flip
+
+                    return (
+                        <a href={`https://www.strava.com/activities/${activity.id}`} target="_blank" rel="noopener noreferrer" class={`face ${isFront ? 'front' : 'back'} strava`}>
+                            <div class="icon-header">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span class="mono">Strava / {isFront ? 'Latest' : 'Previous'}</span>
+                            </div>
+                            <div class="content">
+                                <div class="activity-meta">
+                                    <span class="type-large">{activity.type}</span>
+                                    <span class="date mono">{new Date(activity.start_date).toLocaleDateString(undefined, {weekday:'short'})}</span>
+                                </div>
+                                <div class="stat-row">
+                                    <div>
+                                        <span class="label mono">{stats.label1}</span>
+                                        <div class="val">{stats.val1}</div>
+                                    </div>
+                                    <div>
+                                        <span class="label mono">{stats.label2}</span>
+                                        <div class="val">{stats.val2}</div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="status mono">
+                                {isFront ? <span class="pulse"></span> : null} 
+                                {isFront ? 'Active' : 'Done'}
+                            </div>
+                        </a>
+                    )
+                })}
+                
+                {activities.length === 0 && (
+                     <div class="face front strava empty">
+                        <span class="mono">No data available</span>
+                     </div>
                 )}
             </div>
         </div>
@@ -87,182 +138,104 @@ function formatPace(time: number, distance: number) {
 </section>
 
 <style>
-    #lifestyle {
-        padding: 4rem 0;
-    }
-
+    #lifestyle { padding: 4rem 0; }
     .header {
-        display: flex;
-        align-items: baseline;
-        gap: 1rem;
-        margin-bottom: 3rem;
-        border-bottom: 1px solid var(--color-accent-subtle);
-        padding-bottom: 1rem;
+        display: flex; align-items: baseline; gap: 1rem; margin-bottom: 3rem;
+        border-bottom: 1px solid var(--color-accent-subtle); padding-bottom: 1rem;
+    }
+    .mono { font-family: var(--font-mono); color: var(--color-text-muted); font-size: 0.85rem; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+
+    /* ROTISSERIE (3D Flip) */
+    .rotisserie-container {
+        perspective: 1000px;
+        height: 220px; /* Fixed height for the card */
     }
 
-    .mono {
-        font-family: var(--font-mono);
-        color: var(--color-text-muted);
-        font-size: 0.85rem;
+    .rotisserie {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
     }
 
-    .grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2rem;
+    /* Flip on Hover */
+    .rotisserie-container:hover .rotisserie {
+        transform: rotateX(180deg);
     }
 
-    .card {
+    .face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden; /* Hide back when flipped */
         border: 1px solid var(--color-accent-subtle);
+        border-radius: 12px;
+        background: #0a0a0a; /* Ensure opaque background */
         padding: 1.5rem;
-        border-radius: 8px;
-        background: rgba(255,255,255,0.02);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        min-height: 200px;
-        transition: all 0.2s ease;
-    }
-
-    .link-card {
         text-decoration: none;
         color: inherit;
-        cursor: pointer;
     }
 
-    .link-card:hover {
-        background: rgba(255,255,255,0.05);
+    .face.front {
+        /* Default front */
+    }
+
+    .face.back {
+        transform: rotateX(180deg); /* Pre-rotated for the back side */
+        background: #0f0f0f; /* Slightly lighter for contrast */
         border-color: var(--color-accent);
-        transform: translateY(-2px);
     }
 
+    /* Card Content Styles */
     .icon-header {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-        margin-bottom: 1.5rem;
-        color: var(--color-text);
+        display: flex; align-items: center; gap: 0.8rem;
+        color: var(--color-text); margin-bottom: 1rem;
     }
+    
+    .content { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
 
-    .content {
-        flex-grow: 1;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+    /* Strava Specifics */
+    .activity-meta {
+        display: flex; justify-content: space-between; align-items: baseline;
+        margin-bottom: 1rem;
     }
+    .type-large { font-size: 1.5rem; font-weight: 700; color: #FC4C02; }
+
+    .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .label { font-size: 0.7rem; display: block; margin-bottom: 0.2rem; color: var(--color-text-muted); }
+    .val { font-size: 1.2rem; font-weight: 500; }
 
     /* Spotify Specifics */
     .art {
-        width: 60px;
-        height: 60px;
-        background: #333;
-        border-radius: 4px;
-        position: relative;
-        overflow: hidden;
+        width: 50px; height: 50px; background: #333; border-radius: 4px;
+        position: relative; overflow: hidden; margin-right: 1rem;
     }
-    
     .disc {
-        width: 100%;
-        height: 100%;
-        background: conic-gradient(from 0deg, #333, #666);
-        border-radius: 50%;
-        animation: spin 4s linear infinite;
+        width: 100%; height: 100%; background: conic-gradient(from 0deg, #333, #666);
+        border-radius: 50%; animation: spin 4s linear infinite;
     }
-
     @keyframes spin { 100% { transform: rotate(360deg); } }
-
-    .info {
-        display: flex;
-        flex-direction: column;
+    
+    .spotify .content { flex-direction: row; align-items: center; justify-content: flex-start; }
+    
+    .center-msg {
+        height: 100%; display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem;
     }
 
-    .status {
-        margin-top: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.75rem;
-    }
-
-    .pulse {
-        width: 8px;
-        height: 8px;
-        background: #1DB954; /* Spotify Green */
-        border-radius: 50%;
-        box-shadow: 0 0 5px #1DB954;
-        animation: pulse 2s infinite;
-    }
+    .status { margin-top: auto; display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; }
+    .pulse { width: 6px; height: 6px; border-radius: 50%; animation: pulse 2s infinite; }
+    .spotify .pulse { background: #1DB954; box-shadow: 0 0 5px #1DB954; }
     .strava .pulse { background: #FC4C02; box-shadow: 0 0 5px #FC4C02; }
 
-    @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
-    }
-
-    /* Strava Specifics */
-    .strava-list {
-        max-height: 400px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .activity-list {
-        overflow-y: auto;
-        padding-right: 0.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    /* Custom Scrollbar */
-    .activity-list::-webkit-scrollbar {
-        width: 4px;
-    }
-    .activity-list::-webkit-scrollbar-track {
-        background: rgba(255,255,255,0.02);
-    }
-    .activity-list::-webkit-scrollbar-thumb {
-        background: var(--color-accent-subtle);
-        border-radius: 4px;
-    }
-
-    .activity-item {
-        padding: 1rem;
-        background: rgba(255,255,255,0.03);
-        border-radius: 4px;
-        border: 1px solid transparent;
-        transition: border-color 0.2s;
-    }
-
-    .activity-item:hover {
-        border-color: var(--color-accent-subtle);
-    }
-
-    .activity-meta {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.8rem;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-        padding-bottom: 0.5rem;
-    }
-
-    .date { color: var(--color-text-muted); font-size: 0.8rem; }
-    .type { color: #FC4C02; font-size: 0.8rem; font-weight: bold; }
-
-    .stat-grid.small {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
-    }
-    
-    .stat-grid.small .val {
-        font-size: 1rem;
-    }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
     @media (min-width: 768px) {
-        .grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
+        .grid { grid-template-columns: repeat(2, 1fr); }
     }
 </style>
