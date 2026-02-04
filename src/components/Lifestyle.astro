@@ -33,63 +33,68 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
     return `${paceMins}:${paceSecs.toString().padStart(2, '0')}`;
 }
 
-function getActivityStats(activity: any) {
-    // Safety check for activity
-    if (!activity) return { label1: '-', val1: '-', label2: '-', val2: '-' };
-
-    const type = activity.type;
-    const isRun = type === 'Run' || type === 'Walk' || type === 'Hike';
-    const isRide = type === 'Ride' || type === 'VirtualRide';
-    const isSwim = type === 'Swim';
-    
-    // Calculate Calories (Strava often sends kilojoules for rides, or we might have nothing)
-    // 1 kJ ~= 0.239 kcal. If kilojoules exists, use it. Else check if there's a calorie field (mock or real).
-    // If neither, we might show 0 or hidden.
-    let burnVal = 0;
-    if (activity.kilojoules) {
-        burnVal = Math.round(activity.kilojoules); // Strava often treats kJ roughly equal to active cals for cycling logic contexts, strictly 1kJ = 0.239 kcal
-    } else if (activity.calories) {
-        burnVal = Math.round(activity.calories);
-    }
-    
-    // Formatted strings
-    const distKm = (activity.distance / 1000).toFixed(2);
-    const timeStr = formatDuration(activity.moving_time);
-
-    let stats = {
-        label1: 'Time',
-        val1: timeStr,
-        label2: 'Burn',
-        val2: burnVal > 0 ? `${burnVal}kcal` : '-'
-    };
-
-    if (isRun) {
-        stats = {
-            label1: 'Dist',
-            val1: `${distKm}km`,
-            label2: 'Pace',
-            val2: `${formatPace(activity.moving_time, activity.distance)}/km`
-        };
-    } else if (isRide) {
-        stats = {
-            label1: 'Dist',
-            val1: `${distKm}km`,
-            label2: 'Time',
-            val2: timeStr
-        };
-    } else if (isSwim) {
-        stats = {
-            label1: 'Dist',
-            val1: `${(activity.distance).toFixed(0)}m`,
-            label2: 'Pace',
-            val2: `${formatPace(activity.moving_time, activity.distance, true)}/100m`
-        };
+    function formatSpeed(time: number, distance: number) {
+        const speedMps = distance / time;
+        const speedKmh = speedMps * 3.6;
+        return speedKmh.toFixed(1);
     }
 
-    return stats;
-}
----
-<section id="lifestyle">
+    function getActivityStats(activity: any) {
+        // Safety check for activity
+        if (!activity) return { label1: '-', val1: '-', label2: '-', val2: '-' };
+    
+        const type = activity.type;
+        const isRun = type === 'Run' || type === 'Walk' || type === 'Hike';
+        const isRide = type === 'Ride' || type === 'VirtualRide';
+        const isSwim = type === 'Swim';
+        
+        // Calculate Calories
+        let burnVal = 0;
+        if (activity.kilojoules) {
+            burnVal = Math.round(activity.kilojoules); 
+        } else if (activity.calories) {
+            burnVal = Math.round(activity.calories);
+        }
+        
+        // Formatted strings
+        const distKm = (activity.distance / 1000).toFixed(2);
+        const timeStr = formatDuration(activity.moving_time);
+    
+        // Default (Non-Pace / Other): Time + Burn
+        let stats = {
+            label1: 'Time',
+            val1: timeStr,
+            label2: 'Burn',
+            val2: burnVal > 0 ? `${burnVal}kcal` : '-'
+        };
+    
+        if (isRun) {
+            stats = {
+                label1: 'Dist',
+                val1: `${distKm}km`,
+                label2: 'Pace',
+                val2: `${formatPace(activity.moving_time, activity.distance)}/km`
+            };
+        } else if (isRide) {
+            stats = {
+                label1: 'Dist',
+                val1: `${distKm}km`,
+                label2: 'Speed',
+                val2: `${formatSpeed(activity.moving_time, activity.distance)}km/h`
+            };
+        } else if (isSwim) {
+            stats = {
+                label1: 'Dist',
+                val1: `${(activity.distance).toFixed(0)}m`,
+                label2: 'Pace',
+                val2: `${formatPace(activity.moving_time, activity.distance, true)}/100m`
+            };
+        }
+    
+        return stats;
+    }
+    ---
+    <section id="lifestyle">
     <div class="header">
         <h2>Lifestyle</h2>
         <span class="mono">/api_streams</span>
@@ -160,8 +165,6 @@ function getActivityStats(activity: any) {
                                             <span class="type-large">{activity.type}</span>
                                             <span class="date mono">
                                                 {activity.start_date ? new Date(activity.start_date).toLocaleDateString(undefined, {month:'short', day:'numeric'}) : ''}
-                                                {' · '}
-                                                {formatDuration(activity.moving_time || 0)}
                                             </span>
                                         </div>
                                         <div class="stat-row">
@@ -326,14 +329,14 @@ function getActivityStats(activity: any) {
     }
 
     .strava .activity-meta {
-        display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.5rem;
+        display: flex; align-items: baseline; justify-content: space-between; width: 100%; margin-bottom: 0.25rem;
     }
     .strava .type-large { font-size: 1.6rem; font-weight: 700; color: #FC4C02; letter-spacing: -0.02em; }
     .strava .date { font-size: 0.9rem; color: var(--color-text-muted); }
     
-    .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-    .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.3rem; color: var(--color-text-muted); }
-    .val { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; }
+    .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 0; }
+    .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.2rem; color: var(--color-text-muted); }
+    .val { font-size: 1rem; font-weight: 600; letter-spacing: -0.02em; }
     
     .strava .content {
         flex-grow: 1; display: flex; flex-direction: column; justify-content: center;
