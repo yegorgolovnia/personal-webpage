@@ -203,9 +203,9 @@ function getActivityStats(activity: any) {
 
 <style>
     :root {
-        --cube-height: 220px;
-        --cube-depth: 220px; 
-        --cube-radius: 110px; /* height / 2 */
+        --cube-height: 190px;
+        --cube-depth: 190px; 
+        --cube-radius: 95px; /* height / 2 */
     }
 
     #lifestyle { padding: 4rem 0; }
@@ -214,11 +214,11 @@ function getActivityStats(activity: any) {
         border-bottom: 1px solid var(--color-accent-subtle); padding-bottom: 1rem;
     }
     .mono { font-family: var(--font-mono); color: var(--color-text-muted); font-size: 0.85rem; }
-    .grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 4rem; }
 
     /* CUBE CONTAINER */
     .cube-container {
-        height: 220px; /* var(--cube-height) */
+        height: 190px; /* var(--cube-height) */
         perspective: 1000px;
         position: relative;
         cursor: grab;
@@ -273,7 +273,7 @@ function getActivityStats(activity: any) {
         backface-visibility: hidden; /* Hide backfaces */
         overflow: hidden; /* Prevent content spilling */
         
-        transform: rotateX(calc(var(--i) * -90deg)) translateZ(110px);
+        transform: rotateX(calc(var(--i) * -90deg)) translateZ(95px);
         
         /* Shadows for depth/lighting simulation */
         box-shadow: inset 0 0 40px rgba(255,255,255,0.02);
