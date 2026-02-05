@@ -152,3 +152,25 @@ const projects = [
         }
     }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const cards = document.querySelectorAll("#projects .card");
+        cards.forEach((card) => {
+            card.addEventListener("click", (e) => {
+                e.preventDefault(); // Prevent navigation
+                const dataStr = (card as HTMLElement).dataset.hoverData;
+                if (dataStr) {
+                    try {
+                        const data = JSON.parse(dataStr);
+                        window.dispatchEvent(
+                            new CustomEvent("open-overlay", { detail: data }),
+                        );
+                    } catch (err) {
+                        console.error("Error parsing project data", err);
+                    }
+                }
+            });
+        });
+    });
+</script>

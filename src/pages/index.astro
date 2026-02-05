@@ -6,6 +6,7 @@ import Experience from "../components/Experience.astro";
 import Lifestyle from "../components/Lifestyle.astro";
 import CursorTrace from "../components/CursorTrace.astro";
 import HoverPopup from "../components/HoverPopup.astro";
+import ExperienceOverlay from "../components/ExperienceOverlay";
 
 // Updated Linktree links
 const links = [
@@ -19,8 +20,12 @@ const links = [
 ---
 
 <Layout title="Yegor Golovnia">
+    <div slot="overlays">
+        <HoverPopup />
+        <ExperienceOverlay client:load />
+    </div>
+
     <Hero />
-    <HoverPopup />
 
     <div class="spacer"></div>
 

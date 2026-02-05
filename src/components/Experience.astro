@@ -143,6 +143,28 @@ const experiences = [
         .entry {
             grid-template-columns: 200px 1fr;
             gap: 2rem;
+            cursor: pointer;
         }
     }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const entries = document.querySelectorAll("#experience .entry");
+        entries.forEach((entry) => {
+            entry.addEventListener("click", () => {
+                const dataStr = (entry as HTMLElement).dataset.hoverData;
+                if (dataStr) {
+                    try {
+                        const data = JSON.parse(dataStr);
+                        window.dispatchEvent(
+                            new CustomEvent("open-overlay", { detail: data }),
+                        );
+                    } catch (e) {
+                        console.error("Error parsing experience data", e);
+                    }
+                }
+            });
+        });
+    });
+</script>

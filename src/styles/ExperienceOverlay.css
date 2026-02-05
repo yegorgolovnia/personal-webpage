@@ -1,0 +1,219 @@
+/* ExperienceOverlay.css */
+
+.overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 150;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.overlay-side {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: #030303;
+    z-index: 160;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 768px) {
+    .overlay-side {
+        width: 45vw;
+        min-width: 420px;
+        max-width: 700px;
+    }
+
+    .overlay-content {
+        padding: 3rem !important;
+        /* md:p-12 */
+    }
+
+    .overlay-title h2 {
+        font-size: 2.25rem !important;
+        /* 4xl */
+    }
+}
+
+.glitch-canvas-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 161;
+    mix-blend-mode: screen;
+    opacity: 0.5;
+}
+
+.overlay-content {
+    position: relative;
+    z-index: 162;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+/* Header */
+.overlay-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.overlay-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.overlay-close {
+    color: rgba(255, 255, 255, 0.4);
+    transition: color 0.2s;
+    padding: 0.5rem;
+    margin-right: -0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.overlay-close:hover {
+    color: #fff;
+}
+
+/* Title Section */
+.overlay-title {
+    margin-bottom: 2rem;
+}
+
+.overlay-title h2 {
+    font-size: 1.875rem;
+    /* 3xl */
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    line-height: 1.1;
+}
+
+.overlay-subtitle {
+    font-family: var(--font-mono);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.125rem;
+    /* lg */
+}
+
+/* Meta Row */
+.overlay-meta {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+    column-gap: 1.5rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 2.5rem;
+    font-family: var(--font-mono);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 1.5rem;
+}
+
+/* Body */
+.overlay-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.overlay-desc {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.625;
+    font-size: 1.125rem;
+    /* lg */
+    max-width: 90%;
+}
+
+.overlay-bullets {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.overlay-bullets li {
+    display: flex;
+    gap: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.bullet-dash {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.overlay-section h3 {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+}
+
+.overlay-section-content {
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.625;
+    white-space: pre-line;
+}
+
+/* Footer Tags */
+.overlay-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.overlay-tag {
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: var(--font-mono);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Content Shifter */
+#content-shifter {
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s ease;
+    transform-origin: center center;
+    will-change: transform, filter;
+}
+
+body.overlay-open #content-shifter {
+    transform: scale(0.95) translateX(-5vw);
+    /* Shift left and scale down */
+    filter: brightness(0.6) blur(2px);
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* On mobile, maybe scale less */
+@media (max-width: 768px) {
+    body.overlay-open #content-shifter {
+        transform: scale(0.92);
+        filter: brightness(0.4) blur(3px);
+    }
+}

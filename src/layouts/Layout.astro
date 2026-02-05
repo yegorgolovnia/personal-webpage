@@ -1,12 +1,13 @@
 ---
-import '../styles/global.css';
+import "../styles/global.css";
 
 interface Props {
 	title: string;
-    description?: string;
+	description?: string;
 }
 
-const { title, description = "Yegor Golovnia - Web3 Operations Generalist" } = Astro.props;
+const { title, description = "Yegor Golovnia - Web3 Operations Generalist" } =
+	Astro.props;
 ---
 
 <!doctype html>
@@ -20,8 +21,11 @@ const { title, description = "Yegor Golovnia - Web3 Operations Generalist" } = A
 		<title>{title}</title>
 	</head>
 	<body>
-        <main class="container">
-		    <slot />
-        </main>
+		<div id="content-shifter">
+			<main class="container">
+				<slot />
+			</main>
+		</div>
+		<slot name="overlays" />
 	</body>
 </html>
