@@ -1,0 +1,536 @@
+---
+
+---
+
+<div id="sidebar-scene" class="perspective-container">
+    <canvas id="stretch-canvas" class="stretch-overlay"></canvas>
+
+    <aside id="hover-sidebar" class="sidebar-panel hidden">
+        <div class="panel-surface">
+            <!-- Decorative Border Line -->
+            <div class="active-border"></div>
+
+            <div class="content-wrapper">
+                <div class="meta-row mono">
+                    <span class="location-date"></span>
+                </div>
+
+                <div class="main-body">
+                    <h2 class="role-title"></h2>
+                    <div class="company-sub mono"></div>
+
+                    <ul class="details-list"></ul>
+                </div>
+
+                <div class="footer-row">
+                    <div class="tags-row mono"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<script>
+    const scene = document.getElementById("sidebar-scene");
+    const sidebar = document.getElementById("hover-sidebar");
+    const canvas = document.getElementById(
+        "stretch-canvas",
+    ) as HTMLCanvasElement;
+    const ctx = canvas.getContext("2d");
+
+    // Content Elements
+    const contentWrapper = sidebar.querySelector(".content-wrapper");
+    const roleEl = sidebar.querySelector(".role-title");
+    const compEl = sidebar.querySelector(".company-sub");
+    const metaEl = sidebar.querySelector(".location-date");
+    const listEl = sidebar.querySelector(".details-list");
+    const tagsEl = sidebar.querySelector(".tags-row");
+
+    let hideTimeout;
+    let isOpen = false;
+    let animRequest;
+    let stretchFactor = 0;
+
+    // Track active row to prevent duplicate triggers
+    let currentHoveredRow = null;
+    let activeRowScramblers = [];
+
+    // RGB GLITCH UTILITY
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&0x";
+    class TextScramble {
+        constructor(el) {
+            this.el = el;
+            this.chars = chars;
+            this.queue = [];
+            this.frame = 0;
+            this.frameRequest = null;
+
+            // FIX: Persist original text source of truth to prevent "sticky" encryption
+            if (this.el.dataset.originalText) {
+                this.originalText = this.el.dataset.originalText;
+            } else {
+                this.originalText = el.innerText;
+                this.el.dataset.originalText = this.originalText;
+            }
+        }
+
+        setText(newText, mode = "normal") {
+            const oldText = this.el.innerText;
+            const length = Math.max(oldText.length, newText.length);
+            this.queue = [];
+
+            for (let i = 0; i < length; i++) {
+                const from = oldText[i] || "";
+                const to = newText[i] || "";
+                const start = Math.floor(Math.random() * 8);
+                const end = start + Math.floor(Math.random() * 15);
+                this.queue.push({ from, to, start, end });
+            }
+
+            cancelAnimationFrame(this.frameRequest);
+            this.frame = 0;
+            this.update(mode);
+        }
+
+        update(mode) {
+            let output = "";
+            let complete = 0;
+
+            for (let i = 0, n = this.queue.length; i < n; i++) {
+                let { from, to, start, end, char } = this.queue[i];
+
+                // WHITESPACE PRESERVATION:
+                // If the target character is a space/newline, preserve it exactly.
+                // This keeps word positioning constant ("equal character count" feel).
+                if (/\s/.test(to)) {
+                    output += to;
+                    complete++;
+                    continue;
+                }
+
+                if (this.frame >= end) {
+                    complete++;
+
+                    if (mode === "encrypt") {
+                        if (!char || Math.random() < 0.1) {
+                            char =
+                                this.chars[
+                                    Math.floor(
+                                        Math.random() * this.chars.length,
+                                    )
+                                ];
+                            this.queue[i].char = char;
+                        }
+                        const colorClass =
+                            Math.random() > 0.5 ? "dud-rgb" : "dud-mono";
+                        output += `<span class="${colorClass}">${char}</span>`;
+                    } else {
+                        output += to;
+                    }
+                } else if (this.frame >= start) {
+                    if (!char || Math.random() < 0.28) {
+                        char =
+                            this.chars[
+                                Math.floor(Math.random() * this.chars.length)
+                            ];
+                        this.queue[i].char = char;
+                    }
+                    const colorClass =
+                        Math.random() > 0.6 ? "dud-rgb" : "dud-mono";
+                    output += `<span class="${colorClass}">${char}</span>`;
+                } else {
+                    output += from;
+                }
+            }
+
+            this.el.innerHTML = output;
+
+            if (complete === this.queue.length) {
+                if (mode === "encrypt") {
+                    // Holding state
+                } else {
+                    // Done
+                }
+            } else {
+                this.frameRequest = requestAnimationFrame(() =>
+                    this.update(mode),
+                );
+                this.frame++;
+            }
+        }
+
+        restore() {
+            this.setText(this.originalText, "normal");
+        }
+    }
+
+    const titleScrambler = new TextScramble(roleEl);
+    const companyScrambler = new TextScramble(compEl);
+    const metaScrambler = new TextScramble(metaEl);
+
+    /* CANVAS LOGIC */
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function drawStretch() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (stretchFactor > 0.01) {
+            const chunks = Math.floor(180 * stretchFactor);
+            for (let i = 0; i < chunks; i++) {
+                const h = Math.random() * 60 * stretchFactor + 2;
+                const w =
+                    Math.random() * canvas.width * 0.8 * stretchFactor + 30;
+                const x = Math.random() * canvas.width - w / 2;
+                const y = Math.random() * canvas.height;
+                const rand = Math.random();
+
+                // SUBTLER COLORS
+                if (rand > 0.95)
+                    ctx.fillStyle = `rgba(255, 255, 255, ${0.5 * stretchFactor})`;
+                else if (rand > 0.9)
+                    ctx.fillStyle = `rgba(255, 100, 100, ${0.4 * stretchFactor})`;
+                else if (rand > 0.85)
+                    ctx.fillStyle = `rgba(100, 255, 100, ${0.4 * stretchFactor})`;
+                else if (rand > 0.8)
+                    ctx.fillStyle = `rgba(100, 100, 255, ${0.4 * stretchFactor})`;
+                else if (rand > 0.75)
+                    ctx.fillStyle = `rgba(100, 255, 255, ${0.4 * stretchFactor})`;
+                else ctx.fillStyle = `rgba(0, 0, 0, ${0.8 * stretchFactor})`;
+
+                ctx.fillRect(x, y, w, h);
+            }
+            stretchFactor *= 0.94;
+            animRequest = requestAnimationFrame(drawStretch);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+
+    function triggerEntranceEffect() {
+        stretchFactor = 1.0;
+        cancelAnimationFrame(animRequest);
+        drawStretch();
+    }
+
+    const fillData = (data) => {
+        titleScrambler.setText(data.role || data.title || "", "normal");
+        companyScrambler.setText(data.company || data.subtitle || "", "normal");
+
+        const loc = data.location ? data.location.toUpperCase() : "";
+        const date = data.period || data.year || "";
+        const metaStr = [loc, date].filter(Boolean).join(" • ");
+        metaScrambler.setText(metaStr, "normal");
+
+        listEl.innerHTML = "";
+        if (data.hover_bullets && Array.isArray(data.hover_bullets)) {
+            data.hover_bullets.slice(0, 3).forEach((txt) => {
+                const li = document.createElement("li");
+                listEl.appendChild(li);
+                const s = new TextScramble(li);
+                li.innerText = "";
+                s.setText(txt, "normal");
+            });
+        }
+
+        tagsEl.innerHTML = "";
+        if (data.tags && Array.isArray(data.tags)) {
+            data.tags.forEach((tag) => {
+                const span = document.createElement("span");
+                span.className = "pill";
+                tagsEl.appendChild(span);
+                const s = new TextScramble(span);
+                span.innerText = "";
+                s.setText(tag, "normal");
+            });
+        }
+    };
+
+    function updateContent(data) {
+        stretchFactor = 0.8;
+        cancelAnimationFrame(animRequest);
+        drawStretch();
+        setTimeout(() => {
+            fillData(data);
+            contentWrapper.style.opacity = "1";
+        }, 150);
+    }
+
+    // ROW INTERACTION
+    function encryptRow(trigger) {
+        if (trigger === currentHoveredRow) return;
+
+        restoreActiveRows();
+        currentHoveredRow = trigger;
+
+        const targets = [
+            trigger.querySelector("h3"),
+            trigger.querySelector(".company"),
+            trigger.querySelector(".period"),
+            trigger.querySelector("p"),
+        ];
+
+        targets.forEach((el) => {
+            if (el) {
+                // DIMENSION LOCK: Freeze dimensions to prevent bumping
+                const rect = el.getBoundingClientRect();
+                el.style.width = `${rect.width}px`;
+                el.style.height = `${rect.height}px`;
+                el.style.display = "block"; // Ensure it respects dimensions
+                el.style.overflow = "hidden";
+
+                const s = new TextScramble(el);
+                activeRowScramblers.push(s);
+                s.setText(el.innerText, "encrypt");
+                el.classList.add("encrypted-row-text");
+            }
+        });
+    }
+
+    function restoreActiveRows() {
+        if (!currentHoveredRow) return;
+
+        activeRowScramblers.forEach((s) => {
+            s.el.classList.remove("encrypted-row-text");
+            // Unlock dimensions
+            s.el.style.width = "";
+            s.el.style.height = "";
+            s.el.style.display = "";
+            s.el.style.overflow = "";
+            s.restore();
+        });
+        activeRowScramblers = [];
+        currentHoveredRow = null;
+    }
+
+    function openPanel(trigger) {
+        if (window.innerWidth < 1024) return;
+
+        clearTimeout(hideTimeout);
+        const dataStr = trigger.dataset.hoverData;
+        if (!dataStr) return;
+
+        try {
+            const data = JSON.parse(dataStr);
+
+            encryptRow(trigger);
+
+            if (!isOpen) {
+                fillData(data);
+                contentWrapper.style.opacity = "1";
+                sidebar.classList.remove("hidden");
+                sidebar.classList.add("visible");
+                triggerEntranceEffect();
+                isOpen = true;
+            } else {
+                updateContent(data);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    function scheduleHide() {
+        hideTimeout = setTimeout(() => {
+            // GLITCH EXIT: Blast stretch factor to Max
+            stretchFactor = 1.0;
+            cancelAnimationFrame(animRequest);
+            drawStretch();
+
+            sidebar.classList.remove("visible");
+            sidebar.classList.add("hidden");
+
+            isOpen = false;
+        }, 100);
+    }
+
+    // LISTENERS
+    document.addEventListener("mouseover", (e) => {
+        const target = e.target.closest(".hover-trigger");
+        if (target) {
+            openPanel(target);
+        }
+    });
+
+    document.addEventListener("mouseout", (e) => {
+        const target = e.target.closest(".hover-trigger");
+        if (target) {
+            if (!target.contains(e.relatedTarget)) {
+                restoreActiveRows();
+                scheduleHide();
+            }
+        }
+    });
+
+    // FAILSAFE
+    document.addEventListener("mousemove", (e) => {
+        if (currentHoveredRow && !currentHoveredRow.contains(e.target)) {
+            restoreActiveRows();
+            scheduleHide();
+        }
+    });
+</script>
+
+<style>
+    .perspective-container {
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100vh;
+        width: 100vw;
+        z-index: 90;
+        pointer-events: none;
+    }
+
+    .stretch-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 101;
+        pointer-events: none;
+    }
+
+    .sidebar-panel {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: clamp(400px, 35vw, 600px);
+        z-index: 100;
+        transform: translateX(0);
+        /* Default visible transition */
+        transition:
+            opacity 0.4s ease-out,
+            filter 0.4s ease-out;
+    }
+
+    .sidebar-panel.hidden {
+        opacity: 0;
+        filter: blur(20px);
+        /* Instant vanish transition */
+        transition:
+            opacity 0.1s ease-out,
+            filter 0.1s ease-out;
+    }
+    .sidebar-panel.visible {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    .panel-surface {
+        width: 100%;
+        height: 100%;
+        background: #030303;
+        border-left: 1px solid var(--color-accent-subtle);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 4rem 3rem;
+        position: relative;
+    }
+
+    :global(.dud-mono) {
+        font-family: var(--font-mono);
+        color: var(--color-accent-subtle);
+        opacity: 0.6;
+    }
+    :global(.dud-rgb) {
+        font-family: var(--font-mono);
+        color: rgba(255, 100, 255, 0.8);
+        text-shadow: 1px 0 rgba(100, 255, 100, 0.5);
+        opacity: 0.9;
+    }
+
+    :global(.encrypted-row-text) {
+        font-family: var(--font-mono);
+        color: var(--color-accent-subtle);
+        text-shadow: 0 0 3px rgba(100, 255, 100, 0.3);
+
+        /* OPTICAL COMPENSATION */
+        font-size: 0.85em;
+        letter-spacing: -0.5px;
+        line-height: inherit;
+    }
+
+    /* FIX: Make internal spans ignore pointer so they don't re-trigger shuffle */
+    :global(.encrypted-row-text span) {
+        pointer-events: none;
+    }
+
+    .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+        transition: opacity 0.3s ease-out;
+    }
+
+    .meta-row {
+        margin-bottom: 2rem;
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .role-title {
+        font-family: var(--font-body, sans-serif);
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1.05;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.02em;
+        min-height: 3rem;
+    }
+
+    .company-sub {
+        font-size: 1.1rem;
+        color: var(--color-text-muted);
+        margin-bottom: 3rem;
+        min-height: 1.5rem;
+    }
+
+    .details-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .details-list li {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 0.8rem;
+        line-height: 1.6;
+        padding-left: 1.2rem;
+        position: relative;
+    }
+    .details-list li::before {
+        content: "—";
+        position: absolute;
+        left: 0;
+        color: var(--color-text-muted);
+    }
+
+    .footer-row {
+        margin-top: auto;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .tags-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+    }
+    .pill {
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        background: rgba(255, 255, 255, 0.05);
+        padding: 4px 10px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+</style>

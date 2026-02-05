@@ -5,47 +5,82 @@ const projects = [
         role: "Co-organizer",
         desc: "Privacy-focused community events in Barcelona.",
         link: "#", // Add real links if available in future
-        year: "2024"
+        year: "2024",
+        hover_bullets: [
+            "Monthly privacy workshops",
+            "Onboarded 100+ users to Monero",
+            "Coordinated venue & security",
+        ],
+        tags: ["Privacy", "Community", "Event Ops"],
+        location: "Barcelona",
     },
     {
         title: "Coven.Land",
         role: "Ops & Strategy Lead",
         desc: "Web3 community platform operations.",
         link: "#",
-        year: "2023-2024"
+        year: "2023-2024",
+        hover_bullets: [
+            "Defined operational KPIs",
+            "Streamlined DAO onboarding",
+            "Managed contributor payroll",
+        ],
+        tags: ["DAO Operations", "Strategy", "Web3"],
+        location: "Remote",
     },
     {
         title: "MindGem",
         role: "COO & Co-founder",
         desc: "AI x Web3 startup. Operational foundation.",
         link: "#",
-        year: "2023"
+        year: "2023",
+        hover_bullets: [
+            "Built legal & op foundations",
+            "Managed investor relations",
+            "Product roadmap coordination",
+        ],
+        tags: ["AI Startup", "COO", "Founding Team"],
+        location: "Remote",
     },
     {
         title: "ETHBarcelona",
         role: "Ops Lead",
         desc: "Impact-focused Ethereum conference.",
         link: "https://ethbarcelona.com",
-        year: "2022"
-    }
+        year: "2022",
+        hover_bullets: [
+            "Logistics for 2500+ attendees",
+            "Venue & vendor management",
+            "Emergency response planning",
+        ],
+        tags: ["Event Production", "Ethereum", "Logistics"],
+        location: "Barcelona",
+    },
 ];
 ---
 
 <section id="projects">
     <h2>> ./projects_dump</h2>
-    
+
     <div class="grid">
-        {projects.map((project) => (
-            <a href={project.link} class="card" target={project.link !== '#' ? "_blank" : "_self"}>
-                <div class="card-header">
-                    <span class="year">{project.year}</span>
-                    <span class="icon">[DIR]</span>
-                </div>
-                <h3>{project.title}</h3>
-                <div class="role">{project.role}</div>
-                <p>{project.desc}</p>
-            </a>
-        ))}
+        {
+            projects.map((project) => (
+                <a
+                    href={project.link}
+                    class="card hover-trigger"
+                    target={project.link !== "#" ? "_blank" : "_self"}
+                    data-hover-data={JSON.stringify(project)}
+                >
+                    <div class="card-header">
+                        <span class="year">{project.year}</span>
+                        <span class="icon">[DIR]</span>
+                    </div>
+                    <h3>{project.title}</h3>
+                    <div class="role">{project.role}</div>
+                    <p>{project.desc}</p>
+                </a>
+            ))
+        }
     </div>
 </section>
 
@@ -65,7 +100,7 @@ const projects = [
         padding: 2rem;
         display: block;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        background: rgba(255,255,255,0.02);
+        background: rgba(255, 255, 255, 0.02);
     }
 
     .card:hover {
@@ -76,10 +111,14 @@ const projects = [
         text-decoration: none; /* Override global anchor */
     }
 
-    .card:hover h3, .card:hover .role, .card:hover p, .card:hover .year, .card:hover .icon {
+    .card:hover h3,
+    .card:hover .role,
+    .card:hover p,
+    .card:hover .year,
+    .card:hover .icon {
         color: var(--color-bg);
     }
-    
+
     .card-header {
         display: flex;
         justify-content: space-between;

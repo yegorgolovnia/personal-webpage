@@ -1,10 +1,11 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero.astro';
-import CaseStudies from '../components/CaseStudies.astro';
-import Experience from '../components/Experience.astro';
-import Lifestyle from '../components/Lifestyle.astro';
-import CursorTrace from '../components/CursorTrace.astro';
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import CaseStudies from "../components/CaseStudies.astro";
+import Experience from "../components/Experience.astro";
+import Lifestyle from "../components/Lifestyle.astro";
+import CursorTrace from "../components/CursorTrace.astro";
+import HoverPopup from "../components/HoverPopup.astro";
 
 // Updated Linktree links
 const links = [
@@ -13,13 +14,14 @@ const links = [
     { label: "LinkedIn", url: "https://www.linkedin.com/in/yegorgolovnia/" },
     { label: "Telegram", url: "https://t.me/yegorgolovnia" },
     { label: "Warpcast", url: "https://warpcast.com/yegor" },
-    { label: "Calendly", url: "https://calendly.com/yegorgolovnia" }
+    { label: "Calendly", url: "https://calendly.com/yegorgolovnia" },
 ];
 ---
 
 <Layout title="Yegor Golovnia">
-	<Hero />
-    
+    <Hero />
+    <HoverPopup />
+
     <div class="spacer"></div>
 
     <section id="about">
@@ -28,13 +30,19 @@ const links = [
             <span class="mono">/bio</span>
         </div>
         <p class="bio">
-            I am a <strong>Program & Product Lead</strong> and <strong>Operations Specialist</strong> with a deep focus on the Ethereum ecosystem.
+            I am a <strong>Program & Product Lead</strong> and <strong
+                >Operations Specialist</strong
+            > with a deep focus on the Ethereum ecosystem.
         </p>
         <p class="bio">
-            Currently leading Quadratic Funding Rounds at <strong>Giveth</strong>. Previously co-founded <strong>ETHBarcelona</strong>, scaling it to 2,500+ attendees. 
+            Currently leading Quadratic Funding Rounds at <strong>Giveth</strong
+            >. Previously co-founded <strong>ETHBarcelona</strong>, scaling it
+            to 2,500+ attendees.
         </p>
         <p class="bio text-muted">
-            Specializing in Agile Product Management, Quadratic Funding, Grant Writing, and building distributed organizations. Native in Ukrainian, fluent in English & Russian.
+            Specializing in Agile Product Management, Quadratic Funding, Grant
+            Writing, and building distributed organizations. Native in
+            Ukrainian, fluent in English & Russian.
         </p>
     </section>
 
@@ -48,11 +56,13 @@ const links = [
             <span class="mono">/connect</span>
         </div>
         <div class="links-grid">
-            {links.map(link => (
-                <a href={link.url} target="_blank" class="link-item">
-                    <span class="arrow">→</span> {link.label}
-                </a>
-            ))}
+            {
+                links.map((link) => (
+                    <a href={link.url} target="_blank" class="link-item">
+                        <span class="arrow">→</span> {link.label}
+                    </a>
+                ))
+            }
         </div>
         <div class="f-credits mono">
             <p>NO COOKIES. NO TRACKERS.</p>
@@ -62,7 +72,9 @@ const links = [
 </Layout>
 
 <style>
-    .spacer { height: 100px; }
+    .spacer {
+        height: 100px;
+    }
 
     #about {
         padding: 4rem 0;
@@ -88,7 +100,7 @@ const links = [
         margin-bottom: 1.5rem;
         font-weight: 300;
     }
-    
+
     .bio.text-muted {
         color: var(--color-text-muted);
         font-size: 1.1rem;
@@ -106,11 +118,11 @@ const links = [
         gap: 1rem;
         margin-bottom: 4rem;
     }
-    
+
     .link-item {
         font-size: 1.2rem;
         padding: 1rem;
-        border: 1px solid rgba(255,255,255,0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 4px;
         transition: all 0.2s ease;
         display: flex;
@@ -129,7 +141,7 @@ const links = [
         transform: translateX(-5px);
         transition: all 0.2s ease;
     }
-    
+
     .link-item:hover .arrow {
         opacity: 1;
         transform: translateX(0);

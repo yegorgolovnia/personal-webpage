@@ -2,30 +2,55 @@
 const experiences = [
     {
         role: "Program & Product Lead",
-        company: "SEH Foundation",
-        period: "Jan 2024 – Present",
-        role: "Program & Product Lead (QF Rounds)",
         company: "Giveth",
-        period: "Current",
-        desc: "Leading Quadratic Funding rounds to allocate resources to high-impact public goods. optimizing donor engagement and sybil defense mechanisms."
+        period: "Jan 2024 – Present",
+        desc: "Leading Quadratic Funding rounds to allocate resources to high-impact public goods. optimizing donor engagement and sybil defense mechanisms.",
+        hover_bullets: [
+            "Orchestrated $1M+ in QF rounds",
+            "Designed Sybil-resistance strategy",
+            "Managed cross-functional product squads",
+        ],
+        tags: ["Product Mgmt", "Quadratic Funding", "Operations"],
+        location: "Remote / Barcelona",
     },
     {
         role: "Contributor (Security & Ops)",
         company: "The DAO Security Fund",
         period: "Current",
-        desc: "Coordinating whitehat security initiatives and safeguarding the Ethereum ecosystem. Leveraging historical DAO funds to bolster network resilience."
+        desc: "Coordinating whitehat security initiatives and safeguarding the Ethereum ecosystem. Leveraging historical DAO funds to bolster network resilience.",
+        hover_bullets: [
+            "Whitehat coordination",
+            "Fund governance & allocation",
+            "Ecosystem resilience planning",
+        ],
+        tags: ["Security", "DAO Gov", "Ops"],
+        location: "Remote",
     },
     {
         title: "Monero Meetups BCN",
         role: "Co-organizer",
-        desc: "Privacy-focused community building. Hosting monthly events on cryptography and digital rights in Barcelona."
+        desc: "Privacy-focused community building. Hosting monthly events on cryptography and digital rights in Barcelona.",
+        hover_bullets: [
+            "Monthly event production",
+            "Speaker curation (Privacy/Crypto)",
+            "Community growth strategy",
+        ],
+        tags: ["Privacy", "Events", "Community"],
+        location: "Barcelona, Spain",
     },
     {
         role: "Co-Founder & Operations Lead",
         company: "ETHBarcelona",
         period: "2022 – 2024",
-        desc: "Scaled a localized Web3 conference to 2,500+ attendees. Managed production, staffing, and infinite operational chaos."
-    }
+        desc: "Scaled a localized Web3 conference to 2,500+ attendees. Managed production, staffing, and infinite operational chaos.",
+        hover_bullets: [
+            "Scaled to 2,500+ attendees",
+            "Managed $500k+ budget",
+            "Led 30+ core team & vols",
+        ],
+        tags: ["Event Ops", "Leadership", "Ethereum"],
+        location: "Barcelona, Spain",
+    },
 ];
 ---
 
@@ -34,20 +59,25 @@ const experiences = [
         <h2>Experience</h2>
         <span class="mono">/log</span>
     </div>
-    
+
     <div class="timeline">
-        {experiences.map((exp, index) => (
-            <div class="entry">
-                <div class="meta mono">
-                    <span class="period">{exp.period}</span>
+        {
+            experiences.map((exp, index) => (
+                <div
+                    class="entry hover-trigger"
+                    data-hover-data={JSON.stringify(exp)}
+                >
+                    <div class="meta mono">
+                        <span class="period">{exp.period}</span>
+                    </div>
+                    <div class="content">
+                        <h3>{exp.title || exp.role}</h3>
+                        {exp.company && <h4 class="company">{exp.company}</h4>}
+                        <p>{exp.desc}</p>
+                    </div>
                 </div>
-                <div class="content">
-                    <h3>{exp.role}</h3>
-                    <h4 class="company">{exp.company}</h4>
-                    <p>{exp.desc}</p>
-                </div>
-            </div>
-        ))}
+            ))
+        }
     </div>
 </section>
 
