@@ -15,12 +15,13 @@ const { title, description = "Yegor Golovnia - Web3 Operations Generalist" } =
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content={description} />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
 	<body>
+		<div class="atmosphere" aria-hidden="true"></div>
 		<div id="content-shifter">
 			<main class="container">
 				<slot />

@@ -9,6 +9,11 @@ export interface QueueItem {
     char?: string;
 }
 
+function prefersReducedMotion(): boolean {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export class TextScramble {
     el: HTMLElement;
     chars: string;
@@ -34,6 +39,13 @@ export class TextScramble {
     }
 
     setText(newText: string, mode: "normal" | "encrypt" = "normal") {
+        if (prefersReducedMotion()) {
+            this.el.textContent = newText;
+            this.originalText = newText;
+            this.el.dataset.originalText = newText;
+            return;
+        }
+
         const oldText = this.el.innerText;
         const length = Math.max(oldText.length, newText.length);
         this.queue = [];
@@ -73,7 +85,7 @@ export class TextScramble {
                         char = this.chars[Math.floor(Math.random() * this.chars.length)];
                         this.queue[i].char = char;
                     }
-                    const colorClass = Math.random() > 0.5 ? "dud-rgb" : "dud-mono";
+                    const colorClass = Math.random() > 0.8 ? "dud-rgb" : "dud-mono";
                     output += `<span class="${colorClass}">${char}</span>`;
                 } else {
                     output += to;
@@ -83,7 +95,7 @@ export class TextScramble {
                     char = this.chars[Math.floor(Math.random() * this.chars.length)];
                     this.queue[i].char = char;
                 }
-                const colorClass = Math.random() > 0.6 ? "dud-rgb" : "dud-mono";
+                const colorClass = Math.random() > 0.8 ? "dud-rgb" : "dud-mono";
                 output += `<span class="${colorClass}">${char}</span>`;
             } else {
                 output += from;
@@ -105,8 +117,23 @@ export class TextScramble {
         }
     }
 
+    setTextInstant(newText: string) {
+        if (this.frameRequest) cancelAnimationFrame(this.frameRequest);
+        this.frameRequest = null;
+        this.el.textContent = newText;
+        this.originalText = newText;
+        this.el.dataset.originalText = newText;
+    }
+
     restore() {
         this.setText(this.originalText, "normal");
+    }
+
+    restoreInstant() {
+        if (this.frameRequest) cancelAnimationFrame(this.frameRequest);
+        this.frameRequest = null;
+        this.el.textContent = this.originalText;
+        this.el.dataset.originalText = this.originalText;
     }
 }
 
@@ -136,27 +163,29 @@ export class GlitchCanvas {
         if (!this.ctx) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        if (prefersReducedMotion()) return;
+
         if (this.stretchFactor > 0.01) {
-            const chunks = Math.floor(180 * this.stretchFactor);
+            const chunks = Math.floor(110 * this.stretchFactor);
             for (let i = 0; i < chunks; i++) {
-                const h = Math.random() * 60 * this.stretchFactor + 2;
-                const w = Math.random() * this.canvas.width * 0.8 * this.stretchFactor + 30;
+                const h = Math.random() * 50 * this.stretchFactor + 2;
+                const w = Math.random() * this.canvas.width * 0.7 * this.stretchFactor + 24;
                 const x = Math.random() * this.canvas.width - w / 2;
                 const y = Math.random() * this.canvas.height;
                 const rand = Math.random();
 
                 // SUBTLER COLORS
                 if (rand > 0.95)
-                    this.ctx.fillStyle = `rgba(255, 255, 255, ${0.5 * this.stretchFactor})`;
+                    this.ctx.fillStyle = `rgba(255, 255, 255, ${0.35 * this.stretchFactor})`;
                 else if (rand > 0.9)
-                    this.ctx.fillStyle = `rgba(255, 100, 100, ${0.4 * this.stretchFactor})`;
+                    this.ctx.fillStyle = `rgba(255, 100, 100, ${0.25 * this.stretchFactor})`;
                 else if (rand > 0.85)
-                    this.ctx.fillStyle = `rgba(100, 255, 100, ${0.4 * this.stretchFactor})`;
+                    this.ctx.fillStyle = `rgba(100, 255, 100, ${0.25 * this.stretchFactor})`;
                 else if (rand > 0.8)
-                    this.ctx.fillStyle = `rgba(100, 100, 255, ${0.4 * this.stretchFactor})`;
+                    this.ctx.fillStyle = `rgba(100, 100, 255, ${0.25 * this.stretchFactor})`;
                 else if (rand > 0.75)
-                    this.ctx.fillStyle = `rgba(100, 255, 255, ${0.4 * this.stretchFactor})`;
-                else this.ctx.fillStyle = `rgba(0, 0, 0, ${0.8 * this.stretchFactor})`;
+                    this.ctx.fillStyle = `rgba(100, 255, 255, ${0.25 * this.stretchFactor})`;
+                else this.ctx.fillStyle = `rgba(0, 0, 0, ${0.6 * this.stretchFactor})`;
 
                 this.ctx.fillRect(x, y, w, h);
             }
@@ -168,13 +197,13 @@ export class GlitchCanvas {
     }
 
     triggerEntrance() {
-        this.stretchFactor = 1.0;
+        this.stretchFactor = 0.7;
         if (this.animRequest) cancelAnimationFrame(this.animRequest);
         this.draw();
     }
 
     triggerExit() {
-        this.stretchFactor = 1.0; // Blast it
+        this.stretchFactor = 0.7; // Blast it, but calmer
         if (this.animRequest) cancelAnimationFrame(this.animRequest);
         this.draw();
     }

@@ -1,8 +1,5 @@
 /* Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
-/* Importing Uncut Sans from a CDN or similar if available, or using a fallback for now. */
-/* Using a similar modern sans-serif from Google Fonts as a proxy for Uncut Sans if not locally available: 'Inter' or 'Manrope' */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
 :root {
     --color-bg: #050505;
@@ -14,8 +11,7 @@
     --color-accent-subtle: #2a2a2a;
 
     --font-mono: 'Space Mono', monospace;
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    /* "Uncut Sans" vibe */
+    --font-sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 * {
@@ -34,6 +30,7 @@ body {
     font-size: 16px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    position: relative;
 }
 
 h1,
@@ -48,6 +45,13 @@ h6 {
     line-height: 1.2;
     letter-spacing: -0.02em;
     /* Tight tracking for modern feel */
+}
+
+h1,
+h2 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: -0.02em;
 }
 
 a {
@@ -68,6 +72,35 @@ a:hover {
     padding: 0 1.5rem;
 }
 
+.atmosphere {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(60vw 50vh at 10% 15%, rgba(120, 90, 255, 0.18), rgba(0, 0, 0, 0)),
+        radial-gradient(50vw 45vh at 85% 20%, rgba(0, 200, 180, 0.16), rgba(0, 0, 0, 0)),
+        radial-gradient(55vw 55vh at 30% 90%, rgba(255, 120, 80, 0.12), rgba(0, 0, 0, 0));
+    filter: blur(30px);
+    opacity: 0.8;
+}
+
+.atmosphere::after {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+    mix-blend-mode: soft-light;
+    opacity: 0.08;
+    pointer-events: none;
+}
+
+#content-shifter {
+    position: relative;
+    z-index: 1;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
     width: 6px;
@@ -80,4 +113,13 @@ a:hover {
 ::-webkit-scrollbar-thumb {
     background: var(--color-accent-subtle);
     border-radius: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
 }

@@ -109,13 +109,13 @@ export default function ExperienceOverlay() {
                         onClick={close}
                     />
 
-                    {/* Sheet */}
+                    {/* Modal */}
                     <motion.div
-                        className="overlay-side"
-                        initial={{ x: "100%" }}
-                        animate={{ x: 0 }}
-                        exit={{ x: "100%" }}
-                        transition={{ type: "tween", ease: "easeOut", duration: 0.3 }}
+                        className="overlay-modal"
+                        initial={{ opacity: 0, scale: 0.96, x: "-50%", y: "-50%" }}
+                        animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
+                        exit={{ opacity: 0, scale: 0.98, x: "-50%", y: "-50%" }}
+                        transition={{ type: "tween", ease: "easeOut", duration: 0.25 }}
                         ref={containerRef}
                     >
                         <canvas

@@ -4,7 +4,6 @@ import Hero from "../components/Hero.astro";
 import CaseStudies from "../components/CaseStudies.astro";
 import Experience from "../components/Experience.astro";
 import Lifestyle from "../components/Lifestyle.astro";
-import CursorTrace from "../components/CursorTrace.astro";
 import HoverPopup from "../components/HoverPopup.astro";
 import ExperienceOverlay from "../components/ExperienceOverlay";
 
@@ -63,7 +62,7 @@ const links = [
         <div class="links-grid">
             {
                 links.map((link) => (
-                    <a href={link.url} target="_blank" class="link-item">
+                    <a href={link.url} target="_blank" rel="noopener noreferrer" class="link-item">
                         <span class="arrow">→</span> {link.label}
                     </a>
                 ))

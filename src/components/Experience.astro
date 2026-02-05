@@ -63,9 +63,11 @@ const experiences = [
     <div class="timeline">
         {
             experiences.map((exp, index) => (
-                <div
+                <button
+                    type="button"
                     class="entry hover-trigger"
                     data-hover-data={JSON.stringify(exp)}
+                    aria-label={`Open details for ${exp.title || exp.role}`}
                 >
                     <div class="meta mono">
                         <span class="period">{exp.period}</span>
@@ -75,7 +77,7 @@ const experiences = [
                         {exp.company && <h4 class="company">{exp.company}</h4>}
                         <p>{exp.desc}</p>
                     </div>
-                </div>
+                </button>
             ))
         }
     </div>
@@ -111,6 +113,12 @@ const experiences = [
         display: grid;
         grid-template-columns: 1fr;
         gap: 1rem;
+        background: transparent;
+        border: none;
+        padding: 0;
+        text-align: left;
+        color: inherit;
+        font: inherit;
     }
 
     .meta {
@@ -121,7 +129,10 @@ const experiences = [
     h3 {
         font-size: 1.2rem;
         font-weight: 600;
-        margin-bottom: 0.2rem;
+        margin: 0 0 0.2rem 0;
+        line-height: 1.2;
+        min-height: 1.2em;
+        display: block;
     }
 
     .company {
@@ -145,6 +156,24 @@ const experiences = [
             gap: 2rem;
             cursor: pointer;
         }
+    }
+
+    .entry:hover h3,
+    .entry:focus-visible h3 {
+        color: #e7fff4;
+        text-shadow:
+            0 0 6px rgba(100, 255, 180, 0.25),
+            0 0 14px rgba(100, 255, 180, 0.18);
+    }
+
+    .entry:hover .company,
+    .entry:focus-visible .company {
+        color: rgba(160, 255, 220, 0.7);
+    }
+
+    .entry:focus-visible {
+        outline: 2px solid var(--color-text);
+        outline-offset: 6px;
     }
 </style>
 

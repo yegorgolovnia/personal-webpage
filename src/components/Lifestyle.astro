@@ -1,8 +1,5 @@
 ---
-import { getLatestActivity } from '../lib/strava';
-
-const stravaActivities = await getLatestActivity();
-const activities = Array.isArray(stravaActivities) ? stravaActivities.slice(0, 5) : [];
+const activities: any[] = [];
 
 // Spotify Data - Hardcoded for now as per design
 const spotifyPlaylists = [
@@ -106,7 +103,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
             <div class="cube-wrapper">
                 <div class="cube">
                     {spotifyPlaylists.map((playlist, index) => (
-                        <a href={playlist.link} target="_blank" class="face spotify" style={`--i: ${index}`}>
+                        <a href={playlist.link} target="_blank" rel="noopener noreferrer" class="face spotify" style={`--i: ${index}`}>
                             <div class="icon-header">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M9 18V5l12-2v13"></path>
@@ -130,7 +127,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
                     ))}
                     
                     <!-- Spotify Profile Card -->
-                    <a href="https://open.spotify.com/user/22vwofsgpsjmnw5gzow7pi5ly?si=d1d7580cd8b3469e" target="_blank" class="face spotify profile-card" style={`--i: ${spotifyPlaylists.length}`}>
+                    <a href="https://open.spotify.com/user/22vwofsgpsjmnw5gzow7pi5ly?si=d1d7580cd8b3469e" target="_blank" rel="noopener noreferrer" class="face spotify profile-card" style={`--i: ${spotifyPlaylists.length}`}>
                          <div class="icon-header">
                             <span class="mono">Spotify / Profile</span>
                         </div>
@@ -139,7 +136,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
                         </div>
                     </a>
 
-                    <!-- Dummy Face for Bottom Glance -->
+                    <!-- Dummy Face for Bottom Glance (not scrollable) -->
                     <div class="face spotify dummy-face" style={`--i: ${spotifyPlaylists.length + 1}`}></div>
                 </div>
             </div>
@@ -152,7 +149,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
                     {activities.length > 0 ? (
                         <>
                             {activities.map((activity: any, index: number) => (
-                                 <a href={`https://www.strava.com/activities/${activity.id}`} target="_blank" class="face strava" style={`--i: ${index}`}>
+                                 <a href={`https://www.strava.com/activities/${activity.id}`} target="_blank" rel="noopener noreferrer" class="face strava" style={`--i: ${index}`}>
                                     <div class="icon-header">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <circle cx="12" cy="12" r="10"></circle>
@@ -186,7 +183,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
                             ))}
                             
                             <!-- Profile Card as the Last Face -->
-                            <a href="https://www.strava.com/athletes/yegorgolovnia" target="_blank" class="face strava profile-card" style={`--i: ${activities.length}`}>
+                            <a href="https://www.strava.com/athletes/yegorgolovnia" target="_blank" rel="noopener noreferrer" class="face strava profile-card" style={`--i: ${activities.length}`}>
                                  <div class="icon-header">
                                     <span class="mono">Strava / Profile</span>
                                 </div>
@@ -195,12 +192,12 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
                                 </div>
                             </a>
 
-                            <!-- Dummy Face for Bottom Glance -->
+                            <!-- Dummy Face for Bottom Glance (not scrollable) -->
                             <div class="face strava dummy-face" style={`--i: ${activities.length + 1}`}></div>
                         </>
                     ) : (
                         <div class="face strava empty" style="--i: 0">
-                            <span class="mono">No data available</span>
+                            <span class="mono">Loading Strava...</span>
                         </div>
                     )}
                 </div>
@@ -380,55 +377,230 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
     @media (min-width: 768px) {
         .grid { grid-template-columns: repeat(2, 1fr); }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+        .cube-wrapper,
+        .cube {
+            transition: none;
+        }
+        .disc,
+        .pulse {
+            animation: none;
+        }
+    }
+</style>
+
+<style is:global>
+    #lifestyle .face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000000;
+        border: 1px solid var(--color-accent-subtle);
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        color: inherit;
+        backface-visibility: hidden;
+        overflow: hidden;
+        transform: rotateX(calc(var(--i) * -90deg)) translateZ(var(--cube-radius));
+        box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.02);
+        transition: opacity 0.3s ease, visibility 0.3s ease, border-color 0.3s ease;
+    }
+    #lifestyle .face.hidden-face {
+        opacity: 0;
+        visibility: hidden;
+    }
+    #lifestyle .dummy-face {
+        pointer-events: none;
+    }
+
+    #lifestyle .spotify .content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-grow: 1;
+        transform: translateY(-5px);
+    }
+    #lifestyle .art {
+        width: 56px;
+        height: 56px;
+        background: #333;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        margin-right: 1.25rem;
+        flex-shrink: 0;
+    }
+    #lifestyle .disc {
+        width: 100%;
+        height: 100%;
+        background: conic-gradient(from 0deg, #333, #666);
+        border-radius: 50%;
+        animation: spin 4s linear infinite;
+    }
+    @keyframes spin {
+        100% { transform: rotate(360deg); }
+    }
+
+    #lifestyle .spotify .info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    #lifestyle .spotify .playlist-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.25rem;
+    }
+    #lifestyle .spotify .curated-by {
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    #lifestyle .strava .activity-meta {
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-start;
+        gap: 0.8rem;
+        width: 100%;
+        margin-bottom: 0;
+    }
+    #lifestyle .strava .type-large {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #FC4C02;
+        letter-spacing: -0.02em;
+    }
+    #lifestyle .strava .date {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+    }
+
+    #lifestyle .stat-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 0;
+    }
+    #lifestyle .label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: block;
+        margin-bottom: 0.25rem;
+        color: var(--color-text-muted);
+    }
+    #lifestyle .val {
+        font-size: 1.15rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+    }
+
+    #lifestyle .strava .content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-top: 0;
+        gap: 0.25rem;
+    }
+
+    #lifestyle .icon-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        color: var(--color-text);
+        margin-bottom: 0;
+        height: 24px;
+    }
+
+    #lifestyle .status {
+        position: absolute;
+        bottom: 1.2rem;
+        left: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+    }
+    #lifestyle .pulse {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    #lifestyle .spotify .pulse {
+        background: #1DB954;
+        box-shadow: 0 0 5px #1DB954;
+    }
+    #lifestyle .strava .pulse {
+        background: #FC4C02;
+        box-shadow: 0 0 5px #FC4C02;
+    }
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    #lifestyle .center-msg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+
+    #lifestyle .spotify-cube .profile-card { border-color: #1DB954; }
+    #lifestyle .strava-cube .profile-card { border-color: #FC4C02; }
+
+    #lifestyle .spotify-cube .profile-card:hover .center-msg { color: #1DB954; }
+    #lifestyle .strava-cube .profile-card:hover .center-msg { color: #FC4C02; }
 </style>
 
 <script>
-    // Debounce function
-    function debounce(func: Function, wait: number) {
-        let timeout: ReturnType<typeof setTimeout>;
-        return function executedFunction(...args: any[]) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const cubeControllers = new WeakMap();
 
-    const containers = document.querySelectorAll('.cube-container');
+    function setupCube(container) {
+        if (cubeControllers.has(container)) return cubeControllers.get(container);
 
-    containers.forEach(container => {
-        // We rotate the WRAPPER now, not the inner cube (which handles tilt)
-        const rotator = container.querySelector('.cube-wrapper') as HTMLElement;
-        if (!rotator) return;
-
-        const totalFaces = parseInt(container.getAttribute('data-total') || '1');
-        const faces = container.querySelectorAll('.face');
+        const rotator = container.querySelector('.cube-wrapper');
+        if (!rotator) return null;
 
         let currentIndex = 0;
         let isScrolling = false;
-        let scrollTimeout: ReturnType<typeof setTimeout>;
+        let scrollTimeout;
 
-        // Function to hide faces that are "far away" to prevent z-fighting/overlap
-        const updateVisibility = (index: number) => {
+        const getFaces = () => container.querySelectorAll('.face');
+        const getTotalFaces = () => parseInt(container.getAttribute('data-total') || '1');
+
+        const updateVisibility = (index) => {
+            const faces = getFaces();
             faces.forEach((face, i) => {
-                // Toggle active-face for specific border styling
                 if (i === index) {
                     face.classList.add('active-face');
                 } else {
                     face.classList.remove('active-face');
                 }
 
-                // Show current, previous (-1), and next (+1) for smooth tilt/scroll
                 if (Math.abs(i - index) <= 1) {
                     face.classList.remove('hidden-face');
                 } else {
                     face.classList.add('hidden-face');
                 }
             });
-            
-            // Set first-card class for tilt logic
+
             if (index === 0) {
                 container.classList.add('first-card');
             } else {
@@ -436,82 +608,254 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
             }
         };
 
-        // Initial state
-        updateVisibility(0);
-        container.classList.toggle('first-card', currentIndex === 0);
+        const reset = () => {
+            currentIndex = 0;
+            rotator.style.transform = `rotateX(0deg)`;
+            updateVisibility(0);
+        };
 
-
-        const handleInteraction = (direction: number) => {
-             // Simple debounce/throttle logic
+        const handleInteraction = (direction) => {
             if (isScrolling) return;
-
             isScrolling = true;
 
+            const totalFaces = getTotalFaces();
             const newIndex = currentIndex + direction;
 
-            // Clamp: 0 to totalFaces - 1
             if (newIndex >= 0 && newIndex < totalFaces) {
                 currentIndex = newIndex;
                 const rotation = currentIndex * 90;
                 rotator.style.transform = `rotateX(${rotation}deg)`;
-                
-                // Update visibility
                 updateVisibility(currentIndex);
             }
 
-            // Lock for 500ms
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 isScrolling = false;
-            }, 500); 
+            }, 500);
         };
 
         container.addEventListener('wheel', (e) => {
-            const wheelEvent = e as WheelEvent;
-            // Prevent default page scroll to allow interaction
+            if (prefersReducedMotion) return;
+            const wheelEvent = e;
             wheelEvent.preventDefault();
-
-            // Threshold
             if (Math.abs(wheelEvent.deltaY) < 10) return;
-
             const direction = wheelEvent.deltaY > 0 ? 1 : -1;
             handleInteraction(direction);
-
         }, { passive: false });
 
-        // Touch handling
         let touchStartY = 0;
         let lastInteractionTime = 0;
 
         container.addEventListener('touchstart', (e) => {
-            touchStartY = (e as TouchEvent).touches[0].clientY;
+            touchStartY = e.touches[0].clientY;
         }, { passive: false });
 
         container.addEventListener('touchmove', (e) => {
-             e.preventDefault(); // Prevent page scrolling
-             
-             const touchCurrentY = (e as TouchEvent).touches[0].clientY;
-             const swipeDistance = touchStartY - touchCurrentY; // Positive = Drag Up
-             const minSwipeDistance = 40; // Reduced threshold for better sensitivity, but not too low to flap
+            if (prefersReducedMotion) return;
+            e.preventDefault();
+            const touchCurrentY = e.touches[0].clientY;
+            const swipeDistance = touchStartY - touchCurrentY;
+            const minSwipeDistance = 40;
 
-             // Throttle logic specifically for touchmove
-             const now = Date.now();
-             if (now - lastInteractionTime < 300) return; // Prevent rapid spinning
+            const now = Date.now();
+            if (now - lastInteractionTime < 300) return;
 
-             if (Math.abs(swipeDistance) > minSwipeDistance) {
-                 const direction = swipeDistance > 0 ? 1 : -1;
-                 
-                 handleInteraction(direction);
-                 
-                 // Reset start point to allow continuous swiping without lifting finger
-                 touchStartY = touchCurrentY;
-                 lastInteractionTime = now;
-             }
+            if (Math.abs(swipeDistance) > minSwipeDistance) {
+                const direction = swipeDistance > 0 ? 1 : -1;
+                handleInteraction(direction);
+                touchStartY = touchCurrentY;
+                lastInteractionTime = now;
+            }
         }, { passive: false });
 
-        // Touchend no longer needed for trigger, but cleanliness
-        container.addEventListener('touchend', (e) => {
-            // Optional: Snap or finalize if needed. Currently logic handles it step-by-step
-        }, { passive: false });
+        container.addEventListener('touchend', () => {}, { passive: false });
+
+        const controller = { reset };
+        cubeControllers.set(container, controller);
+        reset();
+        return controller;
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function formatDuration(seconds) {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        if (h > 0) return `${h}h ${m}m`;
+        return `${m}m ${s}s`;
+    }
+
+    function formatPace(time, distance, isSwim = false) {
+        let pace;
+        if (isSwim) {
+            pace = (time / 60) / (distance / 100);
+        } else {
+            pace = (time / 60) / (distance / 1000);
+        }
+        const paceMins = Math.floor(pace);
+        const paceSecs = Math.round((pace - paceMins) * 60);
+        return `${paceMins}:${paceSecs.toString().padStart(2, '0')}`;
+    }
+
+    function formatSpeed(time, distance) {
+        const speedMps = distance / time;
+        const speedKmh = speedMps * 3.6;
+        return speedKmh.toFixed(1);
+    }
+
+    function getActivityStats(activity) {
+        if (!activity) return { label1: '-', val1: '-', label2: '-', val2: '-' };
+
+        const type = activity.type;
+        const isRun = type === 'Run' || type === 'Walk' || type === 'Hike';
+        const isRide = type === 'Ride' || type === 'VirtualRide';
+        const isSwim = type === 'Swim';
+
+        let burnVal = 0;
+        if (activity.kilojoules) {
+            burnVal = Math.round(activity.kilojoules);
+        } else if (activity.calories) {
+            burnVal = Math.round(activity.calories);
+        }
+
+        const distKm = (activity.distance / 1000).toFixed(2);
+        const timeStr = formatDuration(activity.moving_time);
+
+        let stats = {
+            label1: 'Time',
+            val1: timeStr,
+            label2: 'Burn',
+            val2: burnVal > 0 ? `${burnVal}kcal` : '-'
+        };
+
+        if (isRun) {
+            stats = {
+                label1: 'Dist',
+                val1: `${distKm}km`,
+                label2: 'Pace',
+                val2: `${formatPace(activity.moving_time, activity.distance)}/km`
+            };
+        } else if (isRide) {
+            stats = {
+                label1: 'Dist',
+                val1: `${distKm}km`,
+                label2: 'Speed',
+                val2: `${formatSpeed(activity.moving_time, activity.distance)}km/h`
+            };
+        } else if (isSwim) {
+            stats = {
+                label1: 'Dist',
+                val1: `${(activity.distance).toFixed(0)}m`,
+                label2: 'Pace',
+                val2: `${formatPace(activity.moving_time, activity.distance, true)}/100m`
+            };
+        }
+
+        return stats;
+    }
+
+    function renderStravaFaces(activities) {
+        if (!activities || activities.length === 0) {
+            return `<div class="face strava empty" style="--i: 0"><span class="mono">No data available</span></div>`;
+        }
+
+        const activityFaces = activities.map((activity, index) => {
+            const stats = getActivityStats(activity);
+            const date = activity.start_date ? new Date(activity.start_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
+            const type = escapeHtml(activity.type || 'Activity');
+            const stat1 = escapeHtml(stats.label1);
+            const stat1Val = escapeHtml(stats.val1);
+            const stat2 = escapeHtml(stats.label2);
+            const stat2Val = escapeHtml(stats.val2);
+
+            return `
+                <a href="https://www.strava.com/activities/${activity.id}" target="_blank" rel="noopener noreferrer" class="face strava" style="--i: ${index}">
+                    <div class="icon-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span class="mono">Strava / Workout</span>
+                    </div>
+                    <div class="content">
+                        <div class="activity-meta">
+                            <span class="type-large">${type}</span>
+                            <span class="date mono">${escapeHtml(date)}</span>
+                        </div>
+                        <div class="stat-row">
+                            <div>
+                                <span class="label mono">${stat1}</span>
+                                <div class="val">${stat1Val}</div>
+                            </div>
+                            <div>
+                                <span class="label mono">${stat2}</span>
+                                <div class="val">${stat2Val}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="status mono">
+                        ${index === 0 ? '<span class="pulse"></span>' : ''}
+                        ${index === 0 ? 'Latest Activity' : 'Past Activity'}
+                    </div>
+                </a>
+            `;
+        }).join('');
+
+        const profileIndex = activities.length;
+        const dummyIndex = activities.length + 1;
+
+        const profileFace = `
+            <a href="https://www.strava.com/athletes/yegorgolovnia" target="_blank" rel="noopener noreferrer" class="face strava profile-card" style="--i: ${profileIndex}">
+                <div class="icon-header">
+                    <span class="mono">Strava / Profile</span>
+                </div>
+                <div class="center-msg mono">
+                    <span>Follow me on Strava ↗</span>
+                </div>
+            </a>
+        `;
+
+        const dummyFace = `<div class="face strava dummy-face" style="--i: ${dummyIndex}"></div>`;
+
+        return activityFaces + profileFace + dummyFace;
+    }
+
+    async function refreshStrava() {
+        try {
+            const res = await fetch('/api/strava.json');
+            if (!res.ok) throw new Error('Failed to fetch Strava');
+            const data = await res.json();
+            const activities = Array.isArray(data) ? data.slice(0, 5) : [];
+
+            const container = document.querySelector('.strava-cube');
+            if (!container) return;
+
+            const cube = container.querySelector('.cube');
+            if (!cube) return;
+
+            container.setAttribute('data-total', String(activities.length + 1));
+            cube.innerHTML = renderStravaFaces(activities);
+
+            const controller = setupCube(container);
+            if (controller) controller.reset();
+        } catch (err) {
+            // Keep existing content if fetch fails
+            console.warn('Strava refresh failed', err);
+        }
+    }
+
+    document.querySelectorAll('.cube-container').forEach(container => {
+        setupCube(container);
     });
+
+    refreshStrava();
+    setInterval(refreshStrava, 30 * 60 * 1000);
 </script>

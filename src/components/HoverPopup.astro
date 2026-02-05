@@ -56,6 +56,7 @@
         const tagsEl = sidebar.querySelector(".tags-row") as HTMLElement;
 
         let hideTimeout: ReturnType<typeof setTimeout>;
+        const titleRestoreTimers = new WeakMap<TextScramble, ReturnType<typeof setTimeout>>();
         let isOpen = false;
 
         // Track active row to prevent duplicate triggers
@@ -109,7 +110,6 @@
         };
 
         function updateContent(data: any) {
-            glitchCanvas.setStretch(0.8);
             setTimeout(() => {
                 fillData(data);
                 contentWrapper.style.opacity = "1";
@@ -118,6 +118,8 @@
 
         // ROW INTERACTION
         function encryptRow(trigger: HTMLElement) {
+            if (window.innerWidth < 1024) return;
+            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
             if (trigger === currentHoveredRow) return;
 
             restoreActiveRows();
@@ -125,24 +127,34 @@
 
             const targets = [
                 trigger.querySelector("h3"),
-                trigger.querySelector(".company"),
-                trigger.querySelector(".period"),
-                trigger.querySelector("p"),
             ];
 
             targets.forEach((el) => {
                 if (el) {
-                    // DIMENSION LOCK: Freeze dimensions to prevent bumping
+                    // DIMENSION LOCK: Prevent layout shift without cropping
                     const rect = el.getBoundingClientRect();
                     (el as HTMLElement).style.width = `${rect.width}px`;
                     (el as HTMLElement).style.height = `${rect.height}px`;
-                    (el as HTMLElement).style.display = "block"; // Ensure it respects dimensions
-                    (el as HTMLElement).style.overflow = "hidden";
+                    (el as HTMLElement).style.display = "inline-block";
+                    (el as HTMLElement).style.overflow = "visible";
 
                     const s = new TextScramble(el as HTMLElement);
                     activeRowScramblers.push(s);
                     s.setText((el as HTMLElement).innerText, "encrypt");
                     el.classList.add("encrypted-row-text");
+
+                    const existing = titleRestoreTimers.get(s);
+                    if (existing) clearTimeout(existing);
+                    const timer = setTimeout(() => {
+                        s.restoreInstant();
+                        s.el.classList.remove("encrypted-row-text");
+                        s.el.style.width = "";
+                        s.el.style.height = "";
+                        s.el.style.display = "";
+                        s.el.style.overflow = "";
+                        titleRestoreTimers.delete(s);
+                    }, 400);
+                    titleRestoreTimers.set(s, timer);
                 }
             });
         }
@@ -157,7 +169,7 @@
                 s.el.style.height = "";
                 s.el.style.display = "";
                 s.el.style.overflow = "";
-                s.restore();
+                s.restoreInstant();
             });
             activeRowScramblers = [];
             currentHoveredRow = null;
@@ -181,6 +193,7 @@
                     sidebar!.classList.remove("hidden");
                     sidebar!.classList.add("visible");
                     triggerEntranceEffect();
+                    document.body.classList.add("hover-sidebar-open");
                     isOpen = true;
                 } else {
                     updateContent(data);
@@ -197,6 +210,7 @@
 
                 sidebar!.classList.remove("visible");
                 sidebar!.classList.add("hidden");
+                document.body.classList.remove("hover-sidebar-open");
 
                 isOpen = false;
             }, 100);
@@ -234,6 +248,13 @@
                 scheduleHide();
             }
         });
+
+        window.addEventListener("scroll", () => {
+            if (currentHoveredRow) {
+                restoreActiveRows();
+                scheduleHide();
+            }
+        }, { passive: true });
     }
 </script>
 
@@ -294,32 +315,65 @@
         position: relative;
     }
 
+    .panel-surface::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+            repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.03),
+                rgba(255, 255, 255, 0.03) 1px,
+                transparent 1px,
+                transparent 4px
+            );
+        opacity: 0.25;
+        mix-blend-mode: screen;
+        pointer-events: none;
+        animation: scanline 8s linear infinite;
+    }
+
+    @keyframes scanline {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(24px); }
+    }
+
     :global(.dud-mono) {
-        font-family: var(--font-mono);
+        font-family: inherit;
+        font-weight: inherit;
         color: var(--color-accent-subtle);
         opacity: 0.6;
     }
     :global(.dud-rgb) {
-        font-family: var(--font-mono);
+        font-family: inherit;
+        font-weight: inherit;
         color: rgba(255, 100, 255, 0.8);
         text-shadow: 1px 0 rgba(100, 255, 100, 0.5);
         opacity: 0.9;
     }
 
     :global(.encrypted-row-text) {
-        font-family: var(--font-mono);
-        color: var(--color-accent-subtle);
-        text-shadow: 0 0 3px rgba(100, 255, 100, 0.3);
+        font-family: inherit;
+        color: rgba(170, 255, 220, 0.6);
+        text-shadow:
+            0 0 6px rgba(100, 255, 200, 0.2),
+            0 0 12px rgba(100, 255, 200, 0.12);
 
         /* OPTICAL COMPENSATION */
-        font-size: 0.85em;
-        letter-spacing: -0.5px;
+        font-size: 1em;
+        letter-spacing: 0;
         line-height: inherit;
+        white-space: nowrap;
     }
 
     /* FIX: Make internal spans ignore pointer so they don't re-trigger shuffle */
     :global(.encrypted-row-text span) {
         pointer-events: none;
+        font-family: inherit;
+        font-size: inherit;
+        letter-spacing: inherit;
+        line-height: inherit;
+        display: inline-block;
     }
 
     .content-wrapper {
@@ -328,6 +382,8 @@
         height: 100%;
         justify-content: center;
         transition: opacity 0.3s ease-out;
+        position: relative;
+        z-index: 1;
     }
 
     .meta-row {
@@ -393,5 +449,16 @@
         padding: 4px 10px;
         border-radius: 4px;
         border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    :global(body.hover-sidebar-open #content-shifter) {
+        filter: brightness(0.8);
+        transition: filter 0.2s ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .panel-surface::after {
+            animation: none;
+        }
     }
 </style>

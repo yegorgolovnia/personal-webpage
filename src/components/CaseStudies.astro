@@ -54,9 +54,11 @@ const cases = [
     <div class="grid">
         {
             cases.map((item) => (
-                <div
+                <button
+                    type="button"
                     class="card hover-trigger"
                     data-hover-data={JSON.stringify(item)}
+                    aria-label={`Open details for ${item.title}`}
                 >
                     <div class="top">
                         <h3>{item.title}</h3>
@@ -68,7 +70,7 @@ const cases = [
                         ))}
                     </div>
                     <p>{item.desc}</p>
-                </div>
+                </button>
             ))
         }
     </div>
@@ -106,11 +108,20 @@ const cases = [
         border-radius: 4px; /* Slight roundness for cleaner feel */
         transition: transform 0.2s ease;
         cursor: pointer;
+        width: 100%;
+        text-align: left;
+        color: inherit;
+        font: inherit;
     }
 
     .card:hover {
         transform: translateY(-2px);
         border-color: var(--color-text-muted);
+    }
+
+    .card:focus-visible {
+        outline: 2px solid var(--color-text);
+        outline-offset: 2px;
     }
 
     .top {
