@@ -45,11 +45,9 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
         const isRide = type === 'Ride' || type === 'VirtualRide';
         const isSwim = type === 'Swim';
         
-        // Calculate Calories
+        // Calculate calories from Strava's calories field
         let burnVal = 0;
-        if (activity.kilojoules) {
-            burnVal = Math.round(activity.kilojoules); 
-        } else if (activity.calories) {
+        if (activity.calories) {
             burnVal = Math.round(activity.calories);
         }
         
@@ -720,9 +718,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
         const isSwim = type === 'Swim';
 
         let burnVal = 0;
-        if (activity.kilojoules) {
-            burnVal = Math.round(activity.kilojoules);
-        } else if (activity.calories) {
+        if (activity.calories) {
             burnVal = Math.round(activity.calories);
         }
 
