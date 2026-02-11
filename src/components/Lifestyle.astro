@@ -67,22 +67,22 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
             stats = {
                 label1: 'Dist',
                 val1: `${distKm}km`,
-                label2: 'Pace',
-                val2: `${formatPace(activity.moving_time, activity.distance)}/km`
+                label2: burnVal > 0 ? 'Burn' : 'Pace',
+                val2: burnVal > 0 ? `${burnVal}kcal` : `${formatPace(activity.moving_time, activity.distance)}/km`
             };
         } else if (isRide) {
             stats = {
                 label1: 'Dist',
                 val1: `${distKm}km`,
-                label2: 'Speed',
-                val2: `${formatSpeed(activity.moving_time, activity.distance)}km/h`
+                label2: burnVal > 0 ? 'Burn' : 'Speed',
+                val2: burnVal > 0 ? `${burnVal}kcal` : `${formatSpeed(activity.moving_time, activity.distance)}km/h`
             };
         } else if (isSwim) {
             stats = {
                 label1: 'Dist',
                 val1: `${(activity.distance).toFixed(0)}m`,
-                label2: 'Pace',
-                val2: `${formatPace(activity.moving_time, activity.distance, true)}/100m`
+                label2: burnVal > 0 ? 'Burn' : 'Pace',
+                val2: burnVal > 0 ? `${burnVal}kcal` : `${formatPace(activity.moving_time, activity.distance, true)}/100m`
             };
         }
     
@@ -736,22 +736,22 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
             stats = {
                 label1: 'Dist',
                 val1: `${distKm}km`,
-                label2: 'Pace',
-                val2: `${formatPace(activity.moving_time, activity.distance)}/km`
+                label2: burnVal > 0 ? 'Burn' : 'Pace',
+                val2: burnVal > 0 ? `${burnVal}kcal` : `${formatPace(activity.moving_time, activity.distance)}/km`
             };
         } else if (isRide) {
             stats = {
                 label1: 'Dist',
                 val1: `${distKm}km`,
-                label2: 'Speed',
-                val2: `${formatSpeed(activity.moving_time, activity.distance)}km/h`
+                label2: burnVal > 0 ? 'Burn' : 'Speed',
+                val2: burnVal > 0 ? `${burnVal}kcal` : `${formatSpeed(activity.moving_time, activity.distance)}km/h`
             };
         } else if (isSwim) {
             stats = {
                 label1: 'Dist',
                 val1: `${(activity.distance).toFixed(0)}m`,
-                label2: 'Pace',
-                val2: `${formatPace(activity.moving_time, activity.distance, true)}/100m`
+                label2: burnVal > 0 ? 'Burn' : 'Pace',
+                val2: burnVal > 0 ? `${burnVal}kcal` : `${formatPace(activity.moving_time, activity.distance, true)}/100m`
             };
         }
 

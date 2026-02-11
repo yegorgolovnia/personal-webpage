@@ -40,7 +40,7 @@ export const getLatestActivity = async () => {
 
         const accessToken = tokenData.access_token;
 
-        // 2. Get Activities
+        // 2. Get latest activities (summary objects)
         const activitiesResponse = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=5', {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -57,7 +57,31 @@ export const getLatestActivity = async () => {
             return [];
         }
 
-        return activities; // Return array of activities
+        // 3. Hydrate each activity with detail payload so calories is available when Strava provides it.
+        const detailedActivities = await Promise.all(
+            activities.map(async (activity: any) => {
+                if (!activity?.id) return activity;
+
+                try {
+                    const detailResponse = await fetch(`https://www.strava.com/api/v3/activities/${activity.id}`, {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    });
+
+                    if (!detailResponse.ok) {
+                        return activity;
+                    }
+
+                    const detailedActivity = await detailResponse.json();
+                    return { ...activity, ...detailedActivity };
+                } catch {
+                    return activity;
+                }
+            })
+        );
+
+        return detailedActivities;
     } catch (error) {
         console.error("Error fetching Strava data:", error);
         return null;
