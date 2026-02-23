@@ -83,7 +83,7 @@ Each activity from the Strava API contains:
 | `moving_time` | Active time in seconds |
 | `distance` | Distance in meters |
 | `kilojoules` | Energy output (primarily for cycling) |
-| `calories` | Estimated calories burned |
+| `calories` | Eшіstimated calories burned |
 | `total_elevation_gain` | Elevation gain in meters |
 
 ---
