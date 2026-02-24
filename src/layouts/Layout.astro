@@ -21,6 +21,7 @@ const { title, description = "Yegor Golovnia - Web3 Operations Generalist" } =
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<Analytics />
 	</head>
 	<body>
 		<div class="atmosphere" aria-hidden="true"></div>
@@ -30,7 +31,6 @@ const { title, description = "Yegor Golovnia - Web3 Operations Generalist" } =
 			</main>
 		</div>
 		<slot name="overlays" />
-		<Analytics />
 		<SpeedInsights />
 	</body>
 </html>
