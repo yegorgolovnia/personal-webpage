@@ -1,6 +1,4 @@
 ---
-const activities: any[] = [];
-
 // Spotify Data - Hardcoded for now as per design
 const spotifyPlaylists = [
     { month: "Feb '26", year: "2026", link: "https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ", label: "Monthly Playlist" },
@@ -9,94 +7,7 @@ const spotifyPlaylists = [
     { month: "Nov '25", year: "2025", link: "https://open.spotify.com/playlist/6SzWlZxv8UN46aLpX5RG9x?si=a7c3b25743194c83", label: "Monthly Playlist" },
     { month: "Oct '25", year: "2025", link: "https://open.spotify.com/playlist/1P3Iu18FrIeXAMMqUsLB0a?si=ce80fe238b2344e4", label: "Monthly Playlist" }
 ];
-
-function formatDuration(seconds: number) {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    if (h > 0) return `${h}h ${m}m`;
-    return `${m}m ${s}s`;
-}
-
-function formatPace(time: number, distance: number, isSwim: boolean = false) {
-    let pace;
-    if (isSwim) {
-        pace = (time / 60) / (distance / 100);
-    } else {
-        pace = (time / 60) / (distance / 1000);
-    }
-    const paceMins = Math.floor(pace);
-    const paceSecs = Math.round((pace - paceMins) * 60);
-    return `${paceMins}:${paceSecs.toString().padStart(2, '0')}`;
-}
-
-    function formatSpeed(time: number, distance: number) {
-        const speedMps = distance / time;
-        const speedKmh = speedMps * 3.6;
-        return speedKmh.toFixed(1);
-    }
-
-    function getActivityStats(activity: any) {
-        // Safety check for activity
-        if (!activity) return { label1: '-', val1: '-', label2: '-', val2: '-', label3: '', val3: '' };
-    
-        const type = activity.type;
-        const isRun = type === 'Run' || type === 'Walk' || type === 'Hike';
-        const isRide = type === 'Ride' || type === 'VirtualRide';
-        const isSwim = type === 'Swim';
-        
-        // Calculate calories from Strava's calories field
-        let burnVal = 0;
-        if (activity.calories) {
-            burnVal = Math.round(activity.calories);
-        }
-        
-        // Formatted strings
-        const distKm = (activity.distance / 1000).toFixed(2);
-        const timeStr = formatDuration(activity.moving_time);
-    
-        // Default (Non-Pace / Other): Time + Burn
-        let stats = {
-            label1: 'Time',
-            val1: timeStr,
-            label2: burnVal > 0 ? 'Burn' : '',
-            val2: burnVal > 0 ? `${burnVal}kcal` : '',
-            label3: '',
-            val3: ''
-        };
-    
-        if (isRun) {
-            stats = {
-                label1: 'Dist',
-                val1: `${distKm}km`,
-                label2: 'Pace',
-                val2: `${formatPace(activity.moving_time, activity.distance)}/km`,
-                label3: burnVal > 0 ? 'Burn' : '',
-                val3: burnVal > 0 ? `${burnVal}kcal` : ''
-            };
-        } else if (isRide) {
-            stats = {
-                label1: 'Dist',
-                val1: `${distKm}km`,
-                label2: 'Speed',
-                val2: `${formatSpeed(activity.moving_time, activity.distance)}km/h`,
-                label3: burnVal > 0 ? 'Burn' : '',
-                val3: burnVal > 0 ? `${burnVal}kcal` : ''
-            };
-        } else if (isSwim) {
-            stats = {
-                label1: 'Dist',
-                val1: `${(activity.distance).toFixed(0)}m`,
-                label2: 'Pace',
-                val2: `${formatPace(activity.moving_time, activity.distance, true)}/100m`,
-                label3: burnVal > 0 ? 'Burn' : '',
-                val3: burnVal > 0 ? `${burnVal}kcal` : ''
-            };
-        }
-    
-        return stats;
-    }
-    ---
+---
     <section id="lifestyle">
     <div class="header">
         <h2>Lifestyle</h2>
@@ -149,69 +60,12 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
         </div>
 
         <!-- Strava Cube -->
-        <div class="cube-container strava-cube" data-total={activities.length + 1}>
+        <div class="cube-container strava-cube" data-total="1">
             <div class="cube-wrapper">
                 <div class="cube">
-                    {activities.length > 0 ? (
-                        <>
-                            {activities.map((activity: any, index: number) => (
-                                 <a href={`https://www.strava.com/activities/${activity.id}`} target="_blank" rel="noopener noreferrer" class="face strava" style={`--i: ${index}`}>
-                                    <div class="icon-header">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <polyline points="12 6 12 12 16 14"></polyline>
-                                        </svg>
-                                        <span class="mono">Strava / Workout</span>
-                                    </div>
-                                    <div class="content">
-                                        <div class="activity-meta">
-                                            <span class="type-large">{activity.type}</span>
-                                            <span class="date mono">
-                                                {activity.start_date ? new Date(activity.start_date).toLocaleDateString(undefined, {month:'short', day:'numeric'}) : ''}
-                                            </span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <div>
-                                                <span class="label mono">{getActivityStats(activity).label1}</span>
-                                                <div class="val">{getActivityStats(activity).val1}</div>
-                                            </div>
-                                            <div>
-                                                <span class="label mono">{getActivityStats(activity).label2}</span>
-                                                <div class="val">{getActivityStats(activity).val2}</div>
-                                            </div>
-                                            {getActivityStats(activity).label3 && (
-                                                <div>
-                                                    <span class="label mono">{getActivityStats(activity).label3}</span>
-                                                    <div class="val">{getActivityStats(activity).val3}</div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                     <div class="status mono">
-                                        {index === 0 && <span class="pulse"></span>}
-                                        {index === 0 ? "Latest Activity" : "Past Activity"}
-                                    </div>
-                                </a>
-                            ))}
-                            
-                            <!-- Profile Card as the Last Face -->
-                            <a href="https://www.strava.com/athletes/yegorgolovnia" target="_blank" rel="noopener noreferrer" class="face strava profile-card" style={`--i: ${activities.length}`}>
-                                 <div class="icon-header">
-                                    <span class="mono">Strava / Profile</span>
-                                </div>
-                                <div class="center-msg mono">
-                                    <span>Follow me on Strava ↗</span>
-                                </div>
-                            </a>
-
-                            <!-- Dummy Face for Bottom Glance (not scrollable) -->
-                            <div class="face strava dummy-face" style={`--i: ${activities.length + 1}`}></div>
-                        </>
-                    ) : (
-                        <div class="face strava empty" style="--i: 0">
-                            <span class="mono">Loading Strava...</span>
-                        </div>
-                    )}
+                    <div class="face strava empty" style="--i: 0">
+                        <span class="mono">Loading Strava...</span>
+                    </div>
                 </div>
             </div>
         </div>
