@@ -38,7 +38,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
 
     function getActivityStats(activity: any) {
         // Safety check for activity
-        if (!activity) return { label1: '-', val1: '-', label2: '-', val2: '-' };
+        if (!activity) return { label1: '-', val1: '-', label2: '-', val2: '-', label3: '', val3: '' };
     
         const type = activity.type;
         const isRun = type === 'Run' || type === 'Walk' || type === 'Hike';
@@ -59,30 +59,38 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
         let stats = {
             label1: 'Time',
             val1: timeStr,
-            label2: 'Burn',
-            val2: burnVal > 0 ? `${burnVal}kcal` : '-'
+            label2: burnVal > 0 ? 'Burn' : '',
+            val2: burnVal > 0 ? `${burnVal}kcal` : '',
+            label3: '',
+            val3: ''
         };
     
         if (isRun) {
             stats = {
                 label1: 'Dist',
                 val1: `${distKm}km`,
-                label2: burnVal > 0 ? 'Burn' : 'Pace',
-                val2: burnVal > 0 ? `${burnVal}kcal` : `${formatPace(activity.moving_time, activity.distance)}/km`
+                label2: 'Pace',
+                val2: `${formatPace(activity.moving_time, activity.distance)}/km`,
+                label3: burnVal > 0 ? 'Burn' : '',
+                val3: burnVal > 0 ? `${burnVal}kcal` : ''
             };
         } else if (isRide) {
             stats = {
                 label1: 'Dist',
                 val1: `${distKm}km`,
-                label2: burnVal > 0 ? 'Burn' : 'Speed',
-                val2: burnVal > 0 ? `${burnVal}kcal` : `${formatSpeed(activity.moving_time, activity.distance)}km/h`
+                label2: 'Speed',
+                val2: `${formatSpeed(activity.moving_time, activity.distance)}km/h`,
+                label3: burnVal > 0 ? 'Burn' : '',
+                val3: burnVal > 0 ? `${burnVal}kcal` : ''
             };
         } else if (isSwim) {
             stats = {
                 label1: 'Dist',
                 val1: `${(activity.distance).toFixed(0)}m`,
-                label2: burnVal > 0 ? 'Burn' : 'Pace',
-                val2: burnVal > 0 ? `${burnVal}kcal` : `${formatPace(activity.moving_time, activity.distance, true)}/100m`
+                label2: 'Pace',
+                val2: `${formatPace(activity.moving_time, activity.distance, true)}/100m`,
+                label3: burnVal > 0 ? 'Burn' : '',
+                val3: burnVal > 0 ? `${burnVal}kcal` : ''
             };
         }
     
@@ -171,6 +179,12 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
                                                 <span class="label mono">{getActivityStats(activity).label2}</span>
                                                 <div class="val">{getActivityStats(activity).val2}</div>
                                             </div>
+                                            {getActivityStats(activity).label3 && (
+                                                <div>
+                                                    <span class="label mono">{getActivityStats(activity).label3}</span>
+                                                    <div class="val">{getActivityStats(activity).val3}</div>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                      <div class="status mono">
@@ -484,8 +498,8 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
 
     #lifestyle .stat-row {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
         margin-top: 0;
     }
     #lifestyle .label {
@@ -711,7 +725,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
     }
 
     function getActivityStats(activity) {
-        if (!activity) return { label1: '-', val1: '-', label2: '-', val2: '-' };
+        if (!activity) return { label1: '-', val1: '-', label2: '-', val2: '-', label3: '', val3: '' };
 
         const type = activity.type;
         const isRun = type === 'Run' || type === 'Walk' || type === 'Hike';
@@ -729,30 +743,38 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
         let stats = {
             label1: 'Time',
             val1: timeStr,
-            label2: 'Burn',
-            val2: burnVal > 0 ? `${burnVal}kcal` : '-'
+            label2: burnVal > 0 ? 'Burn' : '',
+            val2: burnVal > 0 ? `${burnVal}kcal` : '',
+            label3: '',
+            val3: ''
         };
 
         if (isRun) {
             stats = {
                 label1: 'Dist',
                 val1: `${distKm}km`,
-                label2: burnVal > 0 ? 'Burn' : 'Pace',
-                val2: burnVal > 0 ? `${burnVal}kcal` : `${formatPace(activity.moving_time, activity.distance)}/km`
+                label2: 'Pace',
+                val2: `${formatPace(activity.moving_time, activity.distance)}/km`,
+                label3: burnVal > 0 ? 'Burn' : '',
+                val3: burnVal > 0 ? `${burnVal}kcal` : ''
             };
         } else if (isRide) {
             stats = {
                 label1: 'Dist',
                 val1: `${distKm}km`,
-                label2: burnVal > 0 ? 'Burn' : 'Speed',
-                val2: burnVal > 0 ? `${burnVal}kcal` : `${formatSpeed(activity.moving_time, activity.distance)}km/h`
+                label2: 'Speed',
+                val2: `${formatSpeed(activity.moving_time, activity.distance)}km/h`,
+                label3: burnVal > 0 ? 'Burn' : '',
+                val3: burnVal > 0 ? `${burnVal}kcal` : ''
             };
         } else if (isSwim) {
             stats = {
                 label1: 'Dist',
                 val1: `${(activity.distance).toFixed(0)}m`,
-                label2: burnVal > 0 ? 'Burn' : 'Pace',
-                val2: burnVal > 0 ? `${burnVal}kcal` : `${formatPace(activity.moving_time, activity.distance, true)}/100m`
+                label2: 'Pace',
+                val2: `${formatPace(activity.moving_time, activity.distance, true)}/100m`,
+                label3: burnVal > 0 ? 'Burn' : '',
+                val3: burnVal > 0 ? `${burnVal}kcal` : ''
             };
         }
 
@@ -772,6 +794,8 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
             const stat1Val = escapeHtml(stats.val1);
             const stat2 = escapeHtml(stats.label2);
             const stat2Val = escapeHtml(stats.val2);
+            const stat3 = escapeHtml(stats.label3);
+            const stat3Val = escapeHtml(stats.val3);
 
             return `
                 <a href="https://www.strava.com/activities/${activity.id}" target="_blank" rel="noopener noreferrer" class="face strava" style="--i: ${index}">
@@ -785,7 +809,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
                     <div class="content">
                         <div class="activity-meta">
                             <span class="type-large">${type}</span>
-                            <span class="date mono">${escapeHtml(date)}</span>
+                            <span class="date mono">${date}</span>
                         </div>
                         <div class="stat-row">
                             <div>
@@ -796,11 +820,16 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
                                 <span class="label mono">${stat2}</span>
                                 <div class="val">${stat2Val}</div>
                             </div>
+                            ${stats.label3 ? `
+                            <div>
+                                <span class="label mono">${stat3}</span>
+                                <div class="val">${stat3Val}</div>
+                            </div>
+                            ` : ''}
                         </div>
                     </div>
                     <div class="status mono">
-                        ${index === 0 ? '<span class="pulse"></span>' : ''}
-                        ${index === 0 ? 'Latest Activity' : 'Past Activity'}
+                        ${index === 0 ? '<span class="pulse"></span> Latest Activity' : 'Past Activity'}
                     </div>
                 </a>
             `;
