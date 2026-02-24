@@ -5,12 +5,10 @@ import Hero from "../components/Hero.astro";
 
 // Updated Linktree links
 const links = [
-    { label: "Email", url: "mailto:hi@yegorgolovnia.com" },
     { label: "Twitter", url: "https://twitter.com/yegorgolovnia" },
     { label: "LinkedIn", url: "https://www.linkedin.com/in/yegorgolovnia/" },
     { label: "Telegram", url: "https://t.me/yegorgolovnia" },
-    { label: "Warpcast", url: "https://warpcast.com/yegor" },
-    { label: "Calendly", url: "https://calendly.com/yegorgolovnia" },
+    { label: "GitHub", url: "https://github.com/yegorgolovnia" },
 ];
 ---
 
@@ -22,7 +20,7 @@ const links = [
 
         <section id="about">
             <div class="header">
-                <h2>System.Info</h2>
+                <h2>About</h2>
                 <span class="pixel-text">/bio</span>
             </div>
             <p class="bio">
@@ -40,7 +38,7 @@ const links = [
 
         <section id="ai-services">
             <div class="header">
-                <h2>Services.Execute()</h2>
+                <h2>Services</h2>
                 <span class="pixel-text">/ai</span>
             </div>
             <div class="services-grid">
@@ -64,7 +62,7 @@ const links = [
         <!-- Re-adding Experience per user request for future merge with Case Studies -->
         <section id="experience" style="margin-bottom: 4rem;">
             <div class="header">
-                <h2>System.History</h2>
+                <h2>Experience</h2>
                 <span class="pixel-text">/experience</span>
             </div>
             <p class="bio text-muted" style="font-size: 1rem;">
@@ -75,26 +73,27 @@ const links = [
 
         <section id="interests">
             <div class="header">
-                <h2>Memory.Allocation</h2>
+                <h2>Current Tech Interests</h2>
                 <span class="pixel-text">/current_interests</span>
             </div>
             <ul class="interests-list">
                 <li>
-                    <span class="color-accent">></span> Agentic Workflows & Auto-Dev
-                    Tools
+                    <span class="color-accent">></span>
+                    <a
+                        href="https://github.com/openclaw/openclaw"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >OpenClaw (github.com/openclaw/openclaw)</a
+                    >
                 </li>
                 <li>
-                    <span class="color-accent">></span> Terminal Aesthetics & WebGL
-                    Interfaces
-                </li>
-                <li>
-                    <span class="color-accent">></span> Decentralized Governance Systems
-                </li>
-                <li>
-                    <span class="color-accent">></span> Long-distance Running & Triathlon
-                </li>
-                <li>
-                    <span class="color-accent">></span> Electronic Music Curation
+                    <span class="color-accent">></span>
+                    <a
+                        href="https://github.com/obra/superpowers"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >SuperPowers (github.com/obra/superpowers)</a
+                    >
                 </li>
             </ul>
         </section>
@@ -103,7 +102,7 @@ const links = [
 
         <footer id="contact">
             <div class="header">
-                <h2>Network.Connect()</h2>
+                <h2>Contact</h2>
                 <span class="pixel-text">/links</span>
             </div>
             <div class="links-grid">
@@ -212,6 +211,8 @@ const links = [
             padding: 1.5rem;
             border-radius: 4px;
             background: rgba(0, 255, 65, 0.02);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             transition: all 0.2s ease;
         }
 
@@ -230,16 +231,19 @@ const links = [
         .link-item {
             font-size: 1.2rem;
             padding: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px dashed var(--color-accent-subtle);
             border-radius: 4px;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            background: rgba(0, 255, 65, 0.02);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
         .link-item:hover {
-            background: var(--color-accent-subtle);
+            background: rgba(0, 255, 65, 0.05);
             color: var(--color-accent);
             border-color: var(--color-accent);
         }

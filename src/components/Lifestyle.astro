@@ -1,14 +1,40 @@
 ---
 // Spotify Data - Hardcoded for now as per design
 const spotifyPlaylists = [
-    { month: "Feb '26", year: "2026", link: "https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ", label: "Monthly Playlist" },
-    { month: "Jan '26", year: "2026", link: "https://open.spotify.com/playlist/3CVIbEDvJ93BTa2GX393PD?si=b8171c174727404e", label: "Monthly Playlist" },
-    { month: "Dec '25", year: "2025", link: "https://open.spotify.com/playlist/0h2wa8isRovLhuDyvJ9zzv?si=0348503b85464872", label: "Monthly Playlist" },
-    { month: "Nov '25", year: "2025", link: "https://open.spotify.com/playlist/6SzWlZxv8UN46aLpX5RG9x?si=a7c3b25743194c83", label: "Monthly Playlist" },
-    { month: "Oct '25", year: "2025", link: "https://open.spotify.com/playlist/1P3Iu18FrIeXAMMqUsLB0a?si=ce80fe238b2344e4", label: "Monthly Playlist" }
+    {
+        month: "Feb '26",
+        year: "2026",
+        link: "https://open.spotify.com/playlist/01QytP6FU4AvHMPM9uzFIZ",
+        label: "Monthly Playlist",
+    },
+    {
+        month: "Jan '26",
+        year: "2026",
+        link: "https://open.spotify.com/playlist/3CVIbEDvJ93BTa2GX393PD?si=b8171c174727404e",
+        label: "Monthly Playlist",
+    },
+    {
+        month: "Dec '25",
+        year: "2025",
+        link: "https://open.spotify.com/playlist/0h2wa8isRovLhuDyvJ9zzv?si=0348503b85464872",
+        label: "Monthly Playlist",
+    },
+    {
+        month: "Nov '25",
+        year: "2025",
+        link: "https://open.spotify.com/playlist/6SzWlZxv8UN46aLpX5RG9x?si=a7c3b25743194c83",
+        label: "Monthly Playlist",
+    },
+    {
+        month: "Oct '25",
+        year: "2025",
+        link: "https://open.spotify.com/playlist/1P3Iu18FrIeXAMMqUsLB0a?si=ce80fe238b2344e4",
+        label: "Monthly Playlist",
+    },
 ];
 ---
-    <section id="lifestyle">
+
+<section id="lifestyle">
     <div class="header">
         <h2>Lifestyle</h2>
         <span class="mono">/api_streams</span>
@@ -16,45 +42,83 @@ const spotifyPlaylists = [
 
     <div class="grid">
         <!-- Spotify Cube -->
-        <div class="cube-container spotify-cube" data-total={spotifyPlaylists.length + 1}>
+        <div
+            class="cube-container spotify-cube"
+            data-total={spotifyPlaylists.length + 1}
+        >
             <div class="cube-wrapper">
                 <div class="cube">
-                    {spotifyPlaylists.map((playlist, index) => (
-                        <a href={playlist.link} target="_blank" rel="noopener noreferrer" class="face spotify" style={`--i: ${index}`}>
-                            <div class="icon-header">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M9 18V5l12-2v13"></path>
-                                    <circle cx="6" cy="18" r="3"></circle>
-                                    <circle cx="18" cy="16" r="3"></circle>
-                                </svg>
-                                <span class="mono">Spotify / {playlist.label}</span>
-                            </div>
-                            <div class="content">
-                                <div class="art"><div class="disc"></div></div>
-                                <div class="info">
-                                    <span class="playlist-name">{playlist.month}</span>
-                                    <span class="curated-by mono">Curated by Yegor</span>
+                    {
+                        spotifyPlaylists.map((playlist, index) => (
+                            <a
+                                href={playlist.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="face spotify"
+                                style={`--i: ${index}`}
+                            >
+                                <div class="icon-header">
+                                    <svg
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                    >
+                                        <path d="M9 18V5l12-2v13" />
+                                        <circle cx="6" cy="18" r="3" />
+                                        <circle cx="18" cy="16" r="3" />
+                                    </svg>
+                                    <span class="mono">
+                                        Spotify / {playlist.label}
+                                    </span>
                                 </div>
-                            </div>
-                            <div class="status mono">
-                                {index === 0 && <span class="pulse"></span>}
-                                {index === 0 ? "Listening to..." : "Archived"}
-                            </div>
-                        </a>
-                    ))}
-                    
+                                <div class="content">
+                                    <div class="art">
+                                        <div class="disc" />
+                                    </div>
+                                    <div class="info">
+                                        <span class="playlist-name">
+                                            {playlist.month}
+                                        </span>
+                                        <span class="curated-by mono">
+                                            Curated by Yegor
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="status mono">
+                                    {index === 0 && <span class="pulse" />}
+                                    {index === 0
+                                        ? "Listening to..."
+                                        : "Archived"}
+                                </div>
+                            </a>
+                        ))
+                    }
+
                     <!-- Spotify Profile Card -->
-                    <a href="https://open.spotify.com/user/22vwofsgpsjmnw5gzow7pi5ly?si=d1d7580cd8b3469e" target="_blank" rel="noopener noreferrer" class="face spotify profile-card" style={`--i: ${spotifyPlaylists.length}`}>
-                         <div class="icon-header">
+                    <a
+                        href="https://open.spotify.com/user/22vwofsgpsjmnw5gzow7pi5ly?si=d1d7580cd8b3469e"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="face spotify profile-card"
+                        style={`--i: ${spotifyPlaylists.length}`}
+                    >
+                        <div class="icon-header">
                             <span class="mono">Spotify / Profile</span>
                         </div>
                         <div class="center-msg mono">
-                            <span>Follow me on Spotify ↗</span>
+                            <span>FOLLOW ME ON SPOTIFY ↗</span>
                         </div>
                     </a>
 
                     <!-- Dummy Face for Bottom Glance (not scrollable) -->
-                    <div class="face spotify dummy-face" style={`--i: ${spotifyPlaylists.length + 1}`}></div>
+                    <div
+                        class="face spotify dummy-face"
+                        style={`--i: ${spotifyPlaylists.length + 1}`}
+                    >
+                    </div>
                 </div>
             </div>
         </div>
@@ -75,17 +139,32 @@ const spotifyPlaylists = [
 <style>
     :root {
         --cube-height: 210px;
-        --cube-depth: 210px; 
+        --cube-depth: 210px;
         --cube-radius: 105px; /* height / 2 */
     }
 
-    #lifestyle { padding: 4rem 0; }
-    .header {
-        display: flex; align-items: baseline; gap: 1rem; margin-bottom: 3rem;
-        border-bottom: 1px dashed var(--color-accent-subtle); padding-bottom: 1rem;
+    #lifestyle {
+        padding: 4rem 0;
     }
-    .mono { font-family: var(--font-pixel); color: var(--color-text-muted); font-size: 0.85rem; text-transform: uppercase; }
-    .grid { display: grid; grid-template-columns: 1fr; gap: 4rem; }
+    .header {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+        margin-bottom: 3rem;
+        border-bottom: 1px dashed var(--color-accent-subtle);
+        padding-bottom: 1rem;
+    }
+    .mono {
+        font-family: var(--font-pixel);
+        color: var(--color-text-muted);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4rem;
+    }
 
     /* CUBE CONTAINER */
     .cube-container {
@@ -94,14 +173,16 @@ const spotifyPlaylists = [
         position: relative;
         cursor: grab;
         /* Ensure we don't overflow horizontally during rotation */
-        overflow: visible; 
+        overflow: visible;
         z-index: 1;
         touch-action: none; /* Prevent browser handling of gestures */
     }
     .cube-container:hover {
         z-index: 10; /* Bring to front on interaction */
     }
-    .cube-container:active { cursor: grabbing; }
+    .cube-container:active {
+        cursor: grabbing;
+    }
 
     /* ROTATION WRAPPER (Controlled by Scroll/JS) */
     .cube-wrapper {
@@ -124,20 +205,18 @@ const spotifyPlaylists = [
         transform-origin: center center;
     }
 
-    /* Hover Tilt Effect: 
-       - First card: 20deg
-       - Others: 10deg 
-    */
-    .cube-container.first-card:hover .cube {
+    /* Hover Tilt Effect */
+    .cube-container:hover .cube {
         transform: rotateX(20deg);
-    }
-    .cube-container:not(.first-card):hover .cube {
-        transform: rotateX(10deg);
     }
 
     /* Hover Border Colors - Only on the ACTIVE face */
-    .spotify-cube:hover .face.active-face { border-color: #1DB954; }
-    .strava-cube:hover .face.active-face { border-color: #FC4C02; }
+    .spotify-cube:hover .face.active-face {
+        border-color: var(--color-accent) !important;
+    }
+    .strava-cube:hover .face.active-face {
+        border-color: var(--color-accent) !important;
+    }
 
     /* FACE STYLING */
     .face {
@@ -149,99 +228,210 @@ const spotifyPlaylists = [
         border-radius: 0;
         padding: 1.25rem;
         box-sizing: border-box;
-        display: flex; flex-direction: column; 
+        display: flex;
+        flex-direction: column;
         text-decoration: none;
         color: inherit;
-        backface-visibility: hidden; 
-        overflow: hidden; 
-        
-        transform: rotateX(calc(var(--i) * -90deg)) translateZ(var(--cube-radius));
-        box-shadow: inset 0 0 40px rgba(255,255,255,0.02);
-        
-        transition: opacity 0.3s ease, visibility 0.3s ease, border-color 0.3s ease;
+        backface-visibility: hidden;
+        overflow: hidden;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+
+        transform: rotateX(calc(var(--i) * -90deg))
+            translateZ(var(--cube-radius));
+        box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.02);
+
+        transition:
+            opacity 0.3s ease,
+            visibility 0.3s ease,
+            border-color 0.3s ease;
     }
     .face.hidden-face {
         opacity: 0;
         visibility: hidden;
     }
     .dummy-face {
-        pointer-events: none; 
+        pointer-events: none;
     }
 
     /* Data Specifics */
-    .spotify .content { 
-        display: flex; 
-        flex-direction: row; 
-        align-items: center; 
+    .spotify .content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
         /* Center in the available space */
         flex-grow: 1;
         transform: translateY(-5px); /* Optical center */
     }
-    .art { width: 56px; height: 56px; background: #333; border-radius: 4px; position: relative; overflow: hidden; margin-right: 1.25rem; flex-shrink: 0; }
-    .disc { width: 100%; height: 100%; background: conic-gradient(from 0deg, #333, #666); border-radius: 50%; animation: spin 4s linear infinite; }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .art {
+        width: 56px;
+        height: 56px;
+        background: #333;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        margin-right: 1.25rem;
+        flex-shrink: 0;
+    }
+    .disc {
+        width: 100%;
+        height: 100%;
+        background: conic-gradient(from 0deg, #333, #666);
+        border-radius: 50%;
+        animation: spin 4s linear infinite;
+    }
+    @keyframes spin {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 
     .spotify .info {
-        display: flex; flex-direction: column; justify-content: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     .spotify .playlist-name {
-        font-size: 1.5rem; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em;
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
         margin-bottom: 0.25rem;
     }
     .spotify .curated-by {
-        font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em;
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
     .strava .activity-meta {
-        display: flex; align-items: baseline; justify-content: flex-start; gap: 0.8rem; width: 100%; margin-bottom: 0;
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-start;
+        gap: 0.8rem;
+        width: 100%;
+        margin-bottom: 0;
     }
-    .strava .type-large { font-size: 1.5rem; font-weight: 700; color: #FC4C02; letter-spacing: -0.02em; }
-    .strava .date { font-size: 0.85rem; color: var(--color-text-muted); }
-    
-    .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 0; }
-    .label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.25rem; color: var(--color-text-muted); }
-    .val { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; }
-    
-    .strava .content {
-        flex-grow: 1; 
-        display: flex; 
-        flex-direction: column; 
-        justify-content: center; 
-        padding-top: 0;          
-        gap: 0.25rem;            /* Tight gap */
+    .strava .type-large {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #fc4c02;
+        letter-spacing: -0.02em;
+    }
+    .strava .date {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
     }
 
-    .icon-header { display: flex; align-items: center; gap: 0.8rem; color: var(--color-text); margin-bottom: 0; height: 24px; }
-    
-    /* Footer Status absolute positioning for consistency */
-    .status { 
-        position: absolute; bottom: 1.2rem; left: 1.25rem;
-        display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);
+    .stat-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 0;
     }
-    .pulse { width: 6px; height: 6px; border-radius: 50%; animation: pulse 2s infinite; }
-    .spotify .pulse { background: #1DB954; box-shadow: 0 0 5px #1DB954; }
-    .strava .pulse { background: #FC4C02; box-shadow: 0 0 5px #FC4C02; }
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-    
-    .center-msg { 
-        display: flex; align-items: center; justify-content: center; height: 100%; font-size: 1.2rem; 
+    .label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: block;
+        margin-bottom: 0.25rem;
+        color: var(--color-text-muted);
+    }
+    .val {
+        font-size: 1.15rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+    }
+
+    .strava .content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-top: 0;
+        gap: 0.25rem; /* Tight gap */
+    }
+
+    .icon-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        color: var(--color-text);
+        margin-bottom: 0;
+        height: 24px;
+    }
+
+    /* Footer Status absolute positioning for consistency */
+    .status {
+        position: absolute;
+        bottom: 1.2rem;
+        left: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+    }
+    .pulse {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    .spotify .pulse {
+        background: #1db954;
+        box-shadow: 0 0 5px #1db954;
+    }
+    .strava .pulse {
+        background: #fc4c02;
+        box-shadow: 0 0 5px #fc4c02;
+    }
+    @keyframes pulse {
+        0% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .center-msg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        font-size: 1.2rem;
         transition: color 0.3s ease;
     }
-    
+
     /* Specific Profile Card Borders */
-    .spotify-cube .profile-card { border-color: #1DB954; }
-    .strava-cube .profile-card { border-color: #FC4C02; }
+    .spotify-cube .profile-card {
+        border-color: var(--color-accent-subtle);
+    }
+    .strava-cube .profile-card {
+        border-color: var(--color-accent-subtle);
+    }
 
     /* Profile Card Text Hover Color */
-    .spotify-cube .profile-card:hover .center-msg { color: #1DB954; }
-    .strava-cube .profile-card:hover .center-msg { color: #FC4C02; }
+    .spotify-cube .profile-card:hover .center-msg {
+        color: var(--color-accent);
+    }
+    .strava-cube .profile-card:hover .center-msg {
+        color: var(--color-accent);
+    }
 
     /* When a face is "active" or near active, maybe we highlight it? 
        Actually, backface-visibility handles the hiding. 
     */
 
     @media (min-width: 768px) {
-        .grid { grid-template-columns: repeat(2, 1fr); }
+        .grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -272,9 +462,15 @@ const spotifyPlaylists = [
         color: inherit;
         backface-visibility: hidden;
         overflow: hidden;
-        transform: rotateX(calc(var(--i) * -90deg)) translateZ(var(--cube-radius));
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        transform: rotateX(calc(var(--i) * -90deg))
+            translateZ(var(--cube-radius));
         box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.02);
-        transition: opacity 0.3s ease, visibility 0.3s ease, border-color 0.3s ease;
+        transition:
+            opacity 0.3s ease,
+            visibility 0.3s ease,
+            border-color 0.3s ease;
     }
     #lifestyle .face.hidden-face {
         opacity: 0;
@@ -309,7 +505,9 @@ const spotifyPlaylists = [
         animation: spin 4s linear infinite;
     }
     @keyframes spin {
-        100% { transform: rotate(360deg); }
+        100% {
+            transform: rotate(360deg);
+        }
     }
 
     #lifestyle .spotify .info {
@@ -342,7 +540,7 @@ const spotifyPlaylists = [
     #lifestyle .strava .type-large {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #FC4C02;
+        color: #fc4c02;
         letter-spacing: -0.02em;
     }
     #lifestyle .strava .date {
@@ -405,17 +603,23 @@ const spotifyPlaylists = [
         animation: pulse 2s infinite;
     }
     #lifestyle .spotify .pulse {
-        background: #1DB954;
-        box-shadow: 0 0 5px #1DB954;
+        background: #1db954;
+        box-shadow: 0 0 5px #1db954;
     }
     #lifestyle .strava .pulse {
-        background: #FC4C02;
-        box-shadow: 0 0 5px #FC4C02;
+        background: #fc4c02;
+        box-shadow: 0 0 5px #fc4c02;
     }
     @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
+        0% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+        100% {
+            opacity: 1;
+        }
     }
 
     #lifestyle .center-msg {
@@ -427,51 +631,70 @@ const spotifyPlaylists = [
         transition: color 0.3s ease;
     }
 
-    #lifestyle .spotify-cube .profile-card { border-color: #1DB954; }
-    #lifestyle .strava-cube .profile-card { border-color: #FC4C02; }
+    #lifestyle .spotify-cube .profile-card {
+        border-color: var(--color-accent-subtle);
+    }
+    #lifestyle .strava-cube .profile-card {
+        border-color: var(--color-accent-subtle);
+    }
 
-    #lifestyle .spotify-cube .profile-card:hover .center-msg { color: #1DB954; }
-    #lifestyle .strava-cube .profile-card:hover .center-msg { color: #FC4C02; }
+    #lifestyle .spotify-cube .profile-card:hover .center-msg {
+        color: var(--color-accent);
+    }
+    #lifestyle .strava-cube .profile-card:hover .center-msg {
+        color: var(--color-accent);
+    }
+
+    #lifestyle .spotify-cube:hover .face.active-face {
+        border-color: var(--color-accent) !important;
+    }
+    #lifestyle .strava-cube:hover .face.active-face {
+        border-color: var(--color-accent) !important;
+    }
 </style>
 
 <script>
     // @ts-nocheck
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+    ).matches;
     const cubeControllers = new WeakMap();
 
     function setupCube(container) {
-        if (cubeControllers.has(container)) return cubeControllers.get(container);
+        if (cubeControllers.has(container))
+            return cubeControllers.get(container);
 
-        const rotator = container.querySelector('.cube-wrapper');
+        const rotator = container.querySelector(".cube-wrapper");
         if (!rotator) return null;
 
         let currentIndex = 0;
         let isScrolling = false;
         let scrollTimeout;
 
-        const getFaces = () => container.querySelectorAll('.face');
-        const getTotalFaces = () => parseInt(container.getAttribute('data-total') || '1');
+        const getFaces = () => container.querySelectorAll(".face");
+        const getTotalFaces = () =>
+            parseInt(container.getAttribute("data-total") || "1");
 
         const updateVisibility = (index) => {
             const faces = getFaces();
             faces.forEach((face, i) => {
                 if (i === index) {
-                    face.classList.add('active-face');
+                    face.classList.add("active-face");
                 } else {
-                    face.classList.remove('active-face');
+                    face.classList.remove("active-face");
                 }
 
                 if (Math.abs(i - index) <= 1) {
-                    face.classList.remove('hidden-face');
+                    face.classList.remove("hidden-face");
                 } else {
-                    face.classList.add('hidden-face');
+                    face.classList.add("hidden-face");
                 }
             });
 
             if (index === 0) {
-                container.classList.add('first-card');
+                container.classList.add("first-card");
             } else {
-                container.classList.remove('first-card');
+                container.classList.remove("first-card");
             }
         };
 
@@ -501,41 +724,53 @@ const spotifyPlaylists = [
             }, 500);
         };
 
-        container.addEventListener('wheel', (e) => {
-            if (prefersReducedMotion) return;
-            const wheelEvent = e;
-            wheelEvent.preventDefault();
-            if (Math.abs(wheelEvent.deltaY) < 10) return;
-            const direction = wheelEvent.deltaY > 0 ? 1 : -1;
-            handleInteraction(direction);
-        }, { passive: false });
+        container.addEventListener(
+            "wheel",
+            (e) => {
+                if (prefersReducedMotion) return;
+                const wheelEvent = e;
+                wheelEvent.preventDefault();
+                if (Math.abs(wheelEvent.deltaY) < 10) return;
+                const direction = wheelEvent.deltaY > 0 ? 1 : -1;
+                handleInteraction(direction);
+            },
+            { passive: false },
+        );
 
         let touchStartY = 0;
         let lastInteractionTime = 0;
 
-        container.addEventListener('touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
-        }, { passive: false });
+        container.addEventListener(
+            "touchstart",
+            (e) => {
+                touchStartY = e.touches[0].clientY;
+            },
+            { passive: false },
+        );
 
-        container.addEventListener('touchmove', (e) => {
-            if (prefersReducedMotion) return;
-            e.preventDefault();
-            const touchCurrentY = e.touches[0].clientY;
-            const swipeDistance = touchStartY - touchCurrentY;
-            const minSwipeDistance = 40;
+        container.addEventListener(
+            "touchmove",
+            (e) => {
+                if (prefersReducedMotion) return;
+                e.preventDefault();
+                const touchCurrentY = e.touches[0].clientY;
+                const swipeDistance = touchStartY - touchCurrentY;
+                const minSwipeDistance = 40;
 
-            const now = Date.now();
-            if (now - lastInteractionTime < 300) return;
+                const now = Date.now();
+                if (now - lastInteractionTime < 300) return;
 
-            if (Math.abs(swipeDistance) > minSwipeDistance) {
-                const direction = swipeDistance > 0 ? 1 : -1;
-                handleInteraction(direction);
-                touchStartY = touchCurrentY;
-                lastInteractionTime = now;
-            }
-        }, { passive: false });
+                if (Math.abs(swipeDistance) > minSwipeDistance) {
+                    const direction = swipeDistance > 0 ? 1 : -1;
+                    handleInteraction(direction);
+                    touchStartY = touchCurrentY;
+                    lastInteractionTime = now;
+                }
+            },
+            { passive: false },
+        );
 
-        container.addEventListener('touchend', () => {}, { passive: false });
+        container.addEventListener("touchend", () => {}, { passive: false });
 
         const controller = { reset };
         cubeControllers.set(container, controller);
@@ -563,13 +798,13 @@ const spotifyPlaylists = [
     function formatPace(time, distance, isSwim = false) {
         let pace;
         if (isSwim) {
-            pace = (time / 60) / (distance / 100);
+            pace = time / 60 / (distance / 100);
         } else {
-            pace = (time / 60) / (distance / 1000);
+            pace = time / 60 / (distance / 1000);
         }
         const paceMins = Math.floor(pace);
         const paceSecs = Math.round((pace - paceMins) * 60);
-        return `${paceMins}:${paceSecs.toString().padStart(2, '0')}`;
+        return `${paceMins}:${paceSecs.toString().padStart(2, "0")}`;
     }
 
     function formatSpeed(time, distance) {
@@ -579,12 +814,20 @@ const spotifyPlaylists = [
     }
 
     function getActivityStats(activity) {
-        if (!activity) return { label1: '-', val1: '-', label2: '-', val2: '-', label3: '', val3: '' };
+        if (!activity)
+            return {
+                label1: "-",
+                val1: "-",
+                label2: "-",
+                val2: "-",
+                label3: "",
+                val3: "",
+            };
 
         const type = activity.type;
-        const isRun = type === 'Run' || type === 'Walk' || type === 'Hike';
-        const isRide = type === 'Ride' || type === 'VirtualRide';
-        const isSwim = type === 'Swim';
+        const isRun = type === "Run" || type === "Walk" || type === "Hike";
+        const isRide = type === "Ride" || type === "VirtualRide";
+        const isSwim = type === "Swim";
 
         let burnVal = 0;
         if (activity.calories) {
@@ -595,40 +838,40 @@ const spotifyPlaylists = [
         const timeStr = formatDuration(activity.moving_time);
 
         let stats = {
-            label1: 'Time',
+            label1: "Time",
             val1: timeStr,
-            label2: burnVal > 0 ? 'Burn' : '',
-            val2: burnVal > 0 ? `${burnVal}kcal` : '',
-            label3: '',
-            val3: ''
+            label2: burnVal > 0 ? "Burn" : "",
+            val2: burnVal > 0 ? `${burnVal}kcal` : "",
+            label3: "",
+            val3: "",
         };
 
         if (isRun) {
             stats = {
-                label1: 'Dist',
+                label1: "Dist",
                 val1: `${distKm}km`,
-                label2: 'Pace',
+                label2: "Pace",
                 val2: `${formatPace(activity.moving_time, activity.distance)}/km`,
-                label3: burnVal > 0 ? 'Burn' : '',
-                val3: burnVal > 0 ? `${burnVal}kcal` : ''
+                label3: burnVal > 0 ? "Burn" : "",
+                val3: burnVal > 0 ? `${burnVal}kcal` : "",
             };
         } else if (isRide) {
             stats = {
-                label1: 'Dist',
+                label1: "Dist",
                 val1: `${distKm}km`,
-                label2: 'Speed',
+                label2: "Speed",
                 val2: `${formatSpeed(activity.moving_time, activity.distance)}km/h`,
-                label3: burnVal > 0 ? 'Burn' : '',
-                val3: burnVal > 0 ? `${burnVal}kcal` : ''
+                label3: burnVal > 0 ? "Burn" : "",
+                val3: burnVal > 0 ? `${burnVal}kcal` : "",
             };
         } else if (isSwim) {
             stats = {
-                label1: 'Dist',
-                val1: `${(activity.distance).toFixed(0)}m`,
-                label2: 'Pace',
+                label1: "Dist",
+                val1: `${activity.distance.toFixed(0)}m`,
+                label2: "Pace",
                 val2: `${formatPace(activity.moving_time, activity.distance, true)}/100m`,
-                label3: burnVal > 0 ? 'Burn' : '',
-                val3: burnVal > 0 ? `${burnVal}kcal` : ''
+                label3: burnVal > 0 ? "Burn" : "",
+                val3: burnVal > 0 ? `${burnVal}kcal` : "",
             };
         }
 
@@ -640,18 +883,24 @@ const spotifyPlaylists = [
             return `<div class="face strava empty" style="--i: 0"><span class="mono">No data available</span></div>`;
         }
 
-        const activityFaces = activities.map((activity, index) => {
-            const stats = getActivityStats(activity);
-            const date = activity.start_date ? new Date(activity.start_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
-            const type = escapeHtml(activity.type || 'Activity');
-            const stat1 = escapeHtml(stats.label1);
-            const stat1Val = escapeHtml(stats.val1);
-            const stat2 = escapeHtml(stats.label2);
-            const stat2Val = escapeHtml(stats.val2);
-            const stat3 = escapeHtml(stats.label3);
-            const stat3Val = escapeHtml(stats.val3);
+        const activityFaces = activities
+            .map((activity, index) => {
+                const stats = getActivityStats(activity);
+                const date = activity.start_date
+                    ? new Date(activity.start_date).toLocaleDateString(
+                          undefined,
+                          { month: "short", day: "numeric" },
+                      )
+                    : "";
+                const type = escapeHtml(activity.type || "Activity");
+                const stat1 = escapeHtml(stats.label1);
+                const stat1Val = escapeHtml(stats.val1);
+                const stat2 = escapeHtml(stats.label2);
+                const stat2Val = escapeHtml(stats.val2);
+                const stat3 = escapeHtml(stats.label3);
+                const stat3Val = escapeHtml(stats.val3);
 
-            return `
+                return `
                 <a href="https://www.strava.com/activities/${activity.id}" target="_blank" rel="noopener noreferrer" class="face strava" style="--i: ${index}">
                     <div class="icon-header">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -674,20 +923,25 @@ const spotifyPlaylists = [
                                 <span class="label mono">${stat2}</span>
                                 <div class="val">${stat2Val}</div>
                             </div>
-                            ${stats.label3 ? `
+                            ${
+                                stats.label3
+                                    ? `
                             <div>
                                 <span class="label mono">${stat3}</span>
                                 <div class="val">${stat3Val}</div>
                             </div>
-                            ` : ''}
+                            `
+                                    : ""
+                            }
                         </div>
                     </div>
                     <div class="status mono">
-                        ${index === 0 ? '<span class="pulse"></span> Latest Activity' : 'Past Activity'}
+                        ${index === 0 ? '<span class="pulse"></span> Latest Activity' : "Past Activity"}
                     </div>
                 </a>
             `;
-        }).join('');
+            })
+            .join("");
 
         const profileIndex = activities.length;
         const dummyIndex = activities.length + 1;
@@ -698,7 +952,7 @@ const spotifyPlaylists = [
                     <span class="mono">Strava / Profile</span>
                 </div>
                 <div class="center-msg mono">
-                    <span>Follow me on Strava ↗</span>
+                    <span>FOLLOW ME ON STRAVA ↗</span>
                 </div>
             </a>
         `;
@@ -710,29 +964,29 @@ const spotifyPlaylists = [
 
     async function refreshStrava() {
         try {
-            const res = await fetch('/api/strava.json');
-            if (!res.ok) throw new Error('Failed to fetch Strava');
+            const res = await fetch("/api/strava.json");
+            if (!res.ok) throw new Error("Failed to fetch Strava");
             const data = await res.json();
             const activities = Array.isArray(data) ? data.slice(0, 5) : [];
 
-            const container = document.querySelector('.strava-cube');
+            const container = document.querySelector(".strava-cube");
             if (!container) return;
 
-            const cube = container.querySelector('.cube');
+            const cube = container.querySelector(".cube");
             if (!cube) return;
 
-            container.setAttribute('data-total', String(activities.length + 1));
+            container.setAttribute("data-total", String(activities.length + 1));
             cube.innerHTML = renderStravaFaces(activities);
 
             const controller = setupCube(container);
             if (controller) controller.reset();
         } catch (err) {
             // Keep existing content if fetch fails
-            console.warn('Strava refresh failed', err);
+            console.warn("Strava refresh failed", err);
         }
     }
 
-    document.querySelectorAll('.cube-container').forEach(container => {
+    document.querySelectorAll(".cube-container").forEach((container) => {
         setupCube(container);
     });
 
