@@ -1,5 +1,7 @@
 ---
 import "../styles/global.css";
+import Analytics from "@vercel/analytics/astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
 
 interface Props {
 	title: string;
@@ -28,5 +30,7 @@ const { title, description = "Yegor Golovnia - Web3 Operations Generalist" } =
 			</main>
 		</div>
 		<slot name="overlays" />
+		<Analytics />
+		<SpeedInsights />
 	</body>
 </html>
