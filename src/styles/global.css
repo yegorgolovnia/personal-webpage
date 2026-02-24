@@ -4,8 +4,7 @@
 @font-face {
     font-family: 'Geist Pixel Circle';
     src: url('/fonts/GeistPixel-Circle.woff2') format('woff2');
-    font-weight: 100 900;
-    /* Match all weights */
+    font-weight: normal;
     font-style: normal;
     font-display: swap;
 }
