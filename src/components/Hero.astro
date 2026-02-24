@@ -3,7 +3,6 @@
 ---
 
 <section class="hero" id="hero-section">
-    <canvas id="hero-canvas"></canvas>
     <div class="content">
         <div class="sys-msg pixel-text">System.Boot() // Welcome</div>
         <h1 class="fade-in">YEGOR GOLOVNIA</h1>
@@ -25,7 +24,7 @@
 
 <style>
     .hero {
-        min-height: 60vh;
+        min-height: 50vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -33,21 +32,6 @@
         overflow: hidden;
         border-bottom: 1px dashed var(--color-accent-subtle);
         margin-bottom: 2rem;
-        /* Add a subtle radial gradient overlay to soften the canvas behind */
-        background: radial-gradient(
-            circle at center,
-            transparent 0%,
-            rgba(0, 0, 0, 0.4) 100%
-        );
-    }
-
-    #hero-canvas {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        pointer-events: none; /* Let clicks pass through if needed, though mousemove needs to be caught by the section */
     }
 
     .content {
@@ -147,195 +131,3 @@
         }
     }
 </style>
-
-<script>
-    // @ts-nocheck
-    class ParticleSystem {
-        constructor() {
-            this.canvas = document.getElementById("hero-canvas");
-            this.section = document.getElementById("hero-section");
-            if (!this.canvas || !this.section) return;
-
-            this.ctx = this.canvas.getContext("2d");
-            this.particles = [];
-
-            // Adjust to your desired density
-            this.particleCount = window.innerWidth < 768 ? 40 : 100;
-            this.mouse = { x: null, y: null, radius: 150 };
-
-            this.init();
-            this.animate();
-
-            window.addEventListener("resize", this.resize.bind(this));
-            this.section.addEventListener(
-                "mousemove",
-                this.handleMouseMove.bind(this),
-            );
-            this.section.addEventListener(
-                "mouseleave",
-                this.handleMouseLeave.bind(this),
-            );
-        }
-
-        resize() {
-            this.canvas.width = this.section.clientWidth;
-            this.canvas.height = this.section.clientHeight;
-        }
-
-        init() {
-            this.resize();
-            this.particles = [];
-            for (let i = 0; i < this.particleCount; i++) {
-                this.particles.push(
-                    new Particle(this.canvas.width, this.canvas.height),
-                );
-            }
-        }
-
-        handleMouseMove(e) {
-            const rect = this.canvas.getBoundingClientRect();
-            this.mouse.x = e.clientX - rect.left;
-            this.mouse.y = e.clientY - rect.top;
-        }
-
-        handleMouseLeave() {
-            this.mouse.x = null;
-            this.mouse.y = null;
-        }
-
-        drawLines() {
-            for (let a = 0; a < this.particles.length; a++) {
-                for (let b = a; b < this.particles.length; b++) {
-                    const dx = this.particles[a].x - this.particles[b].x;
-                    const dy = this.particles[a].y - this.particles[b].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 120) {
-                        const opacity = 1 - distance / 120;
-                        this.ctx.strokeStyle = `rgba(0, 255, 65, ${opacity * 0.15})`; // Subtle green lines
-                        this.ctx.lineWidth = 1;
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(
-                            this.particles[a].x,
-                            this.particles[a].y,
-                        );
-                        this.ctx.lineTo(
-                            this.particles[b].x,
-                            this.particles[b].y,
-                        );
-                        this.ctx.stroke();
-                    }
-                }
-            }
-        }
-
-        animate() {
-            if (!this.ctx) return;
-
-            // Clear canvas
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-            // Update & Draw particles
-            for (let i = 0; i < this.particles.length; i++) {
-                this.particles[i].update(
-                    this.mouse,
-                    this.canvas.width,
-                    this.canvas.height,
-                );
-                this.particles[i].draw(this.ctx);
-            }
-
-            this.drawLines();
-
-            // Loop using Astro's requestAnimationFrame wrapper or directly
-            requestAnimationFrame(this.animate.bind(this));
-        }
-    }
-
-    class Particle {
-        constructor(winWidth, winHeight) {
-            this.x = Math.random() * winWidth;
-            this.y = Math.random() * winHeight;
-            this.size = Math.random() * 2 + 1;
-            this.baseX = this.x;
-            this.baseY = this.y;
-            this.density = Math.random() * 30 + 1;
-
-            // very slow random floating movement
-            this.vx = (Math.random() - 0.5) * 0.5;
-            this.vy = (Math.random() - 0.5) * 0.5;
-        }
-
-        draw(ctx) {
-            ctx.fillStyle = "rgba(0, 255, 65, 0.2)"; // Very subtle dots
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        update(mouse, canvasWidth, canvasHeight) {
-            // Float around
-            this.baseX += this.vx;
-            this.baseY += this.vy;
-
-            // Bounce off edges (basis points)
-            if (this.baseX < 0 || this.baseX > canvasWidth) this.vx *= -1;
-            if (this.baseY < 0 || this.baseY > canvasHeight) this.vy *= -1;
-
-            // Repel from mouse
-            if (mouse.x !== null) {
-                const dx = mouse.x - this.x;
-                const dy = mouse.y - this.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < mouse.radius) {
-                    const forceDirectionX = dx / distance;
-                    const forceDirectionY = dy / distance;
-                    // max distance, past that the force is 0
-                    const force = (mouse.radius - distance) / mouse.radius;
-
-                    const directionX = forceDirectionX * force * this.density;
-                    const directionY = forceDirectionY * force * this.density;
-
-                    // push away
-                    this.x -= directionX;
-                    this.y -= directionY;
-                } else {
-                    // return slowly to base position if out of radius
-                    if (this.x !== this.baseX) {
-                        const dxBase = this.x - this.baseX;
-                        this.x -= dxBase / 10;
-                    }
-                    if (this.y !== this.baseY) {
-                        const dyBase = this.y - this.baseY;
-                        this.y -= dyBase / 10;
-                    }
-                }
-            } else {
-                // Return to base slowly when mouse is gone
-                if (this.x !== this.baseX) {
-                    const dxBase = this.x - this.baseX;
-                    this.x -= dxBase / 10;
-                }
-                if (this.y !== this.baseY) {
-                    const dyBase = this.y - this.baseY;
-                    this.y -= dyBase / 10;
-                }
-            }
-        }
-    }
-
-    // Initialize only if prefers-reduced-motion is false
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!mediaQuery.matches) {
-        // Run setup once DOM is ready
-        document.addEventListener("DOMContentLoaded", () => {
-            new ParticleSystem();
-        });
-
-        // For Astro page transitions (if enabled)
-        document.addEventListener("astro:page-load", () => {
-            new ParticleSystem();
-        });
-    }
-</script>

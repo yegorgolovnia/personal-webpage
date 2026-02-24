@@ -1,8 +1,6 @@
 import type { APIRoute } from "astro";
 import { getLatestActivity } from "../../lib/strava";
 
-export const prerender = false;
-
 export const GET: APIRoute = async () => {
     const activities = await getLatestActivity();
 
