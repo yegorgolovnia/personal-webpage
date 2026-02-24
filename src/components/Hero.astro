@@ -1,124 +1,143 @@
 ---
+
 ---
-<section class="hero">
+
+<section class="hero" id="hero-section">
+    <canvas id="hero-canvas"></canvas>
     <div class="content">
-        <h1 class="fade-in">Yegor<br>Golovnia</h1>
-        <div class="role-container fade-in-delay">
-            <span class="role">Program & Product Lead</span>
-            <span class="separator">/</span>
-            <span class="role">Web3 Ops</span>
+        <div class="sys-msg pixel-text">System.Boot() // Welcome</div>
+        <h1 class="fade-in">YEGOR GOLOVNIA</h1>
+        <div class="subtitle pixel-text fade-in-delay">
+            ~ Program Lead & Operations Specialist ~
+        </div>
+        <div class="stats fade-in-more-delay">
+            <span class="pixel-text color-accent">⚡ AUTOMATION STATUS ⚡</span
+            ><br />
+            [ OK ] SYSTEMS ONLINE<br />
+            [ OK ] DEPLOYING WEB3 INFRASTRUCTURE
         </div>
         <p class="intro fade-in-more-delay">
-            Building impact-focused organizations and scalable systems in the Ethereum ecosystem.
+            Building impact-focused organizations and scalable systems in the
+            Ethereum ecosystem.
         </p>
     </div>
-    
-    <div class="bg-gradient"></div>
 </section>
 
 <style>
     .hero {
-        min-height: 85vh; /* Taller hero */
+        min-height: 60vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
         position: relative;
         overflow: hidden;
+        border-bottom: 1px dashed var(--color-accent-subtle);
+        margin-bottom: 2rem;
+        /* Add a subtle radial gradient overlay to soften the canvas behind */
+        background: radial-gradient(
+            circle at center,
+            transparent 0%,
+            rgba(0, 0, 0, 0.4) 100%
+        );
+    }
+
+    #hero-canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none; /* Let clicks pass through if needed, though mousemove needs to be caught by the section */
     }
 
     .content {
         position: relative;
         z-index: 2;
         max-width: 900px;
+        pointer-events: none; /* Let mouse events reach the section behind it for the canvas effect */
+    }
+
+    .content > * {
+        pointer-events: auto; /* Re-enable pointer events for text/buttons inside content */
+    }
+
+    .sys-msg {
+        margin-bottom: 1rem;
+        opacity: 0.7;
     }
 
     h1 {
-        font-size: clamp(4rem, 15vw, 10rem); /* Massive responsive text */
-        line-height: 0.9;
-        margin-bottom: 2rem;
-        letter-spacing: -0.04em;
-        font-weight: 600;
+        font-family: var(--font-pixel);
+        font-size: clamp(3rem, 10vw, 6rem);
+        line-height: 1;
+        margin-bottom: 1rem;
+        letter-spacing: -0.02em;
         color: var(--color-text);
+        text-shadow: 2px 2px 0px var(--color-accent-subtle);
     }
 
-    .role-container {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        font-family: var(--font-mono);
-        font-size: 1.1rem;
-        color: var(--color-text-muted);
+    .subtitle {
+        font-size: 1.2rem;
+        color: var(--color-accent);
         margin-bottom: 2rem;
     }
 
-    .separator {
-        opacity: 0.5;
+    .stats {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        border: 1px solid var(--color-accent-subtle);
+        background: rgba(0, 255, 65, 0.02);
+        display: inline-block;
+        /* Blur background slightly so lines behind don't make it totally unreadable */
+        backdrop-filter: blur(2px);
+    }
+
+    .pixel-text {
+        font-family: var(--font-pixel);
+    }
+
+    .color-accent {
+        color: var(--color-accent);
     }
 
     .intro {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         max-width: 600px;
-        line-height: 1.4;
-        font-weight: 300;
+        line-height: 1.6;
         color: var(--color-text);
         opacity: 0.9;
-    }
-
-    /* Ambient Background */
-    .bg-gradient {
-        position: absolute;
-        top: 50%;
-        right: -10%;
-        width: 60vw;
-        height: 60vw;
-        background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0) 70%);
-        transform: translateY(-50%);
-        pointer-events: none;
-        z-index: 1;
-        filter: blur(90px); /* Softer blur */
-        animation: breathe 16s infinite alternate ease-in-out;
-    }
-
-    @keyframes breathe {
-        0% { opacity: 0.35; transform: translateY(-50%) scale(0.96); }
-        100% { opacity: 0.7; transform: translateY(-50%) scale(1.04); }
+        backdrop-filter: blur(2px);
     }
 
     /* Entry Animations */
     .fade-in {
-        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        animation: fadeInUp 0.8s ease forwards;
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
 
     .fade-in-delay {
-        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+        animation: fadeInUp 0.8s ease 0.2s forwards;
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
 
     .fade-in-more-delay {
-        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+        animation: fadeInUp 0.8s ease 0.4s forwards;
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
 
     @keyframes fadeInUp {
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 768px) {
-        .role-container {
-            font-size: 0.9rem;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-        .separator { display: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .bg-gradient,
         .fade-in,
         .fade-in-delay,
         .fade-in-more-delay {
@@ -128,3 +147,195 @@
         }
     }
 </style>
+
+<script>
+    // @ts-nocheck
+    class ParticleSystem {
+        constructor() {
+            this.canvas = document.getElementById("hero-canvas");
+            this.section = document.getElementById("hero-section");
+            if (!this.canvas || !this.section) return;
+
+            this.ctx = this.canvas.getContext("2d");
+            this.particles = [];
+
+            // Adjust to your desired density
+            this.particleCount = window.innerWidth < 768 ? 40 : 100;
+            this.mouse = { x: null, y: null, radius: 150 };
+
+            this.init();
+            this.animate();
+
+            window.addEventListener("resize", this.resize.bind(this));
+            this.section.addEventListener(
+                "mousemove",
+                this.handleMouseMove.bind(this),
+            );
+            this.section.addEventListener(
+                "mouseleave",
+                this.handleMouseLeave.bind(this),
+            );
+        }
+
+        resize() {
+            this.canvas.width = this.section.clientWidth;
+            this.canvas.height = this.section.clientHeight;
+        }
+
+        init() {
+            this.resize();
+            this.particles = [];
+            for (let i = 0; i < this.particleCount; i++) {
+                this.particles.push(
+                    new Particle(this.canvas.width, this.canvas.height),
+                );
+            }
+        }
+
+        handleMouseMove(e) {
+            const rect = this.canvas.getBoundingClientRect();
+            this.mouse.x = e.clientX - rect.left;
+            this.mouse.y = e.clientY - rect.top;
+        }
+
+        handleMouseLeave() {
+            this.mouse.x = null;
+            this.mouse.y = null;
+        }
+
+        drawLines() {
+            for (let a = 0; a < this.particles.length; a++) {
+                for (let b = a; b < this.particles.length; b++) {
+                    const dx = this.particles[a].x - this.particles[b].x;
+                    const dy = this.particles[a].y - this.particles[b].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 120) {
+                        const opacity = 1 - distance / 120;
+                        this.ctx.strokeStyle = `rgba(0, 255, 65, ${opacity * 0.15})`; // Subtle green lines
+                        this.ctx.lineWidth = 1;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(
+                            this.particles[a].x,
+                            this.particles[a].y,
+                        );
+                        this.ctx.lineTo(
+                            this.particles[b].x,
+                            this.particles[b].y,
+                        );
+                        this.ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        animate() {
+            if (!this.ctx) return;
+
+            // Clear canvas
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // Update & Draw particles
+            for (let i = 0; i < this.particles.length; i++) {
+                this.particles[i].update(
+                    this.mouse,
+                    this.canvas.width,
+                    this.canvas.height,
+                );
+                this.particles[i].draw(this.ctx);
+            }
+
+            this.drawLines();
+
+            // Loop using Astro's requestAnimationFrame wrapper or directly
+            requestAnimationFrame(this.animate.bind(this));
+        }
+    }
+
+    class Particle {
+        constructor(winWidth, winHeight) {
+            this.x = Math.random() * winWidth;
+            this.y = Math.random() * winHeight;
+            this.size = Math.random() * 2 + 1;
+            this.baseX = this.x;
+            this.baseY = this.y;
+            this.density = Math.random() * 30 + 1;
+
+            // very slow random floating movement
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+        }
+
+        draw(ctx) {
+            ctx.fillStyle = "rgba(0, 255, 65, 0.2)"; // Very subtle dots
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        update(mouse, canvasWidth, canvasHeight) {
+            // Float around
+            this.baseX += this.vx;
+            this.baseY += this.vy;
+
+            // Bounce off edges (basis points)
+            if (this.baseX < 0 || this.baseX > canvasWidth) this.vx *= -1;
+            if (this.baseY < 0 || this.baseY > canvasHeight) this.vy *= -1;
+
+            // Repel from mouse
+            if (mouse.x !== null) {
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < mouse.radius) {
+                    const forceDirectionX = dx / distance;
+                    const forceDirectionY = dy / distance;
+                    // max distance, past that the force is 0
+                    const force = (mouse.radius - distance) / mouse.radius;
+
+                    const directionX = forceDirectionX * force * this.density;
+                    const directionY = forceDirectionY * force * this.density;
+
+                    // push away
+                    this.x -= directionX;
+                    this.y -= directionY;
+                } else {
+                    // return slowly to base position if out of radius
+                    if (this.x !== this.baseX) {
+                        const dxBase = this.x - this.baseX;
+                        this.x -= dxBase / 10;
+                    }
+                    if (this.y !== this.baseY) {
+                        const dyBase = this.y - this.baseY;
+                        this.y -= dyBase / 10;
+                    }
+                }
+            } else {
+                // Return to base slowly when mouse is gone
+                if (this.x !== this.baseX) {
+                    const dxBase = this.x - this.baseX;
+                    this.x -= dxBase / 10;
+                }
+                if (this.y !== this.baseY) {
+                    const dyBase = this.y - this.baseY;
+                    this.y -= dyBase / 10;
+                }
+            }
+        }
+    }
+
+    // Initialize only if prefers-reduced-motion is false
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!mediaQuery.matches) {
+        // Run setup once DOM is ready
+        document.addEventListener("DOMContentLoaded", () => {
+            new ParticleSystem();
+        });
+
+        // For Astro page transitions (if enabled)
+        document.addEventListener("astro:page-load", () => {
+            new ParticleSystem();
+        });
+    }
+</script>

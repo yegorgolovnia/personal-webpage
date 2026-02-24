@@ -214,9 +214,9 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
     #lifestyle { padding: 4rem 0; }
     .header {
         display: flex; align-items: baseline; gap: 1rem; margin-bottom: 3rem;
-        border-bottom: 1px solid var(--color-accent-subtle); padding-bottom: 1rem;
+        border-bottom: 1px dashed var(--color-accent-subtle); padding-bottom: 1rem;
     }
-    .mono { font-family: var(--font-mono); color: var(--color-text-muted); font-size: 0.85rem; }
+    .mono { font-family: var(--font-pixel); color: var(--color-text-muted); font-size: 0.85rem; text-transform: uppercase; }
     .grid { display: grid; grid-template-columns: 1fr; gap: 4rem; }
 
     /* CUBE CONTAINER */
@@ -276,9 +276,9 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
         position: absolute;
         width: 100%;
         height: 100%;
-        background: #000000; /* Solid black */
-        border: 1px solid var(--color-accent-subtle);
-        border-radius: 12px;
+        background: rgba(0, 255, 65, 0.02);
+        border: 1px dashed var(--color-accent-subtle);
+        border-radius: 0;
         padding: 1.25rem;
         box-sizing: border-box;
         display: flex; flex-direction: column; 
@@ -393,9 +393,9 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
         position: absolute;
         width: 100%;
         height: 100%;
-        background: #000000;
-        border: 1px solid var(--color-accent-subtle);
-        border-radius: 12px;
+        background: rgba(0, 255, 65, 0.02);
+        border: 1px dashed var(--color-accent-subtle);
+        border-radius: 0;
         padding: 1.25rem;
         box-sizing: border-box;
         display: flex;
@@ -567,6 +567,7 @@ function formatPace(time: number, distance: number, isSwim: boolean = false) {
 </style>
 
 <script>
+    // @ts-nocheck
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const cubeControllers = new WeakMap();
 
