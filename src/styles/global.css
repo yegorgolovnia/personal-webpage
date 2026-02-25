@@ -124,7 +124,8 @@ a:hover {
     overflow: hidden;
 }
 
-.atmosphere::before, .atmosphere::after {
+.atmosphere::before,
+.atmosphere::after {
     content: '';
     position: absolute;
     width: 60vw;
@@ -138,22 +139,50 @@ a:hover {
     background: var(--color-accent);
     top: -10%;
     right: -10%;
-    animation: float1 20s ease-in-out infinite alternate;
+    animation: float1 25s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
 }
 
 .atmosphere::after {
-    background: #8e2de2;
+    background: #c026d3;
+    /* Brighter, more vibrant purple */
     bottom: -10%;
     left: -10%;
-    animation: float2 25s ease-in-out infinite alternate;
+    animation: float2 28s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
 }
 
+/* More dramatic liquid movement across the screen */
 @keyframes float1 {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(-5%, 5%) scale(1.1); }
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(-30vw, 20vh) scale(1.3);
+    }
+
+    66% {
+        transform: translate(-10vw, 50vh) scale(0.8);
+    }
+
+    100% {
+        transform: translate(-40vw, 10vh) scale(1.5);
+    }
 }
 
 @keyframes float2 {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(5%, -5%) scale(1.2); }
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(30vw, -20vh) scale(1.4);
+    }
+
+    66% {
+        transform: translate(10vw, -45vh) scale(0.9);
+    }
+
+    100% {
+        transform: translate(50vw, -15vh) scale(1.6);
+    }
 }
