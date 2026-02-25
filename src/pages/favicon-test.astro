@@ -1,0 +1,158 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Favicon Tests">
+    <div class="test-container">
+        <h2>Favicon Variations</h2>
+        <p>
+            Here are some stylish overlapping 'y' and 'g' variations using the
+            Geist Pixel Circle font. Note: The font only renders as circles for
+            lowercase letters!
+        </p>
+
+        <div class="grid">
+            <!-- Variation 1: Theme Colors Split -->
+            <div class="card">
+                <h3>V1: Brand Colors</h3>
+                <div class="favicon-preview" id="v1">
+                    <span class="letter y">y</span>
+                    <span class="letter g">g</span>
+                </div>
+            </div>
+
+            <!-- Variation 2: Cyber/Screen Blend -->
+            <div class="card">
+                <h3>V2: Cyber Blend</h3>
+                <div class="favicon-preview" id="v2">
+                    <span class="letter y">y</span>
+                    <span class="letter g">g</span>
+                </div>
+            </div>
+
+            <!-- Variation 3: Staggered Minimal -->
+            <div class="card">
+                <h3>V3: Staggered Minimal (Uppercase)</h3>
+                <div class="favicon-preview" id="v3">
+                    <span class="letter g">G</span>
+                    <span class="letter y">Y</span>
+                </div>
+            </div>
+
+            <!-- Variation 4: Monotone Cutout -->
+            <div class="card">
+                <h3>V4: Offset Outline</h3>
+                <div class="favicon-preview" id="v4">
+                    <span class="letter y">y</span>
+                    <span class="letter g">g</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .test-container {
+            padding: 4rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed var(--color-accent-subtle);
+            padding: 2rem;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1rem;
+            margin: 0;
+            color: var(--color-text-muted);
+        }
+
+        .favicon-preview {
+            width: 128px;
+            height: 128px;
+            background: #000;
+            border-radius: 20%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Geist Pixel Circle", sans-serif;
+            font-size: 80px;
+            line-height: 1;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .letter {
+            position: absolute;
+            user-select: none;
+        }
+
+        /* V1: Brand Colors */
+        #v1 .y {
+            color: var(--color-accent); /* Green */
+            transform: translate(-10px, -5px);
+            z-index: 2;
+        }
+        #v1 .g {
+            color: #c026d3; /* Fuchsia */
+            transform: translate(10px, 5px);
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        /* V2: Cyber Blend */
+        #v2 .y {
+            color: #00ffff;
+            transform: translate(-6px, 0);
+            mix-blend-mode: screen;
+            z-index: 2;
+        }
+        #v2 .g {
+            color: #ff00ff;
+            transform: translate(6px, 0);
+            mix-blend-mode: screen;
+            z-index: 1;
+        }
+
+        /* V3: Staggered Minimal */
+        #v3 .y {
+            color: #ffffff;
+            transform: translate(-12px, -12px);
+            z-index: 2;
+        }
+        #v3 .g {
+            color: var(--color-text-muted);
+            transform: translate(8px, 8px);
+            z-index: 1;
+        }
+
+        /* V4: Offset Outline */
+        #v4 .y {
+            color: transparent;
+            -webkit-text-stroke: 2px var(--color-accent);
+            transform: translate(-8px, -8px);
+            z-index: 2;
+        }
+        #v4 .g {
+            color: var(--color-accent);
+            transform: translate(6px, 6px);
+            z-index: 1;
+            opacity: 0.5;
+        }
+    </style>
+</Layout>

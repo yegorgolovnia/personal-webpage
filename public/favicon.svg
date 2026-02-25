@@ -1,4 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="20" fill="#000000"/>
-  <path d="M 35 30 L 50 55 L 65 30 M 50 55 L 50 75" fill="none" stroke="#00FF41" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <style>
+      @font-face {
+        font-family: 'Geist Pixel Circle';
+        src: url('/fonts/GeistPixel-Circle.woff2') format('woff2');
+      }
+      text {
+        font-family: 'Geist Pixel Circle', monospace;
+        font-size: 80px;
+        text-anchor: middle;
+        dominant-baseline: central;
+      }
+    </style>
+  </defs>
+  <rect width="128" height="128" rx="25" fill="#000000"/>
+  <!-- Background 'g' (gray) -->
+  <text x="72" y="72" fill="#888888">g</text>
+  <!-- Foreground 'y' (white) -->
+  <text x="52" y="52" fill="#ffffff">y</text>
 </svg>
