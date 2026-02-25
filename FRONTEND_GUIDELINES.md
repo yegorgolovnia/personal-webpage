@@ -1,41 +1,44 @@
 # Frontend Guidelines
 
 ## Design System Overview
-A calm, premium dark theme that projects operational credibility and systems-level thinking. Effects are used as short, intentional accents, not as constant visual noise.
+A terminal-inspired, tech-forward dark theme that projects operational credibility. It utilizes high-contrast circular pixel typography juxtaposed over a fluid, interactive ambient background layered under frosted glassmorphism cards.
 
 ## Design Principles
-- Calm authority over spectacle.
+- Terminal-chic aesthetic.
 - High contrast, high readability.
-- Motion is intentional and rare.
+- Motion is fluid and reactive (mouse-following liquid gradients).
 - Information density is controlled and scannable.
 
 ## Color Tokens
 Defined in `src/styles/global.css`.
-- `--color-bg`: #050505 (primary background)
+- `--color-bg`: #000000 (pure black primary background)
 - `--color-text`: #eaeaea (primary text)
 - `--color-text-muted`: #888888 (secondary text)
-- `--color-accent`: #ffffff (high-contrast text)
-- `--color-accent-subtle`: #2a2a2a (borders/dividers)
+- `--color-accent`: #00FF41 (terminal green high-contrast text and borders)
+- `--color-accent-subtle`: #1a1a1a (borders/dividers)
+- Ambient Gradients: `#00FF41` (Green) and `#c026d3` (Fuchsia)
 
 Accent usage guidelines:
-- Use green for Spotify and orange for Strava only in their context.
-- Keep accents under 10 percent of visible area.
+- Use green for terminal outputs, hovered cards, and interactive 3D elements.
+- Orange `#fc4c02` is strictly preserved for Strava branding.
 
 ## Typography
 Font families:
-- Display: Instrument Serif (H1, H2)
-- Body: Space Grotesk
-- Mono: Space Mono
+- Primary / Display: `Geist Pixel Circle`
+- Body: `Space Grotesk` (Fallback system sans)
+- Mono: `Space Mono`
 
 Type scale (recommended):
-- H1: clamp(4rem, 15vw, 10rem)
+- H1: clamp(3rem, 10vw, 6rem)
 - H2: 2.2rem
 - H3: 1.4rem
 - Body: 1rem–1.2rem
 - Small / Meta: 0.75rem–0.9rem
 
 Rules:
-- Headings use display font for contrast and character.
+- **CRITICAL**: `Geist Pixel Circle` only renders its signature circular pixels when text is strictly **lowercase**. Uppercase text will render as standard chunky square pixels.
+- Headings use the primary pixel font.
+- Mono is for metadata, status codes, and labels.
 - Mono is for metadata and labels only.
 - Keep line-height generous (1.4–1.6 for body).
 
@@ -71,31 +74,22 @@ Rules:
 - Keep icons monochrome unless context-specific (Spotify, Strava).
 
 ## Visual Atmosphere
-- Use a soft gradient mesh in the background for depth.
-- Add subtle grain to avoid flatness.
-- Background effects must be low opacity and non-distracting.
+- **Liquid Gradients**: Use wide `vw`/`vh` translation animations tied to `--mouse-x` and `--mouse-y` variables to allow the green and fuchsia blurry blobs to smoothly track the user's cursor.
+- **Glassmorphism**: Content cards (Services, Links, Cubes) must use `background: rgba(0, 255, 65, 0.02)` and `backdrop-filter: blur(16px)` to let the ambient liquid background shine through as frosted glass.
 
 ## Motion Guidelines
-- Default animations should be subtle and short.
-- Respect `prefers-reduced-motion` and disable non-essential animation.
-- Glitch effects only on open or explicit triggers, never continuous.
-- Scramble effects only on titles for 300–500ms.
+- Background gradient motion uses `lerp` easing for a sluggish "underwater" feel.
+- Respect `prefers-reduced-motion` and disable the background translation if necessary.
+- 3D Cube tilts uniformly rotate `20deg` on X-axis on hover.
 
 ## Interaction Patterns
-- Hover is desktop-only. Mobile should never require hover.
+- Hover styling typically shifts the border to the solid `--color-accent` green with a dashed outline.
 - All clickable cards must be keyboard accessible.
-- Use focus rings that are clearly visible.
-- Keep transitions under 300ms for UI feedback.
-
-## Interaction States
-- Hover: subtle border highlight or lift.
-- Focus: 2px outline with 2px offset.
-- Active: brief opacity shift or border change.
 
 ## Components
 Hero:
-- Oversized name, minimal copy, large breathing space.
-- One ambient gradient element only.
+- Name in lowercase if circular pixels are desired, or uppercase if square blocks are desired.
+- Keep the `System.Boot() // Welcome` style minimal.
 
 Section Headers:
 - Title + mono slug.

@@ -1,7 +1,12 @@
 # Personal Website Guide
 
-## is this hard? 🤔
-**No!** It might look like a lot of files, but **you only need to care about one or two.**
+A blazing-fast, terminal-inspired landing page built on Astro. Featuring a fluid mouse-reactive ambient background, glassmorphism UI elements, and dynamic data-fetching for Strava and Spotify.
+
+## ✨ Features
+- **Typography**: Uses `Geist Pixel Circle` for a unique lowercase circular-pixel aesthetic.
+- **Ambient Liquid UI**: Interactive, smooth-scrolling purple & green background gradients that gently follow the user's mouse via lerp interpolation.
+- **Glassmorphism**: Service and link cards feature frosted `backdrop-filter` styles to allow the liquid background to shine through.
+- **Live Integrations**: 3D interactive cubes polling live workout data from Strava and static playlists from Spotify.
 
 ## ✏️ How to Edit Content
 You don't need to touch code. Just change the text in these files:

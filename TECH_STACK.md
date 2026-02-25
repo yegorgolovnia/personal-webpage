@@ -13,8 +13,8 @@
 - Design system tokens in `src/styles/global.css`
 
 ## Fonts
-- Space Grotesk (primary sans)
-- Instrument Serif (display for headings)
+- Geist Pixel Circle (primary display)
+- Space Grotesk (fallback sans)
 - Space Mono (mono accents)
 
 ## Data / APIs
