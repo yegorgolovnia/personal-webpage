@@ -139,7 +139,7 @@ a:hover {
     background: var(--color-accent);
     top: -10%;
     right: -10%;
-    animation: float1 25s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+    animation: float1 12s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
 }
 
 .atmosphere::after {
@@ -147,42 +147,42 @@ a:hover {
     /* Brighter, more vibrant purple */
     bottom: -10%;
     left: -10%;
-    animation: float2 28s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+    animation: float2 14s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
 }
 
-/* More dramatic liquid movement across the screen, offset by smooth mouse tracking */
+/* Dramatic liquid movement without mouse tracking */
 @keyframes float1 {
     0% {
-        transform: translate(calc(var(--mouse-x, 0) * 15vw), calc(var(--mouse-y, 0) * 15vh)) scale(1);
+        transform: translate(0, 0) scale(1);
     }
 
     33% {
-        transform: translate(calc(-30vw + (var(--mouse-x, 0) * 15vw)), calc(20vh + (var(--mouse-y, 0) * 15vh))) scale(1.3);
+        transform: translate(-30vw, 20vh) scale(1.3);
     }
 
     66% {
-        transform: translate(calc(-10vw + (var(--mouse-x, 0) * 15vw)), calc(50vh + (var(--mouse-y, 0) * 15vh))) scale(0.8);
+        transform: translate(-10vw, 50vh) scale(0.8);
     }
 
     100% {
-        transform: translate(calc(-40vw + (var(--mouse-x, 0) * 15vw)), calc(10vh + (var(--mouse-y, 0) * 15vh))) scale(1.5);
+        transform: translate(-40vw, 10vh) scale(1.5);
     }
 }
 
 @keyframes float2 {
     0% {
-        transform: translate(calc(var(--mouse-x, 0) * 15vw), calc(var(--mouse-y, 0) * 15vh)) scale(1);
+        transform: translate(0, 0) scale(1);
     }
 
     33% {
-        transform: translate(calc(30vw + (var(--mouse-x, 0) * 15vw)), calc(-20vh + (var(--mouse-y, 0) * 15vh))) scale(1.4);
+        transform: translate(30vw, -20vh) scale(1.4);
     }
 
     66% {
-        transform: translate(calc(10vw + (var(--mouse-x, 0) * 15vw)), calc(-45vh + (var(--mouse-y, 0) * 15vh))) scale(0.9);
+        transform: translate(10vw, -45vh) scale(0.9);
     }
 
     100% {
-        transform: translate(calc(50vw + (var(--mouse-x, 0) * 15vw)), calc(-15vh + (var(--mouse-y, 0) * 15vh))) scale(1.6);
+        transform: translate(50vw, -15vh) scale(1.6);
     }
 }

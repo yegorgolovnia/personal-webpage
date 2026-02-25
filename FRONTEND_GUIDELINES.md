@@ -6,7 +6,7 @@ A terminal-inspired, tech-forward dark theme that projects operational credibili
 ## Design Principles
 - Terminal-chic aesthetic.
 - High contrast, high readability.
-- Motion is fluid and reactive (mouse-following liquid gradients).
+- Motion is fluid (autonomous liquid gradients).
 - Information density is controlled and scannable.
 
 ## Color Tokens
@@ -74,11 +74,11 @@ Rules:
 - Keep icons monochrome unless context-specific (Spotify, Strava).
 
 ## Visual Atmosphere
-- **Liquid Gradients**: Use wide `vw`/`vh` translation animations tied to `--mouse-x` and `--mouse-y` variables to allow the green and fuchsia blurry blobs to smoothly track the user's cursor.
+- **Liquid Gradients**: Use wide `vw`/`vh` translation keyframes to allow the green and fuchsia blurry blobs to smoothly drift across the screen.
 - **Glassmorphism**: Content cards (Services, Links, Cubes) must use `background: rgba(0, 255, 65, 0.02)` and `backdrop-filter: blur(16px)` to let the ambient liquid background shine through as frosted glass.
 
 ## Motion Guidelines
-- Background gradient motion uses `lerp` easing for a sluggish "underwater" feel.
+- Background gradient motion uses cubic-bezier easing for a smooth "underwater" feel.
 - Respect `prefers-reduced-motion` and disable the background translation if necessary.
 - 3D Cube tilts uniformly rotate `20deg` on X-axis on hover.
 
