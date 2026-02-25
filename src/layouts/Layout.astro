@@ -32,5 +32,36 @@ const { title, description = "Yegor Golovnia - Web3 Operations Generalist" } =
 		</div>
 		<slot name="overlays" />
 		<SpeedInsights />
+
+		<script>
+			// Smooth mouse tracking for ambient background
+			const body = document.body;
+			let currentX = 0;
+			let currentY = 0;
+			let targetX = 0;
+			let targetY = 0;
+
+			// Listen to mouse movement and calculate center-relative viewport percentage (-1 to 1)
+			document.addEventListener("mousemove", (e) => {
+				targetX = (e.clientX / window.innerWidth) * 2 - 1;
+				targetY = (e.clientY / window.innerHeight) * 2 - 1;
+			});
+
+			// Easing function to make the movement feel heavy and liquid
+			function animate() {
+				// Linear interpolation (lerp) for smooth trailing
+				currentX += (targetX - currentX) * 0.02;
+				currentY += (targetY - currentY) * 0.02;
+
+				// Update CSS variables for the atmosphere to read
+				body.style.setProperty("--mouse-x", currentX.toString());
+				body.style.setProperty("--mouse-y", currentY.toString());
+
+				requestAnimationFrame(animate);
+			}
+
+			// Start the animation loop
+			requestAnimationFrame(animate);
+		</script>
 	</body>
 </html>
