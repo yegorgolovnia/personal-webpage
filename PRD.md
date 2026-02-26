@@ -46,6 +46,7 @@ Visitors need a fast, credible, and memorable snapshot of Yegor’s role as an o
 - Glitch/scanline effects only on sidebar open, not on hover change.
 - Hover behavior disabled on mobile/tablet for readability.
 - Page dim (subtle) while sidebar is open.
+- **Lifestyle Block Tilt**: On hover, the preview tilt should be 20deg for the first item (face) of the cube, but after scrolling, the hover tilt for subsequent items should be 10deg.
 
 ## Performance Requirements
 - Minimal JS on initial load; defer non-critical effects.
