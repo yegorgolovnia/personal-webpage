@@ -4,7 +4,7 @@
 Yegor Golovnia — Personal Landing Page
 
 ## Problem Statement
-Visitors need a fast, credible, and memorable snapshot of Yegor’s role as a Web3 Program & Operations lead, with immediate paths to connect or explore experience. The current ecosystem is noisy; the site must communicate calm authority and operational excellence without feeling gimmicky.
+Visitors need a fast, credible, and memorable snapshot of Yegor’s role as an operations generalist and builder of agentic AI systems, with immediate paths to connect or explore experience. The current ecosystem is noisy; the site must communicate calm authority, operational excellence, and high-leverage automation without feeling gimmicky.
 
 ## Goals
 1. Communicate a clear value proposition in under 10 seconds.
@@ -18,12 +18,12 @@ Visitors need a fast, credible, and memorable snapshot of Yegor’s role as a We
 - Heavy analytics or tracking.
 
 ## Target Audience
-- Web3 founders, grants program managers, and ecosystem operators.
-- Conference organizers and community builders.
-- Hiring managers and collaborators in open-source/public goods.
+- Technical founders, Web3 leaders, and ecosystem operators.
+- Teams looking for operational scaling through custom AI workflows.
+- Collaborators in open-source and public goods funding.
 
 ## Key Value Proposition
-“Ops + product leadership that scales impact-focused organizations.”
+"Building the operational layer for high-leverage teams, from custom AI agents to complex funding programs."
 
 ## Core Sections
 1. Hero
