@@ -25,6 +25,20 @@
                 public goods funding, leading QF at <strong>Giveth</strong> and actively
                 contributing to <strong>TheDAO Security Fund</strong>.
             </p>
+            <div
+                class="cta-container fade-in-more-delay"
+                style="margin-top: 2rem;"
+            >
+                <p style="margin-bottom: 1rem;">
+                    Available for fractional ops and custom AI automations.
+                </p>
+                <a href="#contact" class="cta-button">
+                    Start a conversation <span
+                        style="font-family: var(--font-sans); margin-left: 0.2rem;"
+                        >→</span
+                    >
+                </a>
+            </div>
         </div>
     </div>
 
@@ -130,6 +144,27 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            font-family: var(--font-pixel);
+            font-size: 1.1rem;
+            color: var(--color-accent);
+            border: 1px dashed var(--color-accent-subtle);
+            background: rgba(0, 255, 65, 0.02);
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .cta-button:hover {
+            border-color: var(--color-accent);
+            background: rgba(0, 255, 65, 0.05);
+            opacity: 1; /* Override default link hover opacity jump */
         }
 
         @media (prefers-reduced-motion: reduce) {

@@ -40,6 +40,7 @@ body {
     -webkit-font-smoothing: none;
     /* Crisper pixel rendering */
     position: relative;
+    scroll-behavior: smooth;
 }
 
 h1,
