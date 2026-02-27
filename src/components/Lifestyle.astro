@@ -728,21 +728,28 @@ const spotifyPlaylists = [
             }, 500);
         };
 
+        let lastInteractionTime = 0;
+
         container.addEventListener(
             "wheel",
             (e) => {
                 if (prefersReducedMotion) return;
-                const wheelEvent = e;
-                wheelEvent.preventDefault();
-                if (Math.abs(wheelEvent.deltaY) < 10) return;
-                const direction = wheelEvent.deltaY > 0 ? 1 : -1;
+                e.preventDefault();
+
+                const now = Date.now();
+                // 600ms cooldown to prevent multi-flip from trackpad inertia
+                if (now - lastInteractionTime < 600) return;
+                // Require a stronger swipe to trigger
+                if (Math.abs(e.deltaY) < 30) return;
+
+                const direction = e.deltaY > 0 ? 1 : -1;
                 handleInteraction(direction);
+                lastInteractionTime = now;
             },
             { passive: false },
         );
 
         let touchStartY = 0;
-        let lastInteractionTime = 0;
 
         container.addEventListener(
             "touchstart",

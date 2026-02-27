@@ -32,7 +32,11 @@
                 <p style="margin-bottom: 1rem;">
                     Available for fractional ops and custom AI automations.
                 </p>
-                <a href="#contact" class="cta-button">
+                <a
+                    href="#contact"
+                    class="cta-button"
+                    onclick="event.preventDefault(); document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });"
+                >
                     Start a conversation <span
                         style="font-family: var(--font-sans); margin-left: 0.2rem;"
                         >→</span
